@@ -3,22 +3,24 @@
  */
 
 // Importación del manejador de wallets
-const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require("@truffle/hdwallet-provider");
 // const infuraKey = "fj4jll3k.....";
 
 //Obtención del mnemonico correspondiente a la seed phrase de nuestra wallet
-const fs = require('fs');
+const fs = require("fs");
 const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 //Validación para permitir solo frases de 12 palabras
 if (!mnemonic || mnemonic.split(" ").length !== 12) {
-  throw new Error("No se pudo encontrar un mnemonico aceptable en el archivo .secret")
+  throw new Error(
+    "No se pudo encontrar un mnemonico aceptable en el archivo .secret"
+  );
 }
 
 module.exports = {
   /**
    * Las redes defininen como conectarnos al cliente de aurora.
-   * Ejemplo: 
+   * Ejemplo:
    * $ truffle test --network <network-name>
    */
 
@@ -62,10 +64,11 @@ module.exports = {
 
     // Se incluye la red de aurora en la configuración de truffle
     aurora: {
-      provider: () => new HDWalletProvider(mnemonic, 'https://testnet.aurora.dev',),
+      provider: () =>
+        new HDWalletProvider(mnemonic, "https://testnet.aurora.dev"),
       network_id: 0x4e454153,
       gas: 10000000,
-      from: '0xFf89239B9f5BBe3dD801794712CE55751B2484F1' // CHANGE THIS ADDRESS
+      from: "0xFf89239B9f5BBe3dD801794712CE55751B2484F1", // CHANGE THIS ADDRESS
     },
   },
 
@@ -77,7 +80,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.1",   // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.1", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
@@ -86,6 +89,6 @@ module.exports = {
       //  },
       //  evmVersion: "byzantium"
       // }
-    }
-  }
+    },
+  },
 };
