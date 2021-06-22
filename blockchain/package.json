@@ -7,9 +7,12 @@
     "test": "test"
   },
   "scripts": {
+    "clean": "rm -rf ./build/",
+    "compile": "truffle compile",
+    "deploy:aurora": "npm run clean && npm run compile && export NETWORK='aurora' && truffle migrate --network aurora",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "jorge ibarra & cristian zambrano",
+  "author": "Jorge Ibarra y Cristian Zambrano",
   "license": "ISC",
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
