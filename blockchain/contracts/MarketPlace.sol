@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract MarketPlace is ERC721URIStorage {
+contract MarketPlace is ERC721Enumerable {
     using Counters for Counters.Counter;
     //representa un entero que lleva la cuenta de los tokensNFT
     Counters.Counter private _tokenIds;
@@ -17,6 +17,7 @@ contract MarketPlace is ERC721URIStorage {
         uint256 price;
         string data;
         bool onSale;
+        uint256 tokenID;
     }
 
     //contiene todas las representacion de cada token
@@ -51,6 +52,7 @@ contract MarketPlace is ERC721URIStorage {
         tokensData[newItemId].data = datos;
         tokensData[newItemId].price = price;
         tokensData[newItemId].onSale = true;
+        tokensData[newItemId].tokenID = newItemId;
 
         return newItemId;
     }
@@ -128,7 +130,6 @@ contract MarketPlace is ERC721URIStorage {
      *regresa todos los nft disponibles
      *@return tokenData[] contiene todos los tokens disponibles
      */
-
     function obtenerNfts() public view returns (tokenData[] memory) {
         //es el numero de tokens
         uint256 nTokens = _tokenIds.current();
@@ -162,5 +163,25 @@ contract MarketPlace is ERC721URIStorage {
 
         //le transferimos el dinero al  vendedor
         tokenOwner.transfer(msg.value);
+    }
+
+    /**
+     * @param owner {address}  representa la dirección al cual consultar los tokens
+     * @return tokenData[] arreglo con todos los datos de cada token
+     */
+    function tokensOf(address owner) public view returns (tokenData[] memory) {
+        //numero de tokens
+        uint256 nTokens = balanceOf(owner);
+        if (nTokens == 0) {
+            return (new tokenData[](nTokens));
+        }
+        //arreglo con los tokens
+        tokenData[] memory userTokens = new tokenData[](nTokens);
+
+        for (uint256 i = 0; i < nTokens; i++) {
+            //obtener los datos de cada uno de los tokens
+            userTokens[i] = tokensData[tokenOfOwnerByIndex(owner, i)];
+        }
+        return (userTokens);
     }
 }
