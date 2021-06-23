@@ -10,7 +10,7 @@
     "clean": "rm -rf ./build/",
     "compile": "truffle compile",
     "deploy:aurora": "npm run clean && npm run compile && export NETWORK='aurora' && truffle migrate --network aurora",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "truffle test"
   },
   "author": "Jorge Ibarra y Cristian Zambrano",
   "license": "ISC",
