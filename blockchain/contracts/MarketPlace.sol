@@ -103,9 +103,11 @@ contract MarketPlace is ERC721Enumerable {
             ownerOf(tokenid) == msg.sender,
             "solo el dueno del token puede venderlo"
         );
-        require(price > 0, "el precio no puede ser negativo ni ser gratis");
         tokensData[tokenid].onSale = true;
-        tokensData[tokenid].price = price;
+
+        if (!(price == 0)) {
+            tokensData[tokenid].price = price;
+        }
     }
 
     /**
@@ -163,6 +165,9 @@ contract MarketPlace is ERC721Enumerable {
 
         //le transferimos el dinero al  vendedor
         tokenOwner.transfer(msg.value);
+
+        //poner el token en pausa
+        tokensData[tokenId].onSale = false;
     }
 
     /**
