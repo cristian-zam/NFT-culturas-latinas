@@ -6,7 +6,7 @@ instalar dependencias dependencias
 @openzeppelin/contracts
 @truffle/hdwallet-provider
 
-descargar plugin de solidity
+descargar plugin de solidity en vscode
 
 truffle create contract MarketPlace
 crear MarketPlace.sol dentro de contracts/contracts
@@ -18,4 +18,6 @@ extender contrato is ERC721URIStorage
 truffle create migrate
 
 truffle create migration MarketPlace
+
+truffle create test MarketPlace
 

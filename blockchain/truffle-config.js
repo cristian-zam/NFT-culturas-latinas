@@ -2,6 +2,7 @@
  * Archivo para la configuración del proyecto de truffle.
  */
 
+const path = require("path");
 // Importación del manejador de wallets
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 // const infuraKey = "fj4jll3k.....";
@@ -76,6 +77,10 @@ module.exports = {
   mocha: {
     // timeout: 100000
   },
+  contracts_build_directory: path.join(
+    __dirname,
+    ".././frontend/src/contracts"
+  ),
 
   // Configure your compilers
   compilers: {
