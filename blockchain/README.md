@@ -32,11 +32,11 @@ una vez instalado de forma local el proyecto es necesario desplegar el contrato 
 
 1. configuramos el `truffle-config.js` dentro del directorio `/blockchain` y cambiamos el address por el propio 
 
-![picture](https://raw/github.com/cristian-cloudmex/nft-culturas-latinas/assets/cambiar_address.png)
+![picture](https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/assets/cambiar_address.png?raw=true)
 
 2. configuramos el archivo `.secret` dentro del directorio `/blockchain` y escribimos nuestra seed phrase (frase de 12 palabras) como texto plano 
 
-![picture](https://raw/github.com/cristian-cloudmex/nft-culturas-latinas/assets/seed_phrase.png)
+![picture](https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/assets/seed_phrase.png?raw=true)
 
 con todo configurado pasamos a ejecutar el siguiente `script` estando dentro del directorio `/blockchain` para desplegar el contrato
 ```bash
@@ -44,7 +44,7 @@ npm run deploy:aurora
 ```
 este comando desplegará el smart contract en la red de [aurora] para que podamos interactuar posteriormente con él.
 
-![picture](https://raw/github.com/cristian-cloudmex/nft-culturas-latinas/assets/despliegue.png)
+![picture](https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/assets/despliegue.png?raw=true)
 
 `interactuar con el smart contract`
 ================
@@ -59,7 +59,7 @@ truffle console --network aurora
 const cvt = await marketplace.deployed()
 ```
 
-![picture](https://raw/github.com/cristian-cloudmex/nft-culturas-latinas/assets/truffle.png)
+![picture](https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/assets/truffle.png?raw=true)
 
 `📃 Métodos del smart contract`
 ===============
