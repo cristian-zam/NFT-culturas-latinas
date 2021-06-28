@@ -41,23 +41,29 @@ function LightFooterB(props) {
             </h2>
             <nav className="list-none mb-10">
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a href="/blog" className="text-gray-600 hover:text-gray-800">
                   Blog
                 </a>
               </li>
 
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a href="/faq" className="text-gray-600 hover:text-gray-800">
                   Faq
                 </a>
               </li>
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a
+                  href="/partners"
+                  className="text-gray-600 hover:text-gray-800"
+                >
                   Partners
                 </a>
               </li>
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a
+                  href="/contacto"
+                  className="text-gray-600 hover:text-gray-800"
+                >
                   Contacto
                 </a>
               </li>
@@ -70,23 +76,35 @@ function LightFooterB(props) {
             </h2>
             <nav className="list-none mb-10">
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a
+                  href="/contacto"
+                  className="text-gray-600 hover:text-gray-800"
+                >
                   Contacto
                 </a>
               </li>
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a
+                  href="acercade"
+                  className="text-gray-600 hover:text-gray-800"
+                >
                   Acerca de
                 </a>
               </li>
 
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a
+                  href="/terminos"
+                  className="text-gray-600 hover:text-gray-800"
+                >
                   Terminos S
                 </a>
               </li>
               <li>
-                <a href className="text-gray-600 hover:text-gray-800">
+                <a
+                  href="/politicas"
+                  className="text-gray-600 hover:text-gray-800"
+                >
                   Politica P
                 </a>
               </li>

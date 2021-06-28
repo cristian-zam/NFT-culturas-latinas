@@ -64,8 +64,8 @@ function LightStepC(props) {
                 viewBox="0 0 24 24"
               >
                 <g id="_62.check" data-name="62.check">
-                  <circle class="cls-1" cx="12" cy="12" r="11" />
-                  <polyline class="cls-1" points="6 13 9 16 17 8" />
+                  <circle className="cls-1" cx="12" cy="12" r="11" />
+                  <polyline className="cls-1" points="6 13 9 16 17 8" />
                 </g>
               </svg>
             </div>
