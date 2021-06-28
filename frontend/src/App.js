@@ -9,6 +9,11 @@ import Footer from "./components/Footer.component";
 import Landing from "./views/Landing.view";
 import Galeria from "./views/Galeria.view";
 import Detail from "./views/Detail.view";
+import Mint from "./views/mintNft.view";
+
+import notFound from "./views/notFound.view";
+import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
+
 const iconList = getIcons();
 const blockListArr = [];
 
@@ -30,40 +35,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ready: false,
       darkMode: false,
-      copied: false,
-      sidebar: false,
-      codeView: false,
-      currentKeyCode: null,
-      view: "desktop",
+
       theme: "blue",
-      blockType: "Blog",
-      blockName: "BlogA",
-      markup: "",
-      loading: true,
-      drizzleState: null,
     };
-  }
-
-  componentDidMount() {
-    const { drizzle } = this.props;
-
-    // suscribirse a los cambios
-    this.unsubscribe = drizzle.store.subscribe(() => {
-      // cada vez que el store se actualiza obtenemos los cambios
-      const drizzleState = drizzle.store.getState();
-
-      // revisar si drizzle esta listo si lo esta acutalizamos el estado del componente
-      if (drizzleState.drizzleStatus.initialized) {
-        this.setState({ loading: false, drizzleState });
-      }
-    });
-    document.addEventListener("keydown", this.keyboardNavigation);
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
   }
 
   render() {
@@ -72,9 +47,11 @@ class App extends Component {
         <Router>
           <Navbar theme={this.state.theme} />
           <Switch>
-            <Route exact path="/" component={Landing}></Route>
-            <Route path="/galeria" component={Galeria}></Route>
-            <Route path="/detail" component={Detail} />
+            <Route exact path="/" component={Landing} />
+            <MetamaskProtectedRoute path="/galeria" component={Galeria} />
+            <MetamaskProtectedRoute path="/detail" component={Detail} />
+            <MetamaskProtectedRoute path="/minar" component={Mint} />
+            <Route component={notFound} />
           </Switch>
           <Footer theme={this.state.theme} />
         </Router>
