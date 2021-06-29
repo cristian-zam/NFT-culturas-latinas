@@ -32,7 +32,6 @@ module.exports = {
         new HDWalletProvider(mnemonic, "https://testnet.aurora.dev"),
       network_id: 0x4e454153,
       gas: 10000000,
-      from: "0xFf89239B9f5BBe3dD801794712CE55751B2484F1", // Cambiar address
     },
   },
 

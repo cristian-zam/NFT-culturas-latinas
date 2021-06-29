@@ -52,7 +52,7 @@ export function init() {
     //instancia de web3
     window.web3x = new Web3(window.ethereum);
     //red por default
-    localStorage.setItem("network", 5777);
+    localStorage.setItem("network", 1313161555);
 
     //instancia de ipfs
     window.ipfs = create({
@@ -98,7 +98,10 @@ export function getContract() {
   //instantiate the contract object
   return new window.web3x.eth.Contract(MarketPlace.abi, smartContractAddress);
 }
-
+/**
+ *
+ * @returns adddres regresa la primera cuenta
+ */
 export async function getSelectedAccount() {
   //get the useraccounts
   let useraccounts = await window.ethereum.request({
@@ -106,7 +109,43 @@ export async function getSelectedAccount() {
   });
   return useraccounts[0];
 }
-
+/**
+ * convierte un numero a weis
+ * @param {float} eth
+ * @returns
+ */
 export function fromETHtoWei(eth) {
   return Web3.utils.toWei(eth.toString(), "ether");
+}
+
+export async function sameNetwork() {
+  //get the actual networkid or chainid
+  let ActualnetworkId = await window.ethereum.request({
+    method: "net_version",
+  });
+
+  //check if the stored network is the same as the selected
+  return ActualnetworkId == parseInt(localStorage.getItem("network"));
+}
+
+/**
+ * with this function we will pause the execution of code , sended as parameter
+ * @param {int} miliseconds es el numero de milisegundos a esperar
+ */
+export function wait(miliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if (new Date().getTime() - start > miliseconds) {
+      break;
+    }
+  }
+}
+
+export async function syncNets() {
+  //mientras la redes no coincidan trata de cambiar la red
+  while (!(await sameNetwork())) {
+    //espera 200 milisegundo para volver a llamar addNetwork evita que no se muestre el modal de metamask
+    wait(200);
+    await addNetwork(parseInt(localStorage.getItem("network"))).catch();
+  }
 }
