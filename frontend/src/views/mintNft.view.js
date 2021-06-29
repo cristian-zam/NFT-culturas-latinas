@@ -4,20 +4,30 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { acceptedFormats } from "../utils/constraint";
+import Modal from "../components/modal.component";
 import {
   addNetwork,
   fromETHtoWei,
   getContract,
   getSelectedAccount,
+  syncNets,
+  syncNetworks,
 } from "../utils/blockchain_interaction";
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
   const [mint, setmint] = React.useState({ file: undefined });
+  const [modal, setModal] = React.useState({
+    show: false,
+    title: "cargando",
+    message: "hola como estas",
+    loading: true,
+    disabled: true,
+  });
   const formik = useFormik({
     initialValues: {
       title: "",
       description: "",
-      price: -1,
+      price: 0,
       image: "",
     },
     //validaciones
@@ -38,8 +48,20 @@ function LightHeroE(props) {
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
+      //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
+      await syncNets();
+
       //la cuenta a la cual mandaremos el token
       let account = await getSelectedAccount();
+      console.log(account);
+      //cargamos el modal
+      setModal({
+        ...modal,
+        show: true,
+        title: "cargando",
+        loading: true,
+        disabled: true,
+      });
       //los datos de la transacccion
       let token = await getContract()
         .methods.minar(
@@ -47,9 +69,33 @@ function LightHeroE(props) {
           JSON.stringify(values),
           fromETHtoWei(values.price)
         )
-        .send({ from: account });
+        .send({ from: account })
+        .catch((err) => {
+          return err;
+        });
 
-      console.log(token);
+      //if de error
+      if (!token.status)
+        setModal({
+          ...modal,
+          show: true,
+          loading: false,
+          title: "error",
+          message: "intentalo de nuevo",
+          change: setModal,
+          disabled: false,
+        });
+      //else de exito
+      else
+        setModal({
+          ...modal,
+          show: true,
+          title: "Exito",
+          message: "el nuevo token se ha minado correctamente",
+          loading: false,
+          change: setModal,
+          disabled: false,
+        });
     },
   });
   function imageClick() {
@@ -199,6 +245,7 @@ function LightHeroE(props) {
           </div>
         </div>
       </form>
+      <Modal {...modal} />
     </section>
   );
 }

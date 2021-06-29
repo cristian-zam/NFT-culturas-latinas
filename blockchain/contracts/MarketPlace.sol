@@ -132,14 +132,15 @@ contract MarketPlace is ERC721Enumerable {
      *regresa todos los nft disponibles
      *@return tokenData[] contiene todos los tokens disponibles
      */
-    function obtenerNfts() public view returns (tokenData[] memory) {
+    function obtenerNftsEnVenta() public view returns (tokenData[] memory) {
         //es el numero de tokens
         uint256 nTokens = _tokenIds.current();
         //es un arreglo temporal con todos los nfts
         tokenData[] memory onSaleTokensData = new tokenData[](nTokens);
         //sacamos los nft del mapping y los almacenamos en el arreglo
         for (uint256 index = 0; index < nTokens; index++) {
-            onSaleTokensData[index] = tokensData[index];
+            if (tokensData[index].onSale)
+                onSaleTokensData[index] = tokensData[index];
         }
 
         return onSaleTokensData;
