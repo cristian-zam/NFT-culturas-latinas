@@ -21,7 +21,7 @@ function LightHeaderB(props) {
           >
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
-          <span className="ml-3 text-xl">NFT-MARKETPLACE</span>
+          <span className="ml-3 text-xl">LatinArt</span>
         </a>
         <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
           <a href="/galeria" className="mr-5 hover:text-gray-900">
@@ -29,6 +29,9 @@ function LightHeaderB(props) {
           </a>
           <a href="contacto" className="mr-5 hover:text-gray-900">
             Contacto
+          </a>
+          <a href="mis_nfts" className="mr-5 hover:text-gray-900">
+            Mis Nfts
           </a>
         </nav>
         <button className="inline-flex items-center  border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">

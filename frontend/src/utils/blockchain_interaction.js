@@ -6,39 +6,39 @@ const { create } = require("ipfs-http-client");
  * contiene todas las redes que podemos agregar
  */
 var nets = [
-    {
-      chainId: 5777,
-      data: [
-        {
-          chainId: "0x1691",
-          chainName: "Truffle Develop",
-          rpcUrls: ["http://127.0.0.1:9545/"],
-          nativeCurrency: {
-            name: "TRUFFLE COIN",
-            symbol: "T-ETH",
-            decimals: 18,
-          },
-          blockExplorerUrls: ["https://bscscan.com/"],
+  {
+    chainId: 5777,
+    data: [
+      {
+        chainId: "0x1691",
+        chainName: "Truffle Develop",
+        rpcUrls: ["http://127.0.0.1:9545/"],
+        nativeCurrency: {
+          name: "TRUFFLE COIN",
+          symbol: "T-ETH",
+          decimals: 18,
         },
-      ],
-    },
-    {
-      chainId: 1313161555,
-      data: [
-        {
-          chainId: "0x4E454153",
-          chainName: "AURORATESTNET",
-          rpcUrls: ["https://testnet.aurora.dev"],
-          nativeCurrency: {
-            name: "AURORA COIN",
-            symbol: "A-ETH",
-            decimals: 18,
-          },
-          blockExplorerUrls: ["https://testnet.bscscan.com/"],
+        blockExplorerUrls: ["https://bscscan.com/"],
+      },
+    ],
+  },
+  {
+    chainId: 1313161555,
+    data: [
+      {
+        chainId: "0x4E454153",
+        chainName: "AURORATESTNET",
+        rpcUrls: ["https://testnet.aurora.dev"],
+        nativeCurrency: {
+          name: "AURORA COIN",
+          symbol: "A-ETH",
+          decimals: 18,
         },
-      ],
-    },
-  ],
+        blockExplorerUrls: ["https://testnet.bscscan.com/"],
+      },
+    ],
+  },
+],
   nets = Object.assign(
     ...nets.map(({ chainId, data }) => ({ [chainId]: data }))
   );
