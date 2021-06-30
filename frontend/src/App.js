@@ -10,6 +10,7 @@ import Landing from "./views/Landing.view";
 import Galeria from "./views/Galeria.view";
 import Detail from "./views/Detail.view";
 import Mint from "./views/mintNft.view";
+import MisNfts from "./views/MisTokens.view"
 
 import notFound from "./views/notFound.view";
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
@@ -36,8 +37,7 @@ class App extends Component {
     super(props);
     this.state = {
       darkMode: false,
-
-      theme: "blue",
+      theme: "yellow",
     };
   }
 
@@ -55,6 +55,7 @@ class App extends Component {
               component={Detail}
             />
             <MetamaskProtectedRoute path="/minar" component={Mint} />
+            <MetamaskProtectedRoute path="/mis_nfts" component={MisNfts} />
             <Route component={notFound} />
           </Switch>
           <Footer theme={this.state.theme} />

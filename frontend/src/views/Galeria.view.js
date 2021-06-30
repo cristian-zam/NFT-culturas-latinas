@@ -7,7 +7,7 @@ import {
 
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
-    theme: "blue",
+    theme: "yellow",
     currency: "ETH",
   });
 
@@ -30,6 +30,7 @@ function LightEcommerceA() {
           {Landing.tokens &&
             Landing.tokens.map((token, key) => {
               const tokenData = JSON.parse(token.data);
+              console.log(token)
               return (
                 <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
                   <a href={"/detail/" + token.tokenID}>

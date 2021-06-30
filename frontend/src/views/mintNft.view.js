@@ -38,7 +38,7 @@ function LightHeroE(props) {
         .min(5, "el titulo debe longitud mayor a 5"),
 
       description: Yup.string()
-        .max(50, "Menos de 50 caracteres")
+        .max(300, "Menos de 50 caracteres")
         .required("Requerido")
         .min(30, "la descripción minimo es de 30 caracteres"),
       price: Yup.number()
@@ -251,7 +251,7 @@ function LightHeroE(props) {
 }
 
 LightHeroE.defaultProps = {
-  theme: "blue",
+  theme: "yellow",
 };
 
 LightHeroE.propTypes = {
