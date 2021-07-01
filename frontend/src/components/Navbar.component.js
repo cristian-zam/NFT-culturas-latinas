@@ -27,8 +27,8 @@ function LightHeaderB(props) {
           <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
           </a>
-          <a href="contacto" className="mr-5 hover:text-gray-900">
-            Contacto
+          <a href="/minar" className="mr-5 hover:text-gray-900">
+            Minar
           </a>
           <a href="mis_nfts" className="mr-5 hover:text-gray-900">
             Mis Nfts
