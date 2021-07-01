@@ -23,8 +23,9 @@ function LightEcommerceB(props) {
 
       //obtener cuantos tokens tiene el contrato
       let totalSupply = await getContract().methods.totalSupply().call();
-      if (tokenid >= totalSupply) {
-        history.push("/galeria");
+      console.log(parseInt(tokenid) >= parseInt(totalSupply));
+      if (parseInt(tokenid) >= parseInt(totalSupply)) {
+        window.location.href = "/galeria";
       } else {
         //obtener los datos del token que se queire
         let toks = await getContract().methods.tokensData(tokenid).call();
@@ -116,13 +117,17 @@ function LightEcommerceB(props) {
             <p className="leading-relaxed mt-2 mb-6 font-mono ">
               {state?.jdata.description}
             </p>
-            <div className="flex border-l-4 border-blue-500 py-2 px-2 my-2 bg-gray-50">
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
               <span className="text-gray-500">TokenId</span>
               <span className="ml-auto text-gray-900">
                 {state?.tokens.tokenID}
               </span>
             </div>
-            <div className="flex border-l-4 border-blue-500 py-2 px-2 my-2 bg-gray-50">
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
               <span className="text-gray-500">OnSale</span>
               <span className="ml-auto text-gray-900">
                 <span
@@ -136,7 +141,9 @@ function LightEcommerceB(props) {
                 </span>
               </span>
             </div>
-            <div className="flex border-l-4 border-blue-500 py-2 px-2 bg-gray-50">
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+            >
               <span className="text-gray-500">Owner</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
                 {state?.owner}
@@ -166,7 +173,7 @@ function LightEcommerceB(props) {
 }
 
 LightEcommerceB.defaultProps = {
-  theme: "blue",
+  theme: "yellow",
 };
 
 LightEcommerceB.propTypes = {
