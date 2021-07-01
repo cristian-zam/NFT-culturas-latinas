@@ -1,5 +1,10 @@
 import React from "react";
 import metamasklogo from "../icons/metamasklogo.png";
+
+/**
+ *
+ * se muestra cuando el usuario no cuenta con emtamask
+ */
 export default function goMetamask() {
   return (
     <div className="container mx-auto flex  my- md:flex-row flex-col  justify-center h-96 items-center text-3xl">

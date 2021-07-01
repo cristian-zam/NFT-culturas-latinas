@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * se llama cuando no se encuentra la ruta que el usuario solicito
+ *
+ */
 export default function notFound() {
   return (
     <>
