@@ -9,11 +9,15 @@ import {
 import Modal from "../components/modal.component";
 
 function LightEcommerceB(props) {
+  //guarda el estado de  toda la vista
   const [state, setstate] = useState();
+  //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
   });
+  //es el parametro de tokenid
   const { tokenid } = useParams();
+  //es el historial de busqueda
   let history = useHistory();
 
   React.useEffect(() => {
@@ -23,22 +27,22 @@ function LightEcommerceB(props) {
 
       //obtener cuantos tokens tiene el contrato
       let totalSupply = await getContract().methods.totalSupply().call();
-      console.log(parseInt(tokenid) >= parseInt(totalSupply));
+
+      //si es mayor que el total de tokens
       if (parseInt(tokenid) >= parseInt(totalSupply)) {
         window.location.href = "/galeria";
       } else {
         //obtener los datos del token que se queire
         let toks = await getContract().methods.tokensData(tokenid).call();
-
+        //obtener el dueño del contrato
         let owner = await getContract().methods.ownerOf(tokenid).call();
-        console.log(owner);
+        //agregar el dueño y los datos del token
         setstate({
           ...state,
           tokens: toks,
           jdata: JSON.parse(toks.data),
           owner,
         });
-        console.log(toks);
       }
     })();
   }, []);
@@ -49,6 +53,7 @@ function LightEcommerceB(props) {
     //la cuenta a la cual mandaremos el token
     let account = await getSelectedAccount();
 
+    //si el dueño intenta comprar un token le decimos que no lo puede comprar
     if (state.owner.toUpperCase() == account.toUpperCase()) {
       setModal({
         show: true,
@@ -81,7 +86,7 @@ function LightEcommerceB(props) {
         return err;
       });
 
-    console.log(toks);
+    //si status esta undefined o falso le mandamos el modal de error
     if (!toks.status)
       setModal({
         show: true,

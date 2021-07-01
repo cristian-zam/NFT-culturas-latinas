@@ -20,7 +20,7 @@ function LightHeroE(props) {
 
           <div className="flex  justify-between">
             <Link to="/galeria">
-              <button className="bg-gray-100 inline-flex py-3 px-5 rounded-lg items-center hover:bg-gray-200 focus:outline-none">
+              <button className="bg-gray-100 inline-flex py-3 px-5 rounded-lg items-center justify-end hover:bg-gray-200 focus:outline-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"

@@ -18,8 +18,10 @@ function LightEcommerceA() {
 
       //la cuenta a la cual mandaremos el token
       let account = await getSelectedAccount();
-      console.log(account);
+      //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
+      //dinamicos en memory
       let toks = await getContract().methods.obtenerNftsEnVenta().call();
+      //asignamos y filtramos todos los tokens que estan a  la venta
       setLanding({ ...Landing, tokens: toks.filter((tok) => tok.onSale) });
     })();
   }, []);
@@ -29,8 +31,8 @@ function LightEcommerceA() {
         <div className="flex flex-wrap -m-4">
           {Landing.tokens &&
             Landing.tokens.map((token, key) => {
+              //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
-              console.log(token)
               return (
                 <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
                   <a href={"/detail/" + token.tokenID}>
