@@ -5,6 +5,7 @@ import {
   syncNets,
   getSelectedAccount,
   getContract,
+  fromWEItoEth,
 } from "../utils/blockchain_interaction";
 import Modal from "../components/modal.component";
 
@@ -158,7 +159,7 @@ function LightEcommerceB(props) {
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
               <span className="title-font font-medium text-2xl text-gray-900">
-                $ {state?.jdata.price} ETH
+                $ {state?.tokens.price && fromWEItoEth(state.tokens.price)} ETH
               </span>
               <button
                 className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}

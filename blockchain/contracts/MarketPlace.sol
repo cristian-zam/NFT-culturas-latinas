@@ -12,6 +12,8 @@ contract MarketPlace is ERC721Enumerable {
     //matenera el dueño del contrato o quien lo mino
     address public minero;
 
+    //es el numero de tokens en venta
+    uint256 public nTokenOnSale;
     // es la representacion de un token
     struct tokenData {
         uint256 price;
@@ -54,6 +56,8 @@ contract MarketPlace is ERC721Enumerable {
         tokensData[newItemId].onSale = true;
         tokensData[newItemId].tokenID = newItemId;
 
+        //agregar a la venta el nuevo token
+        nTokenOnSale++;
         return newItemId;
     }
 
@@ -103,11 +107,10 @@ contract MarketPlace is ERC721Enumerable {
             ownerOf(tokenid) == msg.sender,
             "solo el dueno del token puede venderlo"
         );
+        require(price > 0, "no hay nfts gratis");
         tokensData[tokenid].onSale = true;
-
-        if (!(price == 0)) {
-            tokensData[tokenid].price = price;
-        }
+        tokensData[tokenid].price = price;
+        nTokenOnSale++;
     }
 
     /**
@@ -126,21 +129,91 @@ contract MarketPlace is ERC721Enumerable {
             "ese token todavia no ha sido creado"
         );
         tokensData[tokenid].onSale = false;
+        nTokenOnSale--;
     }
 
     /**
      *regresa todos los nft disponibles
      *@return tokenData[] contiene todos los tokens disponibles
      */
-    function obtenerNftsEnVenta() public view returns (tokenData[] memory) {
+    function obtenerNfts() public view returns (tokenData[] memory) {
         //es el numero de tokens
         uint256 nTokens = _tokenIds.current();
         //es un arreglo temporal con todos los nfts
         tokenData[] memory onSaleTokensData = new tokenData[](nTokens);
         //sacamos los nft del mapping y los almacenamos en el arreglo
         for (uint256 index = 0; index < nTokens; index++) {
-            if (tokensData[index].onSale)
-                onSaleTokensData[index] = tokensData[index];
+            onSaleTokensData[index] = tokensData[index];
+        }
+
+        return onSaleTokensData;
+    }
+
+    /**
+     *trata a tokensData como un arreglo divido entre nTokenP
+     * el inicio de una pagina es el numero de pagina por el numero de tokens por pagina
+     * @param nTokenP uint256 es el numero de tokens que tiene una pagina
+     * @param nPagina contiene que pagina vamos a consultar
+     *@return tokenData[] contiene los tokens de una pagina
+     */
+    function obtenerPaginav1(uint256 nTokenP, uint256 nPagina)
+        public
+        view
+        returns (tokenData[] memory)
+    {
+        //es el incio del ciclo o el inicio de  la pagina
+        uint256 inicioPagina = nPagina * nTokenP;
+        //es un arreglo temporal con todos los nfts de la pagina
+        tokenData[] memory onSaleTokensData = new tokenData[](nTokenP);
+        //sacamos los nft y los almacenamos en el arreglo
+        for (
+            uint256 index = inicioPagina;
+            index < nTokenP * (nPagina + 1);
+            index++
+        ) {
+            //agregar tokens al arreglo
+            onSaleTokensData[index - inicioPagina] = tokensData[index];
+        }
+
+        return onSaleTokensData;
+    }
+
+    /**
+     *nos regresa los tokens que estan en venta hasta que se llene el arreglo o termine el ciclo
+     * espera a llenar el contador hasta que es el incio de la pagina que solicito
+     * @param nTokenP uint256 es el numero de tokens que tiene una pagina
+     * @param nPagina contiene que pagina vamos a consultar
+     *@return tokenData[] contiene los tokens de una pagina
+     */
+    function obtenerPaginav2(uint256 nTokenP, uint256 nPagina)
+        public
+        view
+        returns (tokenData[] memory)
+    {
+        //es el numero de tokens
+        uint256 nTokens = _tokenIds.current();
+        //es la posicion del el ultimo token agregado a onsaletokendata
+        uint256 lastToken = 0;
+        //cuenta cuantos tokens en venta van
+        uint256 ostok = 0;
+        //a partir de cuantos tokens comienza
+        //es un arreglo temporal con todos los nfts de la pagina
+        tokenData[] memory onSaleTokensData = new tokenData[](nTokenP);
+        //sacamos los nft y los almacenamos en el arreglo
+        for (uint256 index = 0; index < nTokens; index++) {
+            //si esta en venta
+            if (tokensData[index].onSale) {
+                //aumentamos el numero de tokens que estan a la venta
+                ostok++;
+                //si el numero de tokens es mayor o igual al incio de la pagina comenzamos a agregar tokens al arreglo
+                if (ostok >= nTokenP * nPagina) {
+                    onSaleTokensData[lastToken] = tokensData[index];
+                    lastToken++;
+                }
+                //si el numero de tokens llega al fin de la pagina cancelamos el for
+                if (ostok == nTokenP * (nPagina + 1)) break;
+            }
+            //agregar tokens al arreglo
         }
 
         return onSaleTokensData;
@@ -169,6 +242,8 @@ contract MarketPlace is ERC721Enumerable {
 
         //poner el token en pausa
         tokensData[tokenId].onSale = false;
+
+        nTokenOnSale--;
     }
 
     /**

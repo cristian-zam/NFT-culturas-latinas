@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 //Importamos metodos de interacción con el smartcontract
 import {
+  fromWEItoEth,
   getContract,
   getSelectedAccount,
   syncNets,
@@ -51,7 +52,7 @@ function MisTokens(props) {
       .catch((err) => {
         return err;
       });
-
+    console.log(quitar);
     //recargar la pantalla si la transacción se ejecuto correctamente
     if (quitar.status) {
       history.go(0);
@@ -80,7 +81,7 @@ function MisTokens(props) {
                 console.log(nft);
                 return (
                   //devolvemos un card por cada token nft del usuario
-                  <div className="lg:w-1/3 sm:w-1/2 p-4">
+                  <div className="lg:w-1/3 sm:w-1/2 p-4" key={key}>
                     <div className="flex relative">
                       <img
                         alt="gallery"
@@ -108,7 +109,9 @@ function MisTokens(props) {
                           </span>
                         </div>
                         <br></br>
-                        <h2 className="tracking-widest text-sm title-font font-medium text-blue-500 mb-1">{`Adquirido en $${nftData.price} ETH`}</h2>
+                        <h2 className="tracking-widest text-sm title-font font-medium text-blue-500 mb-1">{`Adquirido en $${fromWEItoEth(
+                          nft.price
+                        )} ETH`}</h2>
 
                         {/* Mostramos la opción de revender o quitar del marketplace */}
                         {nft.onSale ? (
@@ -118,7 +121,6 @@ function MisTokens(props) {
                               await quitarDelMarketplace(nft.tokenID);
                             }}
                           >
-                            {" "}
                             Quitar del marketplace
                           </button>
                         ) : (
@@ -137,7 +139,6 @@ function MisTokens(props) {
                               });
                             }}
                           >
-                            {" "}
                             Poner en venta
                           </button>
                         )}
