@@ -2,13 +2,17 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 //importamos metodos para interactuar con el smart contract, la red de aurora y el account
-import { syncNets, getContract, getSelectedAccount } from "../utils/blockchain_interaction"
+import {
+  syncNets,
+  getContract,
+  getSelectedAccount,
+  fromETHtoWei,
+} from "../utils/blockchain_interaction";
 
-import { useHistory } from 'react-router'
+import { useHistory } from "react-router";
 
 export default function ModalRevender(props) {
-
-  const history = useHistory()
+  const history = useHistory();
 
   //Configuramos el formulario para revender un token
   const formik = useFormik({
@@ -24,18 +28,22 @@ export default function ModalRevender(props) {
     //Metodo para el boton revender del formulario
     onSubmit: async (values) => {
       //nos aseguramos que sigamos en la red de aurora
-      await syncNets()
-      let account = await getSelectedAccount()
-      let revender = await getContract().methods.revender(props.tokenId, values.price).send({ from: account })
-        .catch(err => { console.log(err) })
+      await syncNets();
+      let account = await getSelectedAccount();
+      let revender = await getContract()
+        .methods.revender(props.tokenId, fromETHtoWei(values.price))
+        .send({ from: account })
+        .catch((err) => {
+          console.log(err);
+        });
 
       //recargar la pantalla si la transacción se ejecuto correctamente
       if (revender.status) {
-        history.go(0)
+        history.go(0);
       }
-      console.log(props.tokenId)
-      console.log(values.price)
-    }
+      console.log(props.tokenId);
+      console.log(values.price);
+    },
   });
 
   return (
@@ -97,7 +105,6 @@ export default function ModalRevender(props) {
                       Revender
                     </button>
                   )}
-
                 </form>
                 {/* Boton de cancelar en la ventana modal */}
                 <div className="flex justify-end">
@@ -111,7 +118,6 @@ export default function ModalRevender(props) {
                   >
                     {props.buttonName}
                   </button>
-
                 </div>
               </div>
             </div>

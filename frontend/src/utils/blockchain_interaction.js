@@ -117,6 +117,16 @@ export async function getSelectedAccount() {
 export function fromETHtoWei(eth) {
   return Web3.utils.toWei(eth.toString(), "ether");
 }
+
+/**
+ * convierte de weis a eth
+ * @param {float} wei
+ * @returns
+ */
+export function fromWEItoEth(wei) {
+  return Web3.utils.fromWei(wei.toString(), "ether");
+}
+
 /**
  * nos dice si la red de metamask es la misma que tenemos en localstorage
  * @returns bool
