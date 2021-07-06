@@ -30,7 +30,7 @@ function LightHeaderB(props) {
           <a href="/minar" className="mr-5 hover:text-gray-900">
             Minar
           </a>
-          <a href="mis_nfts" className="mr-5 hover:text-gray-900">
+          <a href="/mis_nfts" className="mr-5 hover:text-gray-900">
             Mis Nfts
           </a>
         </nav>

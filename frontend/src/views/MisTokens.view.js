@@ -46,6 +46,8 @@ function MisTokens(props) {
    */
   async function quitarDelMarketplace(tokenId) {
     await syncNets();
+
+    setNfts({ disabled: true });
     let account = await getSelectedAccount();
     let quitar = await getContract()
       .methods.quitarDelMarketPlace(tokenId)
@@ -60,6 +62,8 @@ function MisTokens(props) {
     if (quitar.status) {
       history.go(0);
     }
+
+    setNfts({ disabled: false });
   }
 
   return (
@@ -126,6 +130,7 @@ function MisTokens(props) {
                         {nft.onSale ? (
                           <button
                             className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                            disabled={nfts.disabled}
                             onClick={async () => {
                               await quitarDelMarketplace(nft.tokenID);
                             }}

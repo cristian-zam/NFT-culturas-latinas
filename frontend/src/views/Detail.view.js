@@ -49,6 +49,8 @@ function LightEcommerceB(props) {
   }, []);
 
   async function comprar() {
+    //evitar doble compra
+    setstate({ ...state, btnDisabled: true });
     //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
     await syncNets();
     //la cuenta a la cual mandaremos el token
@@ -64,6 +66,8 @@ function LightEcommerceB(props) {
         disabled: false,
         change: setModal,
       });
+      //desbloquear el boton
+      setstate({ ...state, btnDisabled: false });
       return;
     }
 
@@ -88,7 +92,7 @@ function LightEcommerceB(props) {
       });
 
     //si status esta undefined o falso le mandamos el modal de error
-    if (!toks.status)
+    if (!toks.status) {
       setModal({
         show: true,
         title: "Error",
@@ -97,7 +101,9 @@ function LightEcommerceB(props) {
         disabled: false,
         change: setModal,
       });
-    else
+      //desbloquear el boton
+      setstate({ ...state, btnDisabled: false });
+    } else {
       setModal({
         show: true,
         title: "exito",
@@ -106,6 +112,9 @@ function LightEcommerceB(props) {
         disabled: false,
         change: setModal,
       });
+      //desbloquear el boton
+      setstate({ ...state, btnDisabled: false });
+    }
   }
   return (
     <section className="text-gray-600 body-font overflow-hidden">
@@ -163,6 +172,7 @@ function LightEcommerceB(props) {
               </span>
               <button
                 className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                disabled={state?.btnDisabled}
                 onClick={async () => {
                   comprar();
                 }}
