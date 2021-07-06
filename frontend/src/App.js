@@ -51,7 +51,6 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Landing} />
             <MetamaskProtectedRoute path="/galeria" component={Galeria} />
-
             <MetamaskProtectedRoute
               path="/detail/:tokenid"
               component={Detail}
