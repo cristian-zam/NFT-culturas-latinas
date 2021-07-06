@@ -50,6 +50,10 @@ function LightHeroE(props) {
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
+      //evitar que el usuario pueda volver a hacer click hasta que termine el minado
+      setmint({
+        onSubmitDisabled: true,
+      });
       //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
       await syncNets();
 
@@ -98,6 +102,10 @@ function LightHeroE(props) {
           change: setModal,
           disabled: false,
         });
+
+      setmint({
+        onSubmitDisabled: false,
+      });
     },
   });
 
