@@ -4,8 +4,8 @@
 para el desarrollo del smart contract se utilizo el siguiente stack de tecnologías:
 1. truffle framework 
 2. node.js versión 12 
-3. solidity
-4. metamask (extensión del navegador y app móvil) 
+3. Solidity
+4. MetaMask (extensión del navegador y app móvil) 
 5. red de [aurora]
 
 `👨🏻‍💻 instalación local` 
@@ -131,27 +131,15 @@ await cvt.revender(tokenid, precio)
 
 `🎥 tutoriales en video`
 ==============
-recursos en video sobre el proyecto 
 
-[Explicación del proyecto]
--------
-[¿Como vincular la red de aurora con truffle y metamask?]
------------------
-[Creación de token nft]
------------
-[Explorando métodos en el smart contract]
---------
-[Transferir tokens nft con la app móvil de metamask]
--------
-[Pruebas unitarias]
--------
+En el canal en YouTube de [NEAR Hispano] se encuentra una lista de reproducción con el avance diario del proyecto a manera de documentación el cual se encuentra a continuación:
+
+https://www.youtube.com/watch?v=9J2xkT_tFHk&list=PLixWO0N_iFTMGU3M5KHpuMqhpdMKzw88f
+
+Ademas contamos con una lista de reproducción en donde se brinda un demo de las principales funcionalidades del proyecto, misma que se puede encontrar aqui:
+
+https://www.youtube.com/watch?v=9PfxYtO0HK4&list=PLixWO0N_iFTOoCXL_rcyDowvxaO8BKAUD
 
 
 [nvm]:  https://github.com/nvm-sh/nvm
 [aurora]: https://aurora.dev/
-[explicación del proyecto]: https://www.loom.com/share/df30945157c54baea42709ca574faaac
-[¿Como vincular la red de aurora con truffle y metamask?]: https://www.loom.com/share/74d3e7b801b344b895196843929bc325
-[Creación de token nft]:https://www.loom.com/share/01ffa196b4e049e581644cc7d6a2a112
-[Explorando métodos en el smart contract]: https://www.loom.com/share/d8277d6a18f748c8b9cf1a8c60a43dee
-[Transferir tokens nft con la app móvil de metamask]: https://www.loom.com/share/644d5301e0274e4b9514b13d8b2d047e
-[Pruebas unitarias]: https://www.loom.com/share/76688c2c7474452db28f92c44471fa66
