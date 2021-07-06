@@ -15,7 +15,10 @@ import Modal from "../components/modalRevender.component";
 
 function MisTokens(props) {
   //Hooks para el manejo de estados
-  const [nfts, setNfts] = useState({}); //state de los token nft
+  const [nfts, setNfts] = useState({
+    nfts: [],
+
+  }); //state de los token nft
   const [modal, setModal] = useState({
     //state para la ventana modal
     show: false,
@@ -71,6 +74,13 @@ function MisTokens(props) {
               En esta sección aparecen los token nfts que has creado o
               adquirido.
             </p>
+
+            {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
+            {!nfts.nfts.length > 0 ? (
+              <p classname="lg:w-2/3 mx-auto leading-relaxed text-base">
+                Actualmente no tienes tokens en tu pertenencía.
+              </p>) : null}
+
           </div>
           <div className="flex flex-wrap -m-4">
             {/* Hacemos un map del array de nft dentro del state */}
@@ -98,11 +108,10 @@ function MisTokens(props) {
                           <span className="text-gray-500">OnSale</span>
                           <span className="ml-auto text-gray-900">
                             <span
-                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                                nft.onSale
-                                  ? "text-green-100 bg-green-500"
-                                  : "text-red-100 bg-red-500"
-                              } rounded-full`}
+                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${nft.onSale
+                                ? "text-green-100 bg-green-500"
+                                : "text-red-100 bg-red-500"
+                                } rounded-full`}
                             >
                               {nft.onSale ? "Disponible" : "No disponible"}
                             </span>
@@ -149,6 +158,7 @@ function MisTokens(props) {
               })}
           </div>
         </div>
+
 
         {/* Mandamos a llamar al modal con el state como props*/}
         <Modal {...modal} />
