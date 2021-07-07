@@ -62,9 +62,10 @@ function LightEcommerceA() {
       <div className="container px-5 py-24 mx-auto">
         {/* Arroja un mensaje si no hay tokens disponibles en venta*/}
         {!Landing.tokens.length > 0 ? (
-          <p classname="lg:w-2/3 mx-auto leading-relaxed text-base">
+          <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
             Actualmente no hay tokens NFT disponibles.
-          </p>) : null}
+          </p>
+        ) : null}
         <div className="flex flex-wrap -m-4">
           {Landing.tokens &&
             Landing.tokens.map((token, key) => {
@@ -123,10 +124,11 @@ function LightEcommerceA() {
               return (
                 <a
                   href="#"
-                  className={`bg-white ${Landing.page == index
-                    ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
-                    : "border-gray-300 text-gray-500 hover:bg-gray-50"
-                    }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
+                  className={`bg-white ${
+                    Landing.page == index
+                      ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
+                      : "border-gray-300 text-gray-500 hover:bg-gray-50"
+                  }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
                     await getPage(index);
