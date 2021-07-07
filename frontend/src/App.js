@@ -10,9 +10,11 @@ import Landing from "./views/Landing.view";
 import Galeria from "./views/Galeria.view";
 import Detail from "./views/Detail.view";
 import Mint from "./views/mintNft.view";
-import MisNfts from "./views/MisTokens.view"
+import MisNfts from "./views/MisTokens.view";
 
 import notFound from "./views/notFound.view";
+
+//este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
 
 const iconList = getIcons();
@@ -49,7 +51,6 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Landing} />
             <MetamaskProtectedRoute path="/galeria" component={Galeria} />
-
             <MetamaskProtectedRoute
               path="/detail/:tokenid"
               component={Detail}

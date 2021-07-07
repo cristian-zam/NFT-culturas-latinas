@@ -5,15 +5,20 @@ import {
   syncNets,
   getSelectedAccount,
   getContract,
+  fromWEItoEth,
 } from "../utils/blockchain_interaction";
 import Modal from "../components/modal.component";
 
 function LightEcommerceB(props) {
+  //guarda el estado de  toda la vista
   const [state, setstate] = useState();
+  //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
   });
+  //es el parametro de tokenid
   const { tokenid } = useParams();
+  //es el historial de busqueda
   let history = useHistory();
 
   React.useEffect(() => {
@@ -23,31 +28,35 @@ function LightEcommerceB(props) {
 
       //obtener cuantos tokens tiene el contrato
       let totalSupply = await getContract().methods.totalSupply().call();
-      if (tokenid >= totalSupply) {
-        history.push("/galeria");
+
+      //si es mayor que el total de tokens
+      if (parseInt(tokenid) >= parseInt(totalSupply)) {
+        window.location.href = "/galeria";
       } else {
         //obtener los datos del token que se queire
         let toks = await getContract().methods.tokensData(tokenid).call();
-
+        //obtener el dueño del contrato
         let owner = await getContract().methods.ownerOf(tokenid).call();
-        console.log(owner);
+        //agregar el dueño y los datos del token
         setstate({
           ...state,
           tokens: toks,
           jdata: JSON.parse(toks.data),
           owner,
         });
-        console.log(toks);
       }
     })();
   }, []);
 
   async function comprar() {
+    //evitar doble compra
+    setstate({ ...state, btnDisabled: true });
     //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
     await syncNets();
     //la cuenta a la cual mandaremos el token
     let account = await getSelectedAccount();
 
+    //si el dueño intenta comprar un token le decimos que no lo puede comprar
     if (state.owner.toUpperCase() == account.toUpperCase()) {
       setModal({
         show: true,
@@ -57,6 +66,8 @@ function LightEcommerceB(props) {
         disabled: false,
         change: setModal,
       });
+      //desbloquear el boton
+      setstate({ ...state, btnDisabled: false });
       return;
     }
 
@@ -80,8 +91,8 @@ function LightEcommerceB(props) {
         return err;
       });
 
-    console.log(toks);
-    if (!toks.status)
+    //si status esta undefined o falso le mandamos el modal de error
+    if (!toks.status) {
       setModal({
         show: true,
         title: "Error",
@@ -90,7 +101,9 @@ function LightEcommerceB(props) {
         disabled: false,
         change: setModal,
       });
-    else
+      //desbloquear el boton
+      setstate({ ...state, btnDisabled: false });
+    } else {
       setModal({
         show: true,
         title: "exito",
@@ -99,6 +112,9 @@ function LightEcommerceB(props) {
         disabled: false,
         change: setModal,
       });
+      //desbloquear el boton
+      setstate({ ...state, btnDisabled: false });
+    }
   }
   return (
     <section className="text-gray-600 body-font overflow-hidden">
@@ -116,13 +132,17 @@ function LightEcommerceB(props) {
             <p className="leading-relaxed mt-2 mb-6 font-mono ">
               {state?.jdata.description}
             </p>
-            <div className="flex border-l-4 border-blue-500 py-2 px-2 my-2 bg-gray-50">
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
               <span className="text-gray-500">TokenId</span>
               <span className="ml-auto text-gray-900">
                 {state?.tokens.tokenID}
               </span>
             </div>
-            <div className="flex border-l-4 border-blue-500 py-2 px-2 my-2 bg-gray-50">
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
               <span className="text-gray-500">OnSale</span>
               <span className="ml-auto text-gray-900">
                 <span
@@ -136,7 +156,9 @@ function LightEcommerceB(props) {
                 </span>
               </span>
             </div>
-            <div className="flex border-l-4 border-blue-500 py-2 px-2 bg-gray-50">
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+            >
               <span className="text-gray-500">Owner</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
                 {state?.owner}
@@ -146,10 +168,11 @@ function LightEcommerceB(props) {
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
               <span className="title-font font-medium text-2xl text-gray-900">
-                $ {state?.jdata.price} ETH
+                $ {state?.tokens.price && fromWEItoEth(state.tokens.price)} ETH
               </span>
               <button
                 className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                disabled={state?.btnDisabled}
                 onClick={async () => {
                   comprar();
                 }}
@@ -166,7 +189,7 @@ function LightEcommerceB(props) {
 }
 
 LightEcommerceB.defaultProps = {
-  theme: "blue",
+  theme: "yellow",
 };
 
 LightEcommerceB.propTypes = {

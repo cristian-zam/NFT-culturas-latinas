@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 //importamos metodos para interactuar con el smart contract, la red de aurora y el account
-import { syncNets, getContract, getSelectedAccount } from "../utils/blockchain_interaction"
+import {
+  syncNets,
+  getContract,
+  getSelectedAccount,
+  fromETHtoWei,
+} from "../utils/blockchain_interaction";
 
-import { useHistory } from 'react-router'
+import { useHistory } from "react-router";
 
 export default function ModalRevender(props) {
-
-  const history = useHistory()
-
+  const history = useHistory();
+  const [state, setstate] = useState({ disabled: false });
   //Configuramos el formulario para revender un token
   const formik = useFormik({
     initialValues: {
@@ -23,19 +27,26 @@ export default function ModalRevender(props) {
     }),
     //Metodo para el boton revender del formulario
     onSubmit: async (values) => {
+      setstate({ disabled: true });
       //nos aseguramos que sigamos en la red de aurora
-      await syncNets()
-      let account = await getSelectedAccount()
-      let revender = await getContract().methods.revender(props.tokenId, values.price).send({ from: account })
-        .catch(err => { console.log(err) })
+      await syncNets();
+      let account = await getSelectedAccount();
+      let revender = await getContract()
+        .methods.revender(props.tokenId, fromETHtoWei(values.price))
+        .send({ from: account })
+        .catch((err) => {
+          console.log(err);
+        });
 
       //recargar la pantalla si la transacción se ejecuto correctamente
       if (revender.status) {
-        history.go(0)
+        history.go(0);
       }
-      console.log(props.tokenId)
-      console.log(values.price)
-    }
+
+      setstate({ disabled: false });
+      console.log(props.tokenId);
+      console.log(values.price);
+    },
   });
 
   return (
@@ -92,12 +103,11 @@ export default function ModalRevender(props) {
                     <button
                       className={`bg-yellow-500 w-min mt-3  text-white active:bg-yellow-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none  ease-linear transition-all duration-150 `}
                       type="submit"
-                      disabled={props.disabled}
+                      disabled={state.disabled}
                     >
                       Revender
                     </button>
                   )}
-
                 </form>
                 {/* Boton de cancelar en la ventana modal */}
                 <div className="flex justify-end">
@@ -111,7 +121,6 @@ export default function ModalRevender(props) {
                   >
                     {props.buttonName}
                   </button>
-
                 </div>
               </div>
             </div>

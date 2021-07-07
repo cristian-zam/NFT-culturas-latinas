@@ -16,6 +16,7 @@ import {
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
   const [mint, setmint] = React.useState({ file: undefined });
+  //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
     title: "cargando",
@@ -23,6 +24,7 @@ function LightHeroE(props) {
     loading: true,
     disabled: true,
   });
+  //guardara todos los valores del formulario
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -48,6 +50,10 @@ function LightHeroE(props) {
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
+      //evitar que el usuario pueda volver a hacer click hasta que termine el minado
+      setmint({
+        onSubmitDisabled: true,
+      });
       //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
       await syncNets();
 
@@ -96,13 +102,25 @@ function LightHeroE(props) {
           change: setModal,
           disabled: false,
         });
+
+      setmint({
+        onSubmitDisabled: false,
+      });
     },
   });
+
+  /**
+   * hace que cuando se toque la imagen se cambien el valor de touch de formik
+   */
   function imageClick() {
     formik.setFieldTouched("image");
   }
+  /**
+   * cada vez que el usuario cambia de archivo se ejecuta esta funcion
+   *
+   */
   function imageChange(e) {
-    //si selecciono un archivo
+    //si selecciono un archivo, evita que nos de error si el usuario decide cancelar la carga
     if (e.target.files[0]) {
       //asignar imagen de preview
       setmint({
@@ -112,10 +130,15 @@ function LightHeroE(props) {
       //una vez que cargue el arhcivo lo mandamos a ipfs
       const reader = new FileReader();
       reader.readAsArrayBuffer(e.target.files[0]);
+
+      //una vez que cargue
       reader.onloadend = async function () {
+        //subimos la imagen a ipfs
         window.ipfs.add(reader.result).then(async (result) => {
           console.log(result);
           console.log(`https://ipfs.io/ipfs/${result.path}`);
+
+          //agregamos el cid de ipfs  en el campo image
           formik.setFieldValue("image", result.path);
         });
       };

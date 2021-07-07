@@ -1,44 +1,44 @@
 import MarketPlace from "../contracts/MarketPlace.json";
 import Web3 from "web3";
-const { create } = require("ipfs-http-client");
+import { create } from "ipfs-http-client";
 
 /**
  * contiene todas las redes que podemos agregar
  */
 var nets = [
-  {
-    chainId: 5777,
-    data: [
-      {
-        chainId: "0x1691",
-        chainName: "Truffle Develop",
-        rpcUrls: ["http://127.0.0.1:9545/"],
-        nativeCurrency: {
-          name: "TRUFFLE COIN",
-          symbol: "T-ETH",
-          decimals: 18,
+    {
+      chainId: 5777,
+      data: [
+        {
+          chainId: "0x1691",
+          chainName: "Truffle Develop",
+          rpcUrls: ["http://127.0.0.1:9545/"],
+          nativeCurrency: {
+            name: "TRUFFLE COIN",
+            symbol: "T-ETH",
+            decimals: 18,
+          },
+          blockExplorerUrls: ["https://bscscan.com/"],
         },
-        blockExplorerUrls: ["https://bscscan.com/"],
-      },
-    ],
-  },
-  {
-    chainId: 1313161555,
-    data: [
-      {
-        chainId: "0x4E454153",
-        chainName: "AURORATESTNET",
-        rpcUrls: ["https://testnet.aurora.dev"],
-        nativeCurrency: {
-          name: "AURORA COIN",
-          symbol: "A-ETH",
-          decimals: 18,
+      ],
+    },
+    {
+      chainId: 1313161555,
+      data: [
+        {
+          chainId: "0x4E454153",
+          chainName: "AURORATESTNET",
+          rpcUrls: ["https://testnet.aurora.dev"],
+          nativeCurrency: {
+            name: "AURORA COIN",
+            symbol: "A-ETH",
+            decimals: 18,
+          },
+          blockExplorerUrls: ["https://testnet.bscscan.com/"],
         },
-        blockExplorerUrls: ["https://testnet.bscscan.com/"],
-      },
-    ],
-  },
-],
+      ],
+    },
+  ],
   nets = Object.assign(
     ...nets.map(({ chainId, data }) => ({ [chainId]: data }))
   );
@@ -95,11 +95,11 @@ export function getContract() {
   // sm address
   let smartContractAddress =
     MarketPlace.networks[localStorage.getItem("network")].address;
-  //instantiate the contract object
+  //instancia del contrato
   return new window.web3x.eth.Contract(MarketPlace.abi, smartContractAddress);
 }
 /**
- *
+ *obtiene la cuenta selecionada por el usuario en metamask
  * @returns adddres regresa la primera cuenta
  */
 export async function getSelectedAccount() {
@@ -110,7 +110,7 @@ export async function getSelectedAccount() {
   return useraccounts[0];
 }
 /**
- * convierte un numero a weis
+ * convierte ethers a weis
  * @param {float} eth
  * @returns
  */
@@ -118,18 +118,31 @@ export function fromETHtoWei(eth) {
   return Web3.utils.toWei(eth.toString(), "ether");
 }
 
+/**
+ * convierte de weis a eth
+ * @param {float} wei
+ * @returns
+ */
+export function fromWEItoEth(wei) {
+  return Web3.utils.fromWei(wei.toString(), "ether");
+}
+
+/**
+ * nos dice si la red de metamask es la misma que tenemos en localstorage
+ * @returns bool
+ */
 export async function sameNetwork() {
-  //get the actual networkid or chainid
+  //obtener el networkid de la red acutalmente seleccionada en metamask
   let ActualnetworkId = await window.ethereum.request({
     method: "net_version",
   });
 
-  //check if the stored network is the same as the selected
+  //comprobar que la red en local storage y la red de metamask son iguales
   return ActualnetworkId == parseInt(localStorage.getItem("network"));
 }
 
 /**
- * with this function we will pause the execution of code , sended as parameter
+ * pausas los milisegundos que gustes con esta funcion
  * @param {int} miliseconds es el numero de milisegundos a esperar
  */
 export function wait(miliseconds) {
@@ -140,7 +153,9 @@ export function wait(miliseconds) {
     }
   }
 }
-
+/**
+ * cambia la red de metamask a la que esta almacenada en localstorage
+ */
 export async function syncNets() {
   //mientras la redes no coincidan trata de cambiar la red
   while (!(await sameNetwork())) {

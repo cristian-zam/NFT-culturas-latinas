@@ -5,8 +5,9 @@ import Team from "../components/teamMembers.component";
 import Hero from "../components/Hero.component";
 import Steps from "../components/steps.component";
 import Statisct from "../components/statistc.component";
+
 export default function Landing() {
-  const [Landing, setLanding] = React.useState({ theme: "blue" });
+  const [Landing, setLanding] = React.useState({ theme: "yellow" });
   return (
     <>
       <Hero />
