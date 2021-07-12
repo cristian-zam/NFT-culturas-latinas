@@ -265,4 +265,27 @@ contract MarketPlace is ERC721Enumerable {
         }
         return (userTokens);
     }
+
+    function tokensOfPaginav1(
+        address owner,
+        uint256 nTok_porpagina,
+        uint256 pag
+    ) public view returns (tokenData[] memory) {
+        uint256 nUserTokens = balanceOf(owner);
+        //calcular el inicio de la pagina
+        uint256 inicioPagina = pag * nTok_porpagina;
+        //si el fin es mayor que el numero de tokens
+        uint256 finPagina = inicioPagina + nTok_porpagina;
+        if (finPagina > nUserTokens) {
+            finPagina = nUserTokens; // 4
+        }
+        //arreglo con los tokens del usuario
+        tokenData[] memory userTokens = new tokenData[](nTok_porpagina);
+        for (uint256 i = inicioPagina; i < finPagina; i++) {
+            userTokens[i - inicioPagina] = tokensData[
+                tokenOfOwnerByIndex(owner, i)
+            ];
+        }
+        return userTokens;
+    }
 }
