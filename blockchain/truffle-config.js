@@ -27,10 +27,16 @@ module.exports = {
 
   networks: {
     // Se incluye la red de aurora en la configuración de truffle
-    aurora: {
+    auroraTestnet: {
       provider: () =>
         new HDWalletProvider(mnemonic, "https://testnet.aurora.dev"),
       network_id: 0x4e454153,
+      gas: 10000000,
+    },
+    aurora: {
+      provider: () =>
+        new HDWalletProvider(mnemonic, "https://mainnet.aurora.dev"),
+      network_id: 0x4e454152,
       gas: 10000000,
     },
   },

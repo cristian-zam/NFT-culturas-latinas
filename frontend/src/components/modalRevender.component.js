@@ -23,7 +23,8 @@ export default function ModalRevender(props) {
       price: Yup.number()
         .required("Requerido")
         .positive("El precio debe ser mayor a 0")
-        .moreThan(0, "No hay tokens gratis"),
+        .moreThan(0, "No hay tokens gratis")
+        .min(0.000000000000000001, "el precio minimo es un wei"),
     }),
     //Metodo para el boton revender del formulario
     onSubmit: async (values) => {
@@ -35,17 +36,14 @@ export default function ModalRevender(props) {
         .methods.revender(props.tokenId, fromETHtoWei(values.price))
         .send({ from: account })
         .catch((err) => {
-          console.log(err);
+          return err;
         });
 
+      setstate({ disabled: false });
       //recargar la pantalla si la transacción se ejecuto correctamente
       if (revender.status) {
         history.go(0);
       }
-
-      setstate({ disabled: false });
-      console.log(props.tokenId);
-      console.log(values.price);
     },
   });
 

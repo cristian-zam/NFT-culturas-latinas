@@ -38,6 +38,22 @@ var nets = [
         },
       ],
     },
+    {
+      chainId: 1313161554,
+      data: [
+        {
+          chainId: "0x4e454152",
+          chainName: "AURORAMAINNET",
+          rpcUrls: ["https://mainnet.aurora.dev"],
+          nativeCurrency: {
+            name: "AURORA COIN",
+            symbol: "A-ETH",
+            decimals: 18,
+          },
+          blockExplorerUrls: ["https://testnet.bscscan.com/"],
+        },
+      ],
+    },
   ],
   nets = Object.assign(
     ...nets.map(({ chainId, data }) => ({ [chainId]: data }))
@@ -115,6 +131,12 @@ export async function getSelectedAccount() {
  * @returns
  */
 export function fromETHtoWei(eth) {
+  //convertimos el numero a notación cientifica
+  eth = eth.toExponential();
+  //lo convertimos a Number y le quitamos la notactión cientifica
+  eth = Number(eth).toFixed(eth.split(/-|\+/)[1]);
+
+  //le mandamos el numero como string
   return Web3.utils.toWei(eth.toString(), "ether");
 }
 

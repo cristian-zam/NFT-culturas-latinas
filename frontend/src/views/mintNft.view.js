@@ -46,14 +46,13 @@ function LightHeroE(props) {
       price: Yup.number()
         .required("Requerido")
         .positive("el precio debe ser positivo")
-        .moreThan(0, "no existen nft gratis"),
+        .moreThan(0, "no existen nft gratis")
+        .min(0.000000000000000001, "el precio minimo es un wei"),
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
       //evitar que el usuario pueda volver a hacer click hasta que termine el minado
-      setmint({
-        onSubmitDisabled: true,
-      });
+      setmint({ ...mint, onSubmitDisabled: true });
       //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
       await syncNets();
 
@@ -103,9 +102,7 @@ function LightHeroE(props) {
           disabled: false,
         });
 
-      setmint({
-        onSubmitDisabled: false,
-      });
+      setmint({ ...mint, onSubmitDisabled: false });
     },
   });
 
@@ -123,9 +120,7 @@ function LightHeroE(props) {
     //si selecciono un archivo, evita que nos de error si el usuario decide cancelar la carga
     if (e.target.files[0]) {
       //asignar imagen de preview
-      setmint({
-        file: URL.createObjectURL(e.target.files[0]),
-      });
+      setmint({ ...mint, file: URL.createObjectURL(e.target.files[0]) });
 
       //una vez que cargue el arhcivo lo mandamos a ipfs
       const reader = new FileReader();

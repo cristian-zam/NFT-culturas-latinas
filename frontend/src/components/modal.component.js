@@ -1,6 +1,6 @@
 import React from "react";
-
-export default function Modal(props) {
+import PropTypes from "prop-types";
+function Modal(props) {
   return (
     props.show && (
       <>
@@ -11,7 +11,7 @@ export default function Modal(props) {
               {/*header*/}
 
               <div
-                className={`bg-blue-500 flex items-start justify-center font-bold uppercase p-5 border-b border-solid border-blueGray-200 rounded text-white`}
+                className={` bg-${props.theme}-500 flex items-start justify-center font-bold uppercase p-5 border-b border-solid border-${props.theme}-200 rounded text-white`}
               >
                 {props.title}
               </div>
@@ -47,7 +47,7 @@ export default function Modal(props) {
 
                 <div className="flex justify-end">
                   <button
-                    className={`bg-blue-500 w-min mt-3  text-white active:bg-blue-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none  ease-linear transition-all duration-150 `}
+                    className={`bg-${props.theme}-500 w-min mt-3  text-white active:bg-${props.theme}-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none  ease-linear transition-all duration-150 `}
                     type="button"
                     disabled={props.disabled}
                     onClick={() => {
@@ -66,3 +66,13 @@ export default function Modal(props) {
     )
   );
 }
+
+Modal.propTypes = {
+  theme: PropTypes.string,
+};
+
+Modal.defaultProps = {
+  theme: "yellow",
+};
+
+export default Modal;
