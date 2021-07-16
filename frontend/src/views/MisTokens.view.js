@@ -15,13 +15,29 @@ import Modal from "../components/modalRevender.component";
 
 function MisTokens(props) {
   //Hooks para el manejo de estados
-  const [nfts, setNfts] = useState(); //state de los token nft
+  const [nfts, setNfts] = useState({ nfts: [], page: 0, tokensPerPage: 7 }); //state de los token nft
   const [modal, setModal] = useState({
     //state para la ventana modal
     show: false,
   });
 
   const history = useHistory();
+
+  async function getPage(pag) {
+    //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
+    //dinamicos en memory
+    let toks = await getContract()
+      .methods.tokensOfPaginav1(nfts.owner, nfts.tokensPerPage, nfts.page)
+      .call();
+
+    //asignamos y filtramos todos los tokens que estan a  la venta
+
+    setNfts({
+      ...nfts,
+      nfts: toks.filter((tok) => tok.onSale),
+      page: pag,
+    });
+  }
 
   //Hook para el manejo de efectos
   useEffect(() => {
@@ -30,10 +46,18 @@ function MisTokens(props) {
       await syncNets();
       let account = await getSelectedAccount();
       //obtenemos el listado de nfts
-      let nftsArr = await getContract().methods.tokensOf(account).call();
-      console.log(nftsArr.length);
+      let nftsArr = await getContract()
+        .methods.tokensOfPaginav1(account, nfts.tokensPerPage, nfts.page)
+        .call();
+      let balance = await getContract().methods.balanceOf(account).call();
+      console.log(nftsArr);
       //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
-      setNfts({ ...nfts, nfts: nftsArr });
+      setNfts({
+        ...nfts,
+        nfts: nftsArr.filter((tok) => tok.price > 0),
+        nPages: Math.ceil(balance / nfts.tokensPerPage),
+        owner: account,
+      });
     })();
   }, []);
 
@@ -78,7 +102,7 @@ function MisTokens(props) {
             </p>
 
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
-            {nfts?.nfts.length > 0 ? null : (
+            {nfts.nfts.length > 0 ? null : (
               <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
                 Actualmente no tienes tokens en tu pertenencía.
               </p>
@@ -106,7 +130,9 @@ function MisTokens(props) {
                         </h1>
                         <p className="leading-relaxed">{nftData.description}</p>
                         {/* Etiqueta de token en venta */}
-                        <div className="flex border-l-4 border-blue-500 py-2 px-2 my-2 bg-gray-50">
+                        <div
+                          className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+                        >
                           <span className="text-gray-500">OnSale</span>
                           <span className="ml-auto text-gray-900">
                             <span
@@ -121,9 +147,9 @@ function MisTokens(props) {
                           </span>
                         </div>
                         <br></br>
-                        <h2 className="tracking-widest text-sm title-font font-medium text-blue-500 mb-1">{`Adquirido en $${fromWEItoEth(
-                          nft.price
-                        )} ETH`}</h2>
+                        <h2
+                          className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-1`}
+                        >{`Adquirido en $${fromWEItoEth(nft.price)} ETH`}</h2>
 
                         {/* Mostramos la opción de revender o quitar del marketplace */}
                         {nft.onSale ? (
@@ -160,6 +186,32 @@ function MisTokens(props) {
                   </div>
                 );
               })}
+          </div>
+
+          <div className="bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6 mt-16">
+            <nav
+              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+              aria-label="Pagination"
+            >
+              {[...Array(nfts?.nPages)].map((page, index) => {
+                return (
+                  <a
+                    href="#"
+                    className={`bg-white ${
+                      nfts.page == index
+                        ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
+                        : "border-gray-300 text-gray-500 hover:bg-gray-50"
+                    }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
+                    key={index}
+                    onClick={async () => {
+                      await getPage(index);
+                    }}
+                  >
+                    {index + 1}
+                  </a>
+                );
+              })}
+            </nav>
           </div>
         </div>
 
