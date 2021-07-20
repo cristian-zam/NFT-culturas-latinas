@@ -3,9 +3,6 @@ import ReactDOM from "react-dom";
 
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { init } from "./utils/blockchain_interaction";
-//incializar las herramientas para acceder a la blockchain
-init();
 
 ReactDOM.render(<App />, document.getElementById("root"));
 

@@ -5,7 +5,8 @@
 /.pnp
 .pnp.js
 /out
-
+/contract/target
+/near-contract-standards-3.2.0/target
 #keys
 /neardev
 

@@ -1,13 +1,60 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
+import { config } from "../utils/near_interaction";
+import * as nearAPI from "near-api-js";
+import { blockchains } from "../utils/constraint";
+
 function LightHeaderB(props) {
-  const [state, setState] = useState({ dropdown: "Red" });
+  const [state, setState] = useState({
+    dropdown:
+      blockchains[parseInt(localStorage.getItem("blockchain"))] || "Blockchain",
+  });
+
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
 
+  useEffect(() => {
+    /*  (async () => {
+      const { keyStores, connect, WalletConnection } = nearAPI;
+      const keyStore = new keyStores.BrowserLocalStorageKeyStore();
+
+      console.log({ ...config.testnet, keyStore });
+      const near = await connect({ ...config.testnet, keyStore });
+
+      const wallet = new WalletConnection(near);
+      console.log(wallet.isSignedIn());
+
+      if (!wallet.isSignedIn()) {
+        wallet.requestSignIn(
+          "dev-1626280160013-8252228", // contract requesting access
+          "Latin-Art" // optional
+        );
+      }
+
+      console.log(wallet.getAccountId());
+      console.log(wallet.account());
+
+      const account = await near.account(wallet.getAccountId());
+      console.log(await account.getAccountBalance());
+      console.log(account);
+      console.log(await account.getAccountDetails());
+      console.log(await account.state());
+    })();*/
+  }, []);
+
+  /**
+   * esta funcion nos permite cambiar de blockchain
+   * @param {int} index representa la posicion dentro del arreglo blockchains
+   */
+
+  function changeBlockchain(index) {
+    setState({ dropdown: blockchains[index] });
+    localStorage.setItem("blockchain", index);
+    window.location.reload();
+  }
   return (
     <header className="text-gray-600 body-font shadow-sm">
       <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -70,7 +117,7 @@ function LightHeaderB(props) {
                   <div className="py-1">
                     <Menu.Item
                       onClick={() => {
-                        setState({ dropdown: "Aurora" });
+                        changeBlockchain(0);
                       }}
                     >
                       {({ active }) => (
@@ -83,13 +130,13 @@ function LightHeaderB(props) {
                             "block px-2 py-2 text-sm text-center"
                           )}
                         >
-                          Aurora
+                          {blockchains[0]}
                         </a>
                       )}
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
-                        setState({ dropdown: "Near" });
+                        changeBlockchain(1);
                       }}
                     >
                       {({ active }) => (
@@ -102,7 +149,7 @@ function LightHeaderB(props) {
                             "block px-2 py-2 text-sm text-center"
                           )}
                         >
-                          Near
+                          {blockchains[1]}
                         </a>
                       )}
                     </Menu.Item>
