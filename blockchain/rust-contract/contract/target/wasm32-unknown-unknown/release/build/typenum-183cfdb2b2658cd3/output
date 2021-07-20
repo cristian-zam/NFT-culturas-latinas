@@ -1,2 +1,0 @@
-cargo:rustc-env=TYPENUM_BUILD_CONSTS=C:\Users\yeyei\OneDrive\Documentos\NFT-culturas-latinas\blockchain\rust-contract\contract\target\wasm32-unknown-unknown\release\build\typenum-183cfdb2b2658cd3\out\consts.rs
-cargo:rustc-env=TYPENUM_BUILD_OP=C:\Users\yeyei\OneDrive\Documentos\NFT-culturas-latinas\blockchain\rust-contract\contract\target\wasm32-unknown-unknown\release\build\typenum-183cfdb2b2658cd3\out\op.rs
