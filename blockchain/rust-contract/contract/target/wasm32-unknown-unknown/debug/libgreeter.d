@@ -1,1 +1,0 @@
-/home/cristian/development/projects/NEAR/NEAR-projects/NFT-culturas-latinas/blockchain/rust-contract/contract/target/wasm32-unknown-unknown/debug/libgreeter.rlib: /home/cristian/development/projects/NEAR/NEAR-projects/NFT-culturas-latinas/blockchain/rust-contract/contract/src/lib.rs

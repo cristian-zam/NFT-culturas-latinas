@@ -1,2 +1,0 @@
-cargo:rustc-env=TYPENUM_BUILD_CONSTS=/home/cristian/development/projects/NEAR/NEAR-projects/NFT-culturas-latinas/blockchain/rust-contract/contract/target/wasm32-unknown-unknown/debug/build/typenum-a403b5ec76627548/out/consts.rs
-cargo:rustc-env=TYPENUM_BUILD_OP=/home/cristian/development/projects/NEAR/NEAR-projects/NFT-culturas-latinas/blockchain/rust-contract/contract/target/wasm32-unknown-unknown/debug/build/typenum-a403b5ec76627548/out/op.rs

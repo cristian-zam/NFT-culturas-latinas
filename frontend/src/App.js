@@ -16,7 +16,7 @@ import notFound from "./views/notFound.view";
 
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
-
+import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
 const iconList = getIcons();
 const blockListArr = [];
 
@@ -50,6 +50,7 @@ class App extends Component {
           <Navbar theme={this.state.theme} />
           <Switch>
             <Route exact path="/" component={Landing} />
+            <BlockchainProtectedRoute path="/bprhoc" component={Galeria} />
             <MetamaskProtectedRoute path="/galeria" component={Galeria} />
             <MetamaskProtectedRoute
               path="/detail/:tokenid"
