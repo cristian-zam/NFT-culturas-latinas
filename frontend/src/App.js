@@ -17,7 +17,6 @@ import notFound from "./views/notFound.view";
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
 import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
-import Prueba from "./views/prueba";
 import { create } from "ipfs-http-client";
 
 //instancia de ipfs
