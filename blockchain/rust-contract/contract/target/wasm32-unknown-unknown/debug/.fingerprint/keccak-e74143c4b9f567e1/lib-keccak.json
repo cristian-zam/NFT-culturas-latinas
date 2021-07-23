@@ -1,1 +1,0 @@
-{"rustc":10026429466883849012,"features":"[]","target":9835696435951464820,"profile":13719610756125836611,"path":13650793543590591771,"deps":[],"local":[{"CheckDepInfo":{"dep_info":"wasm32-unknown-unknown/debug/.fingerprint/keccak-e74143c4b9f567e1/dep-lib-keccak"}}],"rustflags":["-C","link-args=-s"],"metadata":9226266976642668558,"config":0,"compile_kind":8104632896995515128}

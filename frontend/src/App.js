@@ -16,7 +16,15 @@ import notFound from "./views/notFound.view";
 
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
+import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
+import { create } from "ipfs-http-client";
 
+//instancia de ipfs
+window.ipfs = create({
+  host: "ipfs.infura.io",
+  port: 5001,
+  protocol: "https",
+});
 const iconList = getIcons();
 const blockListArr = [];
 
@@ -50,12 +58,13 @@ class App extends Component {
           <Navbar theme={this.state.theme} />
           <Switch>
             <Route exact path="/" component={Landing} />
+            <BlockchainProtectedRoute path="/minar" component={Mint} />
             <MetamaskProtectedRoute path="/galeria" component={Galeria} />
             <MetamaskProtectedRoute
               path="/detail/:tokenid"
               component={Detail}
             />
-            <MetamaskProtectedRoute path="/minar" component={Mint} />
+
             <MetamaskProtectedRoute path="/mis_nfts" component={MisNfts} />
             <Route component={notFound} />
           </Switch>
