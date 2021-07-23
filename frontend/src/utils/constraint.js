@@ -2,3 +2,4 @@
 export const acceptedFormats = ".jpeg,.gif,.png,.jpg";
 
 export const blockchains = ["Aurora", "Near"];
+export const currencys = ["ETH", "NEAR"];

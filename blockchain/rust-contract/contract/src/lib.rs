@@ -14,8 +14,8 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LazyOption;
 use near_sdk::json_types::ValidAccountId;
 use near_sdk::{
-    env, log, near_bindgen, setup_alloc, AccountId, BorshStorageKey, PanicOnDefault, Promise,
-    PromiseOrValue,
+    env, log, near_bindgen, setup_alloc, AccountId, Balance, BorshStorageKey, PanicOnDefault,
+    Promise, PromiseOrValue, PromiseResult,
 };
 
 setup_alloc!();
@@ -119,6 +119,9 @@ impl Contract {
         )
     }
 
+    pub fn storage_byte_cost() -> Balance {
+        env::storage_byte_cost()
+    }
     /**
      * permite a los usuarios hacer la comprar de tokens
      *
@@ -169,8 +172,14 @@ impl Contract {
             .token_metadata_by_id
             .as_mut()
             .and_then(|by_id| by_id.insert(&token_id, &metadata));
-
         //transferir los nears
+        //TODO: entender como consultar si la transferencia fue exitosa
+
+        /*
+        let promise = Promise::new(owner_id.clone())
+            .transfer(amount)
+            .function_call("tx_status_callback".into(), vec![], 0, 0);
+        */
         Promise::new(owner_id.clone()).transfer(amount);
 
         //transferir el nft
@@ -180,6 +189,22 @@ impl Contract {
         //retornar la metadata
         metadata
     }
+
+    pub fn tx_status_callback(args: String) -> bool {
+        log!(args);
+        //env::promise_result(0)
+
+        match env::promise_result(0) {
+            PromiseResult::Successful(_x) => return true,
+            _x => return false,
+        };
+    }
+
+    /* segun as_return debe de regresar la transaccion
+    pub fn get_result(&recipient_account: AccountId, amount: Balance) {
+        let prepaid_gas = env::prepaid_gas();
+        Promise::new(recipient_account).transfer(amount).as_return()
+    }*/
     /**
      * nos permite revender un token y poner el precio del mismo
      *

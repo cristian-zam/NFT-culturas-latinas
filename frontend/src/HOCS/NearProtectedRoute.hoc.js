@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route } from "react-router-dom";
-import { nearInit } from "../utils/near_interaction";
+import { isNearReady } from "../utils/near_interaction";
+import GoNear from "../views/goNear";
 
 const NearProtectedRoute = ({ component: Component, ...rest }) => {
-  nearInit();
+  const [state, setState] = useState(true);
+  useEffect(() => {
+    (async () => {
+      setState(await isNearReady());
+    })();
+  }, []);
   return (
     <>
       <Route
         {...rest}
         render={(props) => {
-          return <Component {...props} />;
+          return state ? <Component {...props} /> : <GoNear />;
         }}
       />
     </>
