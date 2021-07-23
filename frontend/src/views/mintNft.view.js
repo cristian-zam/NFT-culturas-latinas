@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-import { acceptedFormats } from "../utils/constraint";
+import { acceptedFormats, currencys } from "../utils/constraint";
 import Modal from "../components/modal.component";
 import {
   addNetwork,
@@ -13,9 +13,19 @@ import {
   syncNets,
   syncNetworks,
 } from "../utils/blockchain_interaction";
+import {
+  estimateGas,
+  fromNearToEth,
+  fromNearToYocto,
+  getNearContract,
+  storage_byte_cost,
+} from "../utils/near_interaction";
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
-  const [mint, setmint] = React.useState({ file: undefined });
+  const [mint, setmint] = React.useState({
+    file: undefined,
+    blockchain: localStorage.getItem("blockchain"),
+  });
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -53,12 +63,16 @@ function LightHeroE(props) {
     onSubmit: async (values) => {
       //evitar que el usuario pueda volver a hacer click hasta que termine el minado
       setmint({ ...mint, onSubmitDisabled: true });
-      //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-      await syncNets();
+      let account;
+      if (mint.blockchain == "0") {
+        //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
+        await syncNets();
 
-      //la cuenta a la cual mandaremos el token
-      let account = await getSelectedAccount();
-      console.log(account);
+        //la cuenta a la cual mandaremos el token
+        account = await getSelectedAccount();
+        console.log(account);
+      }
+
       //cargamos el modal
       setModal({
         ...modal,
@@ -67,18 +81,43 @@ function LightHeroE(props) {
         loading: true,
         disabled: true,
       });
-      //los datos de la transacccion
-      let token = await getContract()
-        .methods.minar(
-          account,
-          JSON.stringify(values),
-          fromETHtoWei(values.price)
-        )
-        .send({ from: account })
-        .catch((err) => {
-          return err;
-        });
 
+      let token;
+      if (mint.blockchain == "0") {
+        //los datos de la transacccion
+        token = await getContract()
+          .methods.minar(
+            account,
+            JSON.stringify(values),
+            fromETHtoWei(values.price)
+          )
+          .send({ from: account })
+          .catch((err) => {
+            return err;
+          });
+      } else {
+        let contract = await getNearContract();
+        let payload = {
+          token_owner_id: "chidoman.testnet",
+          token_metadata: {
+            title: values.title,
+            description: values.description,
+            media: values.image,
+            media_hash: "hashhashhashhashhashhashhashhash",
+            price: fromNearToYocto(values.price),
+            on_sale: true,
+          },
+        };
+
+        let amount = fromNearToYocto(0.1);
+        console.log(amount);
+        console.log(payload);
+        contract.minar(
+          payload,
+          300000000000000, // attached GAS (optional)
+          amount
+        );
+      }
       //if de error
       if (!token.status)
         setModal({
@@ -213,7 +252,9 @@ function LightHeroE(props) {
                   htmlFor="price"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Precio en ETH
+                  Precio en
+                  {" " +
+                    currencys[parseInt(localStorage.getItem("blockchain"))]}
                 </label>
                 {formik.touched.price && formik.errors.price ? (
                   <div className="leading-7 text-sm text-red-600">

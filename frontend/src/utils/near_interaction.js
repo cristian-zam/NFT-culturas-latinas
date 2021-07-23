@@ -1,9 +1,17 @@
-import { keyStores, connect, WalletConnection } from "near-api-js";
+import {
+  keyStores,
+  connect,
+  WalletConnection,
+  Contract,
+  utils,
+} from "near-api-js";
 
+export const storage_byte_cost = 10000000000000000000;
+export const contract_name = "dev-1626753781082-15253478806026";
 export const config = {
   testnet: {
     networkId: "testnet",
-
+    keyStore: new keyStores.BrowserLocalStorageKeyStore(),
     nodeUrl: "https://rpc.testnet.near.org",
     walletUrl: "https://wallet.testnet.near.org",
     helperUrl: "https://helper.testnet.near.org",
@@ -12,29 +20,80 @@ export const config = {
 
   mainnet: {
     networkId: "mainnet",
-
+    keyStore: new keyStores.BrowserLocalStorageKeyStore(),
     nodeUrl: "https://rpc.mainnet.near.org",
     walletUrl: "https://wallet.mainnet.near.org",
     helperUrl: "https://helper.mainnet.near.org",
     explorerUrl: "https://explorer.mainnet.near.org",
   },
 };
+//son los metodos que tenemos en el smart contract
+export const methodOptions = {
+  viewMethods: [
+    "obtener_pagina_v2",
+    "nft_token",
+    "nft_total_supply",
+    "nft_tokens",
+    "tokens_of",
+    "storage_byte_cost",
+  ],
+  changeMethods: [
+    "minar",
+    "comprar_nft",
+    "revender",
+    "quitar_del_market_place",
+  ],
+};
+/**
+ *hacemos el signIn con near
+ */
+export async function nearSignIn(URL) {
+  window.near = await connect(config.testnet);
+  window.wallet = new WalletConnection(window.near, "latina");
 
-export async function nearInit() {
-  const keyStore = new keyStores.BrowserLocalStorageKeyStore();
+  window.wallet.requestSignIn(
+    contract_name, // contract requesting access
+    "Latin-Art", // optional,
+    URL, //EXITO
+    URL // FRACASO
+  );
+}
 
-  console.log({ ...config.testnet, keyStore });
-  const near = await connect({ ...config.testnet, keyStore });
+export async function isNearReady() {
+  // conectarse a near
+  const near = await connect(config.testnet);
 
-  const wallet = new WalletConnection(near, "latina");
+  // crear una wallet
+  const wallet = new WalletConnection(near);
+  //esta logueado ?
   console.log(wallet.isSignedIn());
-
-  if (!wallet.isSignedIn()) {
-    wallet.requestSignIn(
-      "dev-1626280160013-8252228", // contract requesting access
-      "Latin-Art" // optional
-    );
-  }
-
   return wallet.isSignedIn();
+}
+
+/**
+ * nos regresa una instancia del contrato
+ */
+export async function getNearContract() {
+  // conectarse a near
+  const near = await connect(config.testnet);
+
+  // crear una wallet de
+  const wallet = new WalletConnection(near);
+
+  console.log(near);
+  console.log(wallet);
+
+  return new Contract(
+    wallet.account(), // the account object that is connecting
+    contract_name,
+    {
+      ...methodOptions,
+      sender: wallet.account(), // account object to initialize and sign transactions.
+    }
+  );
+}
+
+export function fromNearToYocto(near) {
+  console.log(utils.format.parseNearAmount(near.toString()));
+  return utils.format.parseNearAmount(near.toString());
 }
