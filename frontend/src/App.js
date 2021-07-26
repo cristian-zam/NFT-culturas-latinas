@@ -59,7 +59,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
-            <MetamaskProtectedRoute path="/galeria" component={Galeria} />
+            <BlockchainProtectedRoute path="/galeria" component={Galeria} />
             <MetamaskProtectedRoute
               path="/detail/:tokenid"
               component={Detail}
