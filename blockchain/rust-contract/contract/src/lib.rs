@@ -29,6 +29,7 @@ setup_alloc!();
 pub struct Contract {
     tokens: NonFungibleToken,
     metadata: LazyOption<NFTContractMetadata>,
+    nTokenOnSale: u64,
 }
 
 const DATA_IMAGE_SVG_LATINART_ICON: &str = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 288 288'%3E%3Cg id='l' data-name='l'%3E%3Cpath d='M187.58,79.81l-30.1,44.69a3.2,3.2,0,0,0,4.75,4.2L191.86,103a1.2,1.2,0,0,1,2,.91v80.46a1.2,1.2,0,0,1-2.12.77L102.18,77.93A15.35,15.35,0,0,0,90.47,72.5H87.34A15.34,15.34,0,0,0,72,87.84V201.16A15.34,15.34,0,0,0,87.34,216.5h0a15.35,15.35,0,0,0,13.08-7.31l30.1-44.69a3.2,3.2,0,0,0-4.75-4.2L96.14,186a1.2,1.2,0,0,1-2-.91V104.61a1.2,1.2,0,0,1,2.12-.77l89.55,107.23a15.35,15.35,0,0,0,11.71,5.43h3.13A15.34,15.34,0,0,0,216,201.16V87.84A15.34,15.34,0,0,0,200.66,72.5h0A15.35,15.35,0,0,0,187.58,79.81Z'/%3E%3C/g%3E%3C/svg%3E";
@@ -75,6 +76,7 @@ impl Contract {
                 Some(StorageKey::Approval),
             ),
             metadata: LazyOption::new(StorageKey::Metadata, Some(&metadata)),
+            nTokenOnSale: 0,
         }
     }
 
@@ -112,6 +114,7 @@ impl Contract {
         token_owner_id: ValidAccountId,
         token_metadata: TokenMetadata,
     ) -> Token {
+        self.nTokenOnSale += 1;
         self.tokens.mint(
             self.tokens.owner_by_id.len().to_string(),
             token_owner_id,
@@ -186,6 +189,8 @@ impl Contract {
         self.tokens
             .internal_transfer_unguarded(&token_id, &owner_id, buyer_id);
 
+        //cambiar el numero de nfts disponibles
+        self.nTokenOnSale -= 1;
         //retornar la metadata
         metadata
     }
@@ -249,6 +254,8 @@ impl Contract {
             .as_mut()
             .and_then(|by_id| by_id.insert(&token_id, &metadata));
 
+        //cambiar el numero de nfts disponibles
+        self.nTokenOnSale += 1;
         //retornar la metadata
         metadata
     }
@@ -294,6 +301,8 @@ impl Contract {
             .as_mut()
             .and_then(|by_id| by_id.insert(&token_id, &metadata));
 
+        //cambiar el numero de nfts disponibles
+        self.nTokenOnSale -= 1;
         //retornar la metadata
         metadata
     }
@@ -349,6 +358,9 @@ impl Contract {
             .collect()
     }
 
+    pub fn get_on_sale_toks(&self) -> u64 {
+        self.nTokenOnSale
+    }
     // Self::pass_it(Self::get_sale_status(self, x.0.clone()), counter, ntokens)
     /* #[private]
         pub fn get_sale_status(&self, token_id: TokenId) -> bool {
@@ -389,12 +401,17 @@ impl Contract {
     //Metodo que retorna el numero total de tokens
     //near view dev-1626753781082-15253478806026 nft_total_supply
 
-    //Metodo que retorna un array con el total de tokens determinado por un determinado rango (desde el index hasta el index hasta el limit)
+    //Metodo que retorna un array con el total de tokens determinado por un determinado rango (desde el index hasta  el limit)
     //near view dev-1626753781082-15253478806026 nft_tokens '{""from_index"": ""0"",""limit"": "1000"}'
 
     //Metodo que retorna los tokens nft del owner en un determinado rango (desde el index y hasta el limit)
     //se dejo solo para hacer coincidir el nombre del metodo con el de solidity ,pero se puede llamar directamente a nft_tokens_for_owner
-    pub fn tokens_of(self, account_id: ValidAccountId, from_index: U128, limit: u64) -> Vec<Token> {
+    pub fn tokens_of(
+        &self,
+        account_id: ValidAccountId,
+        from_index: U128,
+        limit: u64,
+    ) -> Vec<Token> {
         return self
             .tokens
             .nft_tokens_for_owner(account_id, Some(from_index), Some(limit));

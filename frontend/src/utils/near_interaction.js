@@ -7,7 +7,7 @@ import {
 } from "near-api-js";
 
 export const storage_byte_cost = 10000000000000000000;
-export const contract_name = "dev-1626753781082-15253478806026";
+export const contract_name = "dev-1627316245657-69022433655295";
 export const config = {
   testnet: {
     networkId: "testnet",
@@ -36,6 +36,7 @@ export const methodOptions = {
     "nft_tokens",
     "tokens_of",
     "storage_byte_cost",
+    "get_on_sale_toks",
   ],
   changeMethods: [
     "minar",
@@ -96,4 +97,8 @@ export async function getNearContract() {
 export function fromNearToYocto(near) {
   console.log(utils.format.parseNearAmount(near.toString()));
   return utils.format.parseNearAmount(near.toString());
+}
+
+export function fromYoctoToNear(yocto) {
+  return utils.format.formatNearAmount(yocto.toString());
 }
