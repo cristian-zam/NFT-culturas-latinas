@@ -317,17 +317,14 @@ impl Contract {
         // no estoy segyri de como convierte  de U128 a u128
         let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
         let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let ntokens = start_index as usize * limit;
-        assert!(
-            (self.tokens.owner_by_id.len() as u128) >= ntokens as u128,
-            "Out of bounds, please use a smaller from_index."
-        );
+        let inicioPag = start_index as usize * limit;
+
         assert_ne!(limit, 0, "Cannot provide limit of 0.");
         log!(
             "el valor de start_index es {}, el valor de limit {}, el valor de ntokens es {}",
             start_index,
             limit,
-            ntokens
+            inicioPag
         );
         let mut counter: usize = 0;
         self.tokens
@@ -344,7 +341,7 @@ impl Contract {
                     .unwrap()
                 {
                     counter += 1;
-                    if counter >= ntokens {
+                    if counter > inicioPag {
                         true
                     } else {
                         false

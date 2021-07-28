@@ -6,6 +6,7 @@ import {
   getSelectedAccount,
   getContract,
   fromWEItoEth,
+  fromETHtoWei,
 } from "../utils/blockchain_interaction";
 import { currencys } from "../utils/constraint";
 import {
@@ -137,7 +138,7 @@ function LightEcommerceB(props) {
         .methods.comprarNft(state.tokens.tokenID)
         .send({
           from: account,
-          value: state.tokens.price,
+          value: fromETHtoWei(Number(state.tokens.price)),
         })
         .catch((err) => {
           return err;

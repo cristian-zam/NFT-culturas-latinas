@@ -25,7 +25,7 @@ function MisTokens(props) {
   const [nfts, setNfts] = useState({
     nfts: [],
     page: 0,
-    tokensPerPage: 7,
+    tokensPerPage: 6,
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
   }); //state de los token nft
@@ -41,7 +41,7 @@ function MisTokens(props) {
       //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
       //dinamicos en memory
       let toks = await getContract()
-        .methods.tokensOfPaginav1(nfts.owner, nfts.tokensPerPage, nfts.page)
+        .methods.tokensOfPaginav1(nfts.owner, nfts.tokensPerPage, pag)
         .call();
 
       //asignamos y filtramos todos los tokens que estan a  la venta
@@ -49,6 +49,35 @@ function MisTokens(props) {
       setNfts({
         ...nfts,
         nfts: toks.filter((tok) => tok.onSale),
+        page: pag,
+      });
+    } else {
+      let contract = await getNearContract();
+      let account = await getNearAccount();
+      let payload = {
+        account_id: account,
+        from_index: (pag * nfts.tokensPerPage).toString(),
+        limit: nfts.tokensPerPage,
+      };
+
+      let nftsArr = await contract.nft_tokens_for_owner(payload);
+
+      //convertir los datos al formato esperado por la vista
+      nftsArr = nftsArr.map((tok) => {
+        return {
+          tokenID: tok.token_id,
+          price: fromYoctoToNear(tok.metadata.price),
+          onSale: tok.metadata.on_sale,
+          data: JSON.stringify({
+            title: tok.metadata.title,
+            image: tok.metadata.media,
+          }),
+        };
+      });
+
+      setNfts({
+        ...nfts,
+        nfts: nftsArr,
         page: pag,
       });
     }
