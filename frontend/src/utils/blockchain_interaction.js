@@ -1,6 +1,6 @@
 import MarketPlace from "../contracts/MarketPlace.json";
 import Web3 from "web3";
-import { create } from "ipfs-http-client";
+const { create } = require("ipfs-http-client");
 
 /**
  * contiene todas las redes que podemos agregar

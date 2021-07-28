@@ -15,7 +15,7 @@ function LightEcommerceA() {
     tokens: [],
     page: 0,
     blockchain: localStorage.getItem("blockchain"),
-    tokensPerPage: 7,
+    tokensPerPage: 6,
   });
 
   async function getPage(pag) {
@@ -30,6 +30,7 @@ function LightEcommerceA() {
       //filtrar tokens
       let copytoks = toks.filter((tok) => tok.onSale);
 
+      console.log(toks);
       //convertir los precios de wei a eth
       copytoks = copytoks.map((tok) => {
         return { ...tok, price: fromWEItoEth(tok.price) };
@@ -43,10 +44,13 @@ function LightEcommerceA() {
     } else {
       //instanciar contracto
       let contract = await getNearContract();
+      let numberOfToks = pag * Landing.tokensPerPage;
+      //obtener cuantos tokens estan a la venta
+      let onSaleToks = await contract.get_on_sale_toks();
       //obtener tokens a la venta
       toks = await contract.obtener_pagina_v2({
-        from_index: Landing.page,
-        limit: Landing.tokensPerPage,
+        from_index: pag != 0 ? numberOfToks + 1 : numberOfToks,
+        limit: onSaleToks - numberOfToks,
       });
 
       //convertir los datos al formato esperado por la vista
@@ -60,7 +64,7 @@ function LightEcommerceA() {
           }),
         };
       });
-
+      console.log(toks);
       setLanding({
         ...Landing,
         tokens: toks,
@@ -85,6 +89,9 @@ function LightEcommerceA() {
         //es el numero de tokens a la venta
         onSaleToks = await getContract().methods.nTokenOnSale.call().call();
 
+        //obtener cuantos tokens tiene el contrato
+        let totalSupply = await getContract().methods.totalSupply().call();
+        console.log(totalSupply);
         console.log(toks);
         console.log(onSaleToks);
         //filtrar tokens

@@ -16,9 +16,6 @@ const BlockchainProtectedRoute = ({ component: Component, ...rest }) => {
     title: "Selecciona una wallet",
   });
 
-  if (localStorage.getItem("blockchain"))
-    console.log(localStorage.getItem("blockchain"));
-
   return (
     <>
       <Route

@@ -9,6 +9,8 @@ import {
   fromETHtoWei,
 } from "../utils/blockchain_interaction";
 
+import { getNearContract, fromNearToYocto } from "../utils/near_interaction";
+
 import { useHistory } from "react-router";
 
 export default function ModalRevender(props) {
@@ -29,15 +31,33 @@ export default function ModalRevender(props) {
     //Metodo para el boton revender del formulario
     onSubmit: async (values) => {
       setstate({ disabled: true });
-      //nos aseguramos que sigamos en la red de aurora
-      await syncNets();
-      let account = await getSelectedAccount();
-      let revender = await getContract()
-        .methods.revender(props.tokenId, fromETHtoWei(values.price))
-        .send({ from: account })
-        .catch((err) => {
-          return err;
-        });
+      let revender;
+      if (props.blockchain == "0") {
+        //nos aseguramos que sigamos en la red de aurora
+        await syncNets();
+        let account = await getSelectedAccount();
+        revender = await getContract()
+          .methods.revender(props.tokenId, fromETHtoWei(values.price))
+          .send({ from: account })
+          .catch((err) => {
+            return err;
+          });
+      } else {
+        let contract = await getNearContract();
+        let payload = {
+          token_id: props.tokenId,
+          price: fromNearToYocto(values.price),
+        };
+        let amount = fromNearToYocto(0);
+        console.log(amount);
+        console.log(payload);
+        revender = await contract.revender(
+          payload,
+          300000000000000, // attached GAS (optional)
+          amount
+        );
+        revender.status = revender.on_sale;
+      }
 
       setstate({ disabled: false });
       //recargar la pantalla si la transacción se ejecuto correctamente
@@ -79,7 +99,7 @@ export default function ModalRevender(props) {
                       htmlFor="price"
                       className="leading-7 text-sm text-gray-600"
                     >
-                      Precio en ETH
+                      Precio en {props.currency}
                     </label>
                     {formik.touched.price && formik.errors.price ? (
                       <div className="leading-7 text-sm text-red-600">

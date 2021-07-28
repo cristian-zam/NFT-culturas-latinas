@@ -17,8 +17,8 @@ export default function goNear(props) {
           height="100"
           viewBox="0 0 130 50"
           fill="black"
-          className="h-32 mx-auto "
-          onClick={() => {
+          className="h-32 mx-auto  cursor-pointer "
+          onClick={async () => {
             nearSignIn(window.location.href);
           }}
         >

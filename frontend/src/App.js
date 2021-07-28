@@ -17,7 +17,7 @@ import notFound from "./views/notFound.view";
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
 import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
-import { create } from "ipfs-http-client";
+const { create } = require("ipfs-http-client");
 
 //instancia de ipfs
 window.ipfs = create({
@@ -60,12 +60,12 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
             <BlockchainProtectedRoute path="/galeria" component={Galeria} />
-            <MetamaskProtectedRoute
+            <BlockchainProtectedRoute
               path="/detail/:tokenid"
               component={Detail}
             />
 
-            <MetamaskProtectedRoute path="/mis_nfts" component={MisNfts} />
+            <BlockchainProtectedRoute path="/mis_nfts" component={MisNfts} />
             <Route component={notFound} />
           </Switch>
           <Footer theme={this.state.theme} />
