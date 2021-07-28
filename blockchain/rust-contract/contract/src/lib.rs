@@ -319,7 +319,7 @@ impl Contract {
         let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
         let ntokens = start_index as usize * limit;
         assert!(
-            (self.tokens.owner_by_id.len() as u128) > ntokens as u128,
+            (self.tokens.owner_by_id.len() as u128) >= ntokens as u128,
             "Out of bounds, please use a smaller from_index."
         );
         assert_ne!(limit, 0, "Cannot provide limit of 0.");

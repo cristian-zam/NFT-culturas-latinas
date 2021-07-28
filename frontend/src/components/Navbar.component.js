@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { config } from "../utils/near_interaction";
+import { config, signOut } from "../utils/near_interaction";
 import * as nearAPI from "near-api-js";
 import { blockchains } from "../utils/constraint";
 
@@ -50,9 +50,11 @@ function LightHeaderB(props) {
    * @param {int} index representa la posicion dentro del arreglo blockchains
    */
 
-  function changeBlockchain(index) {
+  async function changeBlockchain(index) {
     setState({ dropdown: blockchains[index] });
     localStorage.setItem("blockchain", index);
+
+    await signOut();
     window.location.reload();
   }
   return (

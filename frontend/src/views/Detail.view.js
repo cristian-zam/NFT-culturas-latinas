@@ -7,6 +7,14 @@ import {
   getContract,
   fromWEItoEth,
 } from "../utils/blockchain_interaction";
+import { currencys } from "../utils/constraint";
+import {
+  fromNearToYocto,
+  fromYoctoToNear,
+  getNearAccount,
+  getNearContract,
+} from "../utils/near_interaction";
+
 import Modal from "../components/modal.component";
 
 function LightEcommerceB(props) {
@@ -23,27 +31,64 @@ function LightEcommerceB(props) {
 
   React.useEffect(() => {
     (async () => {
-      //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-      await syncNets();
+      let totalSupply;
 
-      //obtener cuantos tokens tiene el contrato
-      let totalSupply = await getContract().methods.totalSupply().call();
+      if (localStorage.getItem("blockchain") == "0") {
+        //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
+        await syncNets();
 
-      //si es mayor que el total de tokens
-      if (parseInt(tokenid) >= parseInt(totalSupply)) {
-        window.location.href = "/galeria";
+        //obtener cuantos tokens tiene el contrato
+        totalSupply = await getContract().methods.totalSupply().call();
+
+        //si es mayor que el total de tokens
+        if (parseInt(tokenid) >= parseInt(totalSupply)) {
+          window.location.href = "/galeria";
+        } else {
+          //obtener los datos del token que se queire
+          let toks = await getContract().methods.tokensData(tokenid).call();
+          toks.price = fromWEItoEth(toks.price);
+          //obtener el dueño del contrato
+          let owner = await getContract().methods.ownerOf(tokenid).call();
+          //agregar el dueño y los datos del token
+          setstate({
+            ...state,
+            tokens: toks,
+            jdata: JSON.parse(toks.data),
+            owner,
+          });
+        }
       } else {
-        //obtener los datos del token que se queire
-        let toks = await getContract().methods.tokensData(tokenid).call();
-        //obtener el dueño del contrato
-        let owner = await getContract().methods.ownerOf(tokenid).call();
-        //agregar el dueño y los datos del token
-        setstate({
-          ...state,
-          tokens: toks,
-          jdata: JSON.parse(toks.data),
-          owner,
-        });
+        //instanciar contracto
+        let contract = await getNearContract();
+        totalSupply = await contract.nft_total_supply();
+        console.log(totalSupply);
+
+        //si es mayor que el total de tokens
+        if (parseInt(tokenid) >= parseInt(totalSupply)) {
+          window.location.href = "/galeria";
+        } else {
+          let toks = await contract.nft_token({ token_id: tokenid });
+          console.log({
+            tokenID: toks.token_id,
+            onSale: toks.metadata.on_sale,
+            price: toks.metadata.price,
+          });
+
+          setstate({
+            ...state,
+            tokens: {
+              tokenID: toks.token_id,
+              onSale: toks.metadata.on_sale,
+              price: fromYoctoToNear(toks.metadata.price),
+            },
+            jdata: {
+              image: toks.metadata.media,
+              title: toks.metadata.title,
+              description: toks.metadata.description,
+            },
+            owner: toks.owner_id,
+          });
+        }
       }
     })();
   }, []);
@@ -51,13 +96,18 @@ function LightEcommerceB(props) {
   async function comprar() {
     //evitar doble compra
     setstate({ ...state, btnDisabled: true });
-    //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-    await syncNets();
-    //la cuenta a la cual mandaremos el token
-    let account = await getSelectedAccount();
+    let account, toks;
+    if (localStorage.getItem("blockchain") == "0") {
+      //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
+      await syncNets();
+      //la cuenta a la cual mandaremos el token
+      account = await getSelectedAccount();
+    } else {
+      account = await getNearAccount();
+    }
 
     //si el dueño intenta comprar un token le decimos que no lo puede comprar
-    if (state.owner.toUpperCase() == account.toUpperCase()) {
+    if (state.owner.toUpperCase() === account.toUpperCase()) {
       setModal({
         show: true,
         title: "Error",
@@ -80,16 +130,32 @@ function LightEcommerceB(props) {
       disabled: true,
       change: setModal,
     });
-    //llamar el metodo de comprar
-    let toks = await getContract()
-      .methods.comprarNft(state.tokens.tokenID)
-      .send({
-        from: account,
-        value: state.tokens.price,
-      })
-      .catch((err) => {
-        return err;
-      });
+
+    if (localStorage.getItem("blockchain") == "0") {
+      //llamar el metodo de comprar
+      toks = await getContract()
+        .methods.comprarNft(state.tokens.tokenID)
+        .send({
+          from: account,
+          value: state.tokens.price,
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      //instanciar contracto
+      let contract = await getNearContract();
+      //obtener tokens a la venta
+      toks = await contract.comprar_nft(
+        {
+          token_id: state.tokens.tokenID,
+        },
+        300000000000000,
+        fromNearToYocto(state.tokens.price)
+      );
+
+      console.log(toks);
+    }
 
     //si status esta undefined o falso le mandamos el modal de error
     if (!toks.status) {
@@ -168,7 +234,8 @@ function LightEcommerceB(props) {
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
               <span className="title-font font-medium text-2xl text-gray-900">
-                $ {state?.tokens.price && fromWEItoEth(state.tokens.price)} ETH
+                $ {state?.tokens.price}
+                {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
               </span>
               <button
                 className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
