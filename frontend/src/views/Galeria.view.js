@@ -21,8 +21,6 @@ function LightEcommerceA() {
   async function getPage(pag) {
     let toks;
     if (Landing.blockchain == "0") {
-      //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
-      //dinamicos en memory
       toks = await getContract()
         .methods.obtenerPaginav2(Landing.tokensPerPage, pag)
         .call();
@@ -49,8 +47,8 @@ function LightEcommerceA() {
       let onSaleToks = await contract.get_on_sale_toks();
       //obtener tokens a la venta
       toks = await contract.obtener_pagina_v2({
-        from_index: pag != 0 ? numberOfToks + 1 : numberOfToks,
-        limit: onSaleToks - numberOfToks,
+        from_index: pag,
+        limit: Landing.tokensPerPage,
       });
 
       //convertir los datos al formato esperado por la vista

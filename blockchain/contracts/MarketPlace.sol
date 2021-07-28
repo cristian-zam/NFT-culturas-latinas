@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract MarketPlace is ERC721Enumerable {
     using Counters for Counters.Counter;
     //representa un entero que lleva la cuenta de los tokensNFT
-    Counters.Counter private _tokenIds;
+    Counters.Counter public _tokenIds;
 
     //matenera el dueño del contrato o quien lo mino
     address public minero;
