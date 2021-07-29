@@ -12,10 +12,23 @@ import {
 import { useHistory } from "react-router";
 
 import Modal from "../components/modalRevender.component";
+import { currencys } from "../utils/constraint";
+import {
+  getNearAccount,
+  getNearContract,
+  fromYoctoToNear,
+  fromNearToYocto,
+} from "../utils/near_interaction";
 
 function MisTokens(props) {
   //Hooks para el manejo de estados
-  const [nfts, setNfts] = useState({ nfts: [], page: 0, tokensPerPage: 7 }); //state de los token nft
+  const [nfts, setNfts] = useState({
+    nfts: [],
+    page: 0,
+    tokensPerPage: 6,
+    blockchain: localStorage.getItem("blockchain"),
+    currency: currencys[parseInt(localStorage.getItem("blockchain"))],
+  }); //state de los token nft
   const [modal, setModal] = useState({
     //state para la ventana modal
     show: false,
@@ -24,40 +37,117 @@ function MisTokens(props) {
   const history = useHistory();
 
   async function getPage(pag) {
-    //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
-    //dinamicos en memory
-    let toks = await getContract()
-      .methods.tokensOfPaginav1(nfts.owner, nfts.tokensPerPage, nfts.page)
-      .call();
+    if (nfts.blockchain == "0") {
+      //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
+      //dinamicos en memory
+      let toks = await getContract()
+        .methods.tokensOfPaginav1(nfts.owner, nfts.tokensPerPage, pag)
+        .call();
 
-    //asignamos y filtramos todos los tokens que estan a  la venta
+      //asignamos y filtramos todos los tokens que estan a  la venta
 
-    setNfts({
-      ...nfts,
-      nfts: toks.filter((tok) => tok.onSale),
-      page: pag,
-    });
+      setNfts({
+        ...nfts,
+        nfts: toks.filter((tok) => tok.onSale),
+        page: pag,
+      });
+    } else {
+      let contract = await getNearContract();
+      let account = await getNearAccount();
+      let payload = {
+        account_id: account,
+        from_index: (pag * nfts.tokensPerPage).toString(),
+        limit: nfts.tokensPerPage,
+      };
+
+      let nftsArr = await contract.nft_tokens_for_owner(payload);
+
+      //convertir los datos al formato esperado por la vista
+      nftsArr = nftsArr.map((tok) => {
+        return {
+          tokenID: tok.token_id,
+          price: fromYoctoToNear(tok.metadata.price),
+          onSale: tok.metadata.on_sale,
+          data: JSON.stringify({
+            title: tok.metadata.title,
+            image: tok.metadata.media,
+          }),
+        };
+      });
+
+      setNfts({
+        ...nfts,
+        nfts: nftsArr,
+        page: pag,
+      });
+    }
   }
 
   //Hook para el manejo de efectos
   useEffect(() => {
     (async () => {
-      //Comparamos la red en el combo de metamask con la red de aurora
-      await syncNets();
-      let account = await getSelectedAccount();
-      //obtenemos el listado de nfts
-      let nftsArr = await getContract()
-        .methods.tokensOfPaginav1(account, nfts.tokensPerPage, nfts.page)
-        .call();
-      let balance = await getContract().methods.balanceOf(account).call();
-      console.log(nftsArr);
-      //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
-      setNfts({
-        ...nfts,
-        nfts: nftsArr.filter((tok) => tok.price > 0),
-        nPages: Math.ceil(balance / nfts.tokensPerPage),
-        owner: account,
-      });
+      if (nfts.blockchain == "0") {
+        //Comparamos la red en el combo de metamask con la red de aurora
+        await syncNets();
+        let account = await getSelectedAccount();
+        //obtenemos el listado de nfts
+        let nftsArr = await getContract()
+          .methods.tokensOfPaginav1(account, nfts.tokensPerPage, nfts.page)
+          .call();
+        let balance = await getContract().methods.balanceOf(account).call();
+        console.log(nftsArr);
+
+        //filtrar tokens
+        let copytoks = nftsArr.filter((tok) => tok.price > 0);
+
+        //convertir los precios de wei a eth
+        copytoks = copytoks.map((tok) => {
+          return { ...tok, price: fromWEItoEth(tok.price) };
+        });
+
+        //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
+        setNfts({
+          ...nfts,
+          nfts: copytoks,
+          nPages: Math.ceil(balance / nfts.tokensPerPage),
+          owner: account,
+        });
+      } else {
+        let contract = await getNearContract();
+        let account = await getNearAccount();
+        console.log(account);
+        let payload = {
+          account_id: account,
+          from_index: (nfts.page * nfts.tokensPerPage).toString(),
+          limit: nfts.tokensPerPage,
+        };
+
+        let nftsArr = await contract.nft_tokens_for_owner(payload);
+        let balance = await contract.nft_supply_for_owner({
+          account_id: account,
+        });
+        console.log(nftsArr);
+
+        //convertir los datos al formato esperado por la vista
+        nftsArr = nftsArr.map((tok) => {
+          return {
+            tokenID: tok.token_id,
+            price: fromYoctoToNear(tok.metadata.price),
+            onSale: tok.metadata.on_sale,
+            data: JSON.stringify({
+              title: tok.metadata.title,
+              image: tok.metadata.media,
+            }),
+          };
+        });
+        //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
+        setNfts({
+          ...nfts,
+          nfts: nftsArr,
+          nPages: Math.ceil(balance / nfts.tokensPerPage),
+          owner: account,
+        });
+      }
     })();
   }, []);
 
@@ -67,21 +157,38 @@ function MisTokens(props) {
    * @return void
    */
   async function quitarDelMarketplace(tokenId) {
-    await syncNets();
-
     setNfts({ ...nfts, disabled: true });
-    let account = await getSelectedAccount();
-    let quitar = await getContract()
-      .methods.quitarDelMarketPlace(tokenId)
-      .send({
-        from: account,
-      })
-      .catch((err) => {
-        return err;
-      });
+    let quitar;
+    if (props.blockchain == "0") {
+      await syncNets();
+
+      let account = await getSelectedAccount();
+      quitar = await getContract()
+        .methods.quitarDelMarketPlace(tokenId)
+        .send({
+          from: account,
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      let contract = await getNearContract();
+      let payload = {
+        token_id: tokenId,
+      };
+      let amount = fromNearToYocto(0);
+      console.log(amount);
+      console.log(payload);
+      quitar = await contract.quitar_del_market_place(
+        payload,
+        300000000000000, // attached GAS (optional)
+        amount
+      );
+    }
+
     console.log(quitar);
     //recargar la pantalla si la transacción se ejecuto correctamente
-    if (quitar.status) {
+    if (quitar.title || quitar.status) {
       history.go(0);
     }
 
@@ -149,7 +256,7 @@ function MisTokens(props) {
                         <br></br>
                         <h2
                           className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-1`}
-                        >{`Adquirido en $${fromWEItoEth(nft.price)} ETH`}</h2>
+                        >{`Adquirido en $${nft.price} ${nfts.currency}`}</h2>
 
                         {/* Mostramos la opción de revender o quitar del marketplace */}
                         {nft.onSale ? (
@@ -171,6 +278,8 @@ function MisTokens(props) {
                                 show: true,
                                 tokenId: nft.tokenID,
                                 title: "Revender nft",
+                                currency: nfts.currency,
+                                blockchain: nfts.blockchain,
                                 message:
                                   "Ingresa el costo al cual quieres poner a la venta este NFT.",
                                 buttonName: "Cancelar",

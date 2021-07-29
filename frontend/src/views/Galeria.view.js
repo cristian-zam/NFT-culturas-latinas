@@ -5,56 +5,139 @@ import {
   getSelectedAccount,
   syncNets,
 } from "../utils/blockchain_interaction";
+import { currencys } from "../utils/constraint";
+import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
 
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
     theme: "yellow",
-    currency: "ETH",
+    currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
     page: 0,
-    tokensPerPage: 7,
+    blockchain: localStorage.getItem("blockchain"),
+    tokensPerPage: 6,
   });
 
   async function getPage(pag) {
-    //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
-    //dinamicos en memory
-    let toks = await getContract()
-      .methods.obtenerPaginav2(Landing.tokensPerPage, pag)
-      .call();
+    let toks;
+    if (Landing.blockchain == "0") {
+      toks = await getContract()
+        .methods.obtenerPaginav2(Landing.tokensPerPage, pag)
+        .call();
 
-    //asignamos y filtramos todos los tokens que estan a  la venta
+      //filtrar tokens
+      let copytoks = toks.filter((tok) => tok.onSale);
 
-    setLanding({
-      ...Landing,
-      tokens: toks.filter((tok) => tok.onSale),
-      page: pag,
-    });
+      console.log(toks);
+      //convertir los precios de wei a eth
+      copytoks = copytoks.map((tok) => {
+        return { ...tok, price: fromWEItoEth(tok.price) };
+      });
+
+      setLanding({
+        ...Landing,
+        tokens: copytoks,
+        page: pag,
+      });
+    } else {
+      //instanciar contracto
+      let contract = await getNearContract();
+      let numberOfToks = pag * Landing.tokensPerPage;
+      //obtener cuantos tokens estan a la venta
+      let onSaleToks = await contract.get_on_sale_toks();
+      //obtener tokens a la venta
+      toks = await contract.obtener_pagina_v2({
+        from_index: pag,
+        limit: Landing.tokensPerPage,
+      });
+
+      //convertir los datos al formato esperado por la vista
+      toks = toks.map((tok) => {
+        return {
+          tokenID: tok.token_id,
+          price: fromYoctoToNear(tok.metadata.price),
+          data: JSON.stringify({
+            title: tok.metadata.title,
+            image: tok.metadata.media,
+          }),
+        };
+      });
+      console.log(toks);
+      setLanding({
+        ...Landing,
+        tokens: toks,
+        page: pag,
+      });
+    }
   }
 
   React.useEffect(() => {
     (async () => {
-      //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-      await syncNets();
+      let toks, onSaleToks;
+      if (Landing.blockchain == "0") {
+        //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
+        await syncNets();
 
-      //la cuenta a la cual mandaremos el token
-      let account = await getSelectedAccount();
-      //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
-      //dinamicos en memory
-      let toks = await getContract()
-        .methods.obtenerPaginav2(Landing.tokensPerPage, Landing.page)
-        .call();
+        //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
+        //dinamicos en memory
+        toks = await getContract()
+          .methods.obtenerPaginav2(Landing.tokensPerPage, Landing.page)
+          .call();
 
-      //es el numero de tokens a la venta
-      let onSaleToks = await getContract().methods.nTokenOnSale.call().call();
-      console.log(toks);
-      console.log(onSaleToks);
-      //asignamos y filtramos todos los tokens que estan a  la venta
+        //es el numero de tokens a la venta
+        onSaleToks = await getContract().methods.nTokenOnSale.call().call();
 
-      setLanding({
-        ...Landing,
-        tokens: toks.filter((tok) => tok.onSale),
-        nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
-      });
+        //obtener cuantos tokens tiene el contrato
+        let totalSupply = await getContract().methods.totalSupply().call();
+        console.log(totalSupply);
+        console.log(toks);
+        console.log(onSaleToks);
+        //filtrar tokens
+        let copytoks = toks.filter((tok) => tok.onSale);
+
+        //convertir los precios de wei a eth
+        copytoks = copytoks.map((tok) => {
+          return { ...tok, price: fromWEItoEth(tok.price) };
+        });
+
+        //asignamos y filtramos todos los tokens que estan a  la venta
+        setLanding({
+          ...Landing,
+          tokens: copytoks,
+          nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+        });
+      } else {
+        //instanciar contracto
+        let contract = await getNearContract();
+        //obtener tokens a la venta
+        toks = await contract.obtener_pagina_v2({
+          from_index: Landing.page,
+          limit: Landing.tokensPerPage,
+        });
+        //obtener cuantos tokens estan a la venta
+        onSaleToks = await contract.get_on_sale_toks();
+
+        //convertir los datos al formato esperado por la vista
+        toks = toks.map((tok) => {
+          return {
+            tokenID: tok.token_id,
+            price: fromYoctoToNear(tok.metadata.price),
+            data: JSON.stringify({
+              title: tok.metadata.title,
+              image: tok.metadata.media,
+            }),
+          };
+        });
+
+        console.log(toks);
+        console.log(onSaleToks);
+
+        setLanding({
+          ...Landing,
+          tokens: toks,
+          nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+        });
+      }
     })();
   }, []);
   return (
@@ -86,7 +169,7 @@ function LightEcommerceA() {
                         {tokenData.title}
                       </h2>
                       <p className="mt-1">
-                        {fromWEItoEth(token.price) + " " + Landing.currency}
+                        {token.price + " " + Landing.currency}
                       </p>
                     </div>
                   </a>

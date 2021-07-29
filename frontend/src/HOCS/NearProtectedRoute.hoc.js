@@ -4,7 +4,7 @@ import { isNearReady } from "../utils/near_interaction";
 import GoNear from "../views/goNear";
 
 const NearProtectedRoute = ({ component: Component, ...rest }) => {
-  const [state, setState] = useState(true);
+  const [state, setState] = useState(false);
   useEffect(() => {
     (async () => {
       setState(await isNearReady());

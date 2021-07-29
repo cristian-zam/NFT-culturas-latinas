@@ -17,6 +17,8 @@ import {
   estimateGas,
   fromNearToEth,
   fromNearToYocto,
+  fromYoctoToNear,
+  getNearAccount,
   getNearContract,
   storage_byte_cost,
 } from "../utils/near_interaction";
@@ -98,7 +100,7 @@ function LightHeroE(props) {
       } else {
         let contract = await getNearContract();
         let payload = {
-          token_owner_id: "chidoman.testnet",
+          token_owner_id: await getNearAccount(),
           token_metadata: {
             title: values.title,
             description: values.description,
@@ -108,10 +110,9 @@ function LightHeroE(props) {
             on_sale: true,
           },
         };
-
+        console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);
-        console.log(amount);
-        console.log(payload);
+
         contract.minar(
           payload,
           300000000000000, // attached GAS (optional)

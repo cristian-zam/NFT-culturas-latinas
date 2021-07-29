@@ -7,7 +7,7 @@ import {
 } from "near-api-js";
 
 export const storage_byte_cost = 10000000000000000000;
-export const contract_name = "dev-1626753781082-15253478806026";
+export const contract_name = "dev-1627316245657-69022433655295";
 export const config = {
   testnet: {
     networkId: "testnet",
@@ -36,6 +36,9 @@ export const methodOptions = {
     "nft_tokens",
     "tokens_of",
     "storage_byte_cost",
+    "get_on_sale_toks",
+    "nft_tokens_for_owner",
+    "nft_supply_for_owner",
   ],
   changeMethods: [
     "minar",
@@ -66,7 +69,6 @@ export async function isNearReady() {
   // crear una wallet
   const wallet = new WalletConnection(near);
   //esta logueado ?
-  console.log(wallet.isSignedIn());
   return wallet.isSignedIn();
 }
 
@@ -79,10 +81,6 @@ export async function getNearContract() {
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
-
-  console.log(near);
-  console.log(wallet);
-
   return new Contract(
     wallet.account(), // the account object that is connecting
     contract_name,
@@ -92,8 +90,40 @@ export async function getNearContract() {
     }
   );
 }
-
+/**
+ * convierte de nears a yoctos
+ *
+ * */
 export function fromNearToYocto(near) {
   console.log(utils.format.parseNearAmount(near.toString()));
   return utils.format.parseNearAmount(near.toString());
+}
+/**
+ *
+ *
+ * convierte de yocto a near
+ */
+export function fromYoctoToNear(yocto) {
+  return utils.format.formatNearAmount(yocto.toString());
+}
+/**
+ * con esta funcion obtenemos el accountid de la cartera
+ * */
+export async function getNearAccount() {
+  // conectarse a near
+  const near = await connect(config.testnet);
+
+  // crear una wallet de
+  const wallet = new WalletConnection(near);
+
+  return wallet.getAccountId();
+}
+
+export async function signOut() {
+  // conectarse a near
+  const near = await connect(config.testnet);
+
+  // crear una wallet de
+  const wallet = new WalletConnection(near);
+  wallet.signOut();
 }
