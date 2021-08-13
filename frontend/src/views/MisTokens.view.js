@@ -159,7 +159,7 @@ function MisTokens(props) {
   async function quitarDelMarketplace(tokenId) {
     setNfts({ ...nfts, disabled: true });
     let quitar;
-    if (props.blockchain == "0") {
+    if (nfts.blockchain == "0") {
       await syncNets();
 
       let account = await getSelectedAccount();
