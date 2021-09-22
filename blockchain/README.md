@@ -52,11 +52,11 @@ este comando desplegará el smart contract en la red de [aurora] para que podamo
 para interactuar con el smart contract desplegado es necesario hacer una instancia del contrato desde la consola de truffle para eso usaremos los siguientes comandos:
 
 ```bash
-truffle console --network aurora
+truffle console --network auroraTestnet
 ```
 
 ```bash
-const cvt = await marketplace.deployed()
+const cvt = await MarketPlace.deployed()
 ```
 
 ![picture](https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/assets/truffle.png?raw=true)
@@ -75,31 +75,31 @@ await cvt.minar("address", "data", precio)
 Método para transferir un token nft 
 -----------------
 ```bash
-await cvt.transferirnft("address", tokenid)
+await cvt.transferirNft("address", tokenid)
 ```
 
 Método para listar los token nft a la venta
 -----------------
 ```bash
-await cvt.obtenernfts()
+await cvt.obtenerNfts()
 ```
 
 Método para comprar un token nft
 ----------------
 ```bash
-await cvt.comprarnft(tokenid)
+await cvt.comprarNft(tokenid)
 ```
 
 Método para listar mis tokens nft adquiridos
 ---------------
 ```bash
-await cvt.tokensof("address")
+await cvt.tokensOf("address")
 ```
 
 Método para quitar de la venta uno de mis token nft 
 ---------------
 ```bash
-await cvt.quitardelmarketplace(tokenid)
+await cvt.quitarDelMarketPlace(tokenid)
 ```
 
 Método para revender un token nft
@@ -128,18 +128,6 @@ await cvt.revender(tokenid, precio)
 │   └── exception.js
 └── yarn.lock
 ```
-
-`🎥 tutoriales en video`
-==============
-
-En el canal en YouTube de [NEAR Hispano] se encuentra una lista de reproducción con el avance diario del proyecto a manera de documentación el cual se encuentra a continuación:
-
-https://www.youtube.com/watch?v=9J2xkT_tFHk&list=PLixWO0N_iFTMGU3M5KHpuMqhpdMKzw88f
-
-Ademas contamos con una lista de reproducción en donde se brinda un demo de las principales funcionalidades del proyecto, misma que se puede encontrar aqui:
-
-https://www.youtube.com/watch?v=9PfxYtO0HK4&list=PLixWO0N_iFTOoCXL_rcyDowvxaO8BKAUD
-
 
 [nvm]:  https://github.com/nvm-sh/nvm
 [aurora]: https://aurora.dev/
