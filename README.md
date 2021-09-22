@@ -16,11 +16,11 @@ El proyecto consta de 4 partes:
  
 ## Documentación de cada parte del proyecto 
 
-### Contrato en solidity para Aurora EVM
+[Contrato en solidity para Aurora EVM]
 
-### Contrato en Rust para NEAR
+[Contrato en Rust para NEAR]
 
-### Frontend
+[Frontend]
 
 ## 🎥 Avances del proyecto 
 
@@ -40,3 +40,6 @@ https://www.youtube.com/playlist?list=PLixWO0N_iFTPr5LSe6s1RZfEw6yXPWV7p
 
 [MetaMask]: https://metamask.io/
 [NEAR Hispano]: https://www.youtube.com/channel/UCGJRj-rzdgow2nIAZ_pTkbQ
+[Contrato en solidity para Aurora EVM]: https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/blockchain/README.md
+[Contrato en Rust para NEAR]: https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/blockchain/rust-contract/README.md
+[Frontend]: https://github.com/cristian-cloudmex/NFT-culturas-latinas/blob/master/frontend/README.md

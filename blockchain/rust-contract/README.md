@@ -1,7 +1,11 @@
 # Marketplace NFT culturas latinas - Rust contract
 
-# Desplegar el contrato en la Testnet de NEAR
+## Pasos previos 
+Asegurate de tener instalado la herramienta `near-cli`, esta sera utilizada para consumir los metodos en el contrato. Para instalarla usamos el comando con npm: 
 
+`npm install -g near-cli`
+
+# 🚀 Desplegar el contrato en la Testnet de NEAR
 ## Hacer login con el NEAR CLI
 `near login`
 
@@ -11,11 +15,11 @@
 ## Desplegar contrato en testnet
 `near dev-deploy --wasmFile target/wasm32-unknown-unknown/debug/nft_marketplace.wasm`
 
-# Comandos
+# 💻 Comandos del contrato
 
 ## Inicializar contrato con los valores en la metadata 
 `near call <direccion del contrato> new_default_meta '{"owner_id": "owner nearId"}' --accountId <tu nearId>`
-# Obtener la metadata del contrato
+## Obtener la metadata del contrato
 `near view <direccion del contrato> nft_metadata`
 
 ## Minar un token 
@@ -24,17 +28,17 @@
 ## Comprar un token NFT
 `near call <dirección del contrato> comprar_nft '{"token_id": "token id"}' --accountId <tu nearId> --amount 0.01`
 
-## Obtener el numero de tokens en el contrato
-`near view <direccion del contrato> numero_de_nfts`
+## Revender un token NFT
+`near call <direccion del contrato> revender '{"token_id": "0","price": "0"}' --accountId <tu nearId>`
 
-## Buscar un token mediante su token id
-`near view <direccion del contrato> buscar_nft '{"token_id": "token_id"}'`
+## Tokens NFT pertenecientes a una cuenta de NEAR
+`near view <direccion del contrato> tokens_of '{"account_id": "nearId","from_index": "0","limit": 3}'`
 
-## Obtener los tokens NFT mediante un rango (token id de inicio y token id del final)
-near view <dirección del contrato> nfts_por_propietario '{"account_id": "<NEAR ID del propietario de los tokens>", "from_index": "<id token inicio>", "limit": <id token limite>}'
+## Quitar un token a la venta del marketplace
+`near call <direccion del contrato> quitar_del_market_place '{"token_id": "0"}' --accountId <tu nearId>`
 
-## Obtener todos los tokens NFT del contrato    
-`near call <dirección del contrato> tokens_nfts '{"from_index": "0", "limit": 20}' --accountId $ID`
+## Nos permite obtener los tokens NFT filtrados por pagina a la venta 
+`near view <direccion del contrato> obtener_pagina_v2 '{"from_index": 0,"limit": 7}'`
 
 
   [smart contract]: https://docs.near.org/docs/develop/contracts/overview
