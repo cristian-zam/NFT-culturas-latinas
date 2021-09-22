@@ -32,7 +32,7 @@ Para correr este proyecto de forma local se necesitan los siguientes requerimien
 │   ├── preview.gif
 │   └── robots.txt
 └── src                                          # Directorio fuente del proyecto en react
-    ├── App.j                                    # Archivo con el punto de montaje del componente app
+    ├── App.js                                   # Archivo con el punto de montaje del componente app
     ├── App.test.js
     ├── HOCS
     │   └── MetamaskProtectedRoute.hoc.js        # Archivo que controla las rutas protegidas con metamask
@@ -87,18 +87,6 @@ Para correr este proyecto de forma local se necesitan los siguientes requerimien
         ├── mintNft.view.js
         └── notFound.view.js
 ```
-
-## 📹 Avances del proyecto
-
-En el canal en YouTube de [NEAR Hispano] se encuentra una lista de reproducción con el avance diario del proyecto a manera de documentación el cual se encuentra a continuación:
-
-https://www.youtube.com/watch?v=9J2xkT_tFHk&list=PLixWO0N_iFTMGU3M5KHpuMqhpdMKzw88f
-
-Ademas contamos con una lista de reproducción en donde se brinda un demo de las principales funcionalidades del proyecto, misma que se puede encontrar aqui:
-
-https://www.youtube.com/watch?v=9PfxYtO0HK4&list=PLixWO0N_iFTOoCXL_rcyDowvxaO8BKAUD
  
-
-[NEAR Hispano]: https://www.youtube.com/channel/UCGJRj-rzdgow2nIAZ_pTkbQ
 [Node.js]: https://nodejs.org/en/download/package-manager/
 [nvm]: https://github.com/nvm-sh/nvm

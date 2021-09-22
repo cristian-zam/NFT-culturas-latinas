@@ -11,11 +11,11 @@ function LightHeroE(props) {
         </div>
         <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center ">
           <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-            Explora,revende nfts hechos por artistas de comunidades indigenas en
+            Explora, crea y vende tokens NFT hechos por artistas de culturas indigenas en
             America latina.
           </h1>
           <p className="mb-8 leading-relaxed">
-            Todos los nfts son hechos por que representan comunidades indigenas.
+            Captura el valor del arte a través de un token NFT y se parte de la revolución de blockchain.
           </p>
 
           <div className="flex  justify-between">
