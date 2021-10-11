@@ -106,6 +106,15 @@ function LightEcommerceA() {
           tokens: copytoks,
           nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
         });
+
+        let infoe  = await getContract()
+          .methods.getItemInfo(0)
+          .call();
+        console.log(infoe)
+        let getall  = await getContract()
+        .methods.obtenerNfts()
+        .call();
+      console.log("alll",getall)
       } else {
         //instanciar contracto
         let contract = await getNearContract();

@@ -288,4 +288,12 @@ contract MarketPlace is ERC721Enumerable {
         }
         return userTokens;
     }
+
+ function getItemInfo(uint256 _token)external view returns(uint256 _price,  string memory _data,bool _onSale, uint256 _tokenID){
+        _price=tokensData[ _token].price;
+        _data=tokensData[ _token].data;
+        _onSale=tokensData[ _token].onSale;
+        _tokenID=tokensData[ _token].tokenID;
+       
+    }
 }

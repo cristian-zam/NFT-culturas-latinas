@@ -51,6 +51,7 @@ function LightEcommerceB(props) {
           //obtener el dueño del contrato
           let owner = await getContract().methods.ownerOf(tokenid).call();
           //agregar el dueño y los datos del token
+          console.log(JSON.parse(toks.data));
           setstate({
             ...state,
             tokens: toks,
@@ -210,7 +211,7 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
-              <span className="text-gray-500">OnSale</span>
+              <span className="text-gray-500">En venta</span>
               <span className="ml-auto text-gray-900">
                 <span
                   className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
@@ -224,14 +225,50 @@ function LightEcommerceB(props) {
               </span>
             </div>
             <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Cultura</span>
+              <span className="ml-auto text-gray-900">
+                <span
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
+                    state?.jdata.culture
+                      ? "text-green-100 bg-green-500"
+                      : "text-red-100 bg-red-500"
+                  } rounded-full`}
+                >
+                  {state?.jdata.culture  }
+                </span>
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">País</span>
+              <span className="ml-auto text-gray-900">
+                <span
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
+                    state?.jdata.culture
+                      ? "text-green-100 bg-green-500"
+                      : "text-red-100 bg-red-500"
+                  } rounded-full`}
+                >
+                  {state?.jdata.country  }
+                </span>
+              </span>
+            </div>
+
+            <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
             >
-              <span className="text-gray-500">Owner</span>
+              <span className="text-gray-500">Propietario</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
                 {state?.owner}
               </span>
             </div>
 
+
+            
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
               <span className="title-font font-medium text-2xl text-gray-900">

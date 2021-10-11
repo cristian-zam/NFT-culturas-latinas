@@ -42,6 +42,8 @@ function LightHeroE(props) {
       title: "",
       description: "",
       price: 0,
+      culture: "",
+      country: "",
       image: "",
     },
     //validaciones
@@ -55,11 +57,20 @@ function LightHeroE(props) {
         .max(300, "Menos de 50 caracteres")
         .required("Requerido")
         .min(30, "la descripción minimo es de 30 caracteres"),
+        
       price: Yup.number()
         .required("Requerido")
         .positive("el precio debe ser positivo")
         .moreThan(0, "no existen nft gratis")
         .min(0.000000000000000001, "el precio minimo es un wei"),
+        
+         
+        culture: Yup.string()
+        .required("Escribe el nombre de la cultura pertenenciente "),
+         
+        country: Yup.string()
+        .required("Escribe el nombre del pais pertenenciente "),
+       
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
@@ -84,6 +95,9 @@ function LightHeroE(props) {
         disabled: true,
       });
 
+      console.log(JSON.stringify(values));
+
+     
       let token;
       if (mint.blockchain == "0") {
         //los datos de la transacccion
@@ -240,13 +254,7 @@ function LightHeroE(props) {
                 ) : null}
               </div>
 
-              <input
-                type="text"
-                id="title"
-                name="title"
-                {...formik.getFieldProps("title")}
-                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-              />
+              <input                type="text"                id="title"                name="title"                {...formik.getFieldProps("title")}                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}/>
 
               <div className="flex justify-between ">
                 <label
@@ -264,6 +272,8 @@ function LightHeroE(props) {
                 ) : null}
               </div>
 
+
+              
               <input
                 type="number"
                 id="price"
@@ -271,6 +281,56 @@ function LightHeroE(props) {
                 className={`border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out-${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                 {...formik.getFieldProps("price")}
               />
+
+
+
+
+              <div className="flex justify-between ">
+              <label
+                htmlFor="culture"
+                className="leading-7 text-sm text-gray-600"
+              >
+                Cultura
+              </label>
+              {formik.touched.culture && formik.errors.culture ? (
+                <div className="leading-7 text-sm text-red-600">
+                  {formik.errors.culture}
+                </div>
+              ) : null}
+            </div>
+
+            <input
+              type="text"
+              id="culture"
+              name="culture"
+              {...formik.getFieldProps("culture")}
+              className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+            />
+
+
+            
+            
+            <div className="flex justify-between ">
+            <label
+              htmlFor="country"
+              className="leading-7 text-sm text-gray-600"
+            >
+              Pais
+            </label>
+            {formik.touched.country && formik.errors.country ? (
+              <div className="leading-7 text-sm text-red-600">
+                {formik.errors.country}
+              </div>
+            ) : null}
+          </div>
+
+          <input
+            type="text"
+            id="country"
+            name="country"
+            {...formik.getFieldProps("country")}
+            className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+          />
 
               <div className="flex justify-between ">
                 <label
