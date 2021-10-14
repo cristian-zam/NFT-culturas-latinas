@@ -70,10 +70,13 @@ function LightEcommerceB(props) {
           window.location.href = "/galeria";
         } else {
           let toks = await contract.nft_token({ token_id: tokenid });
+          console.log(toks)
           console.log({
             tokenID: toks.token_id,
             onSale: toks.metadata.on_sale,
             price: toks.metadata.price,
+            culture:toks.metadata.culture,
+            country:toks.metadata.country,
           });
 
           setstate({
@@ -82,15 +85,22 @@ function LightEcommerceB(props) {
               tokenID: toks.token_id,
               onSale: toks.metadata.on_sale,
               price: fromYoctoToNear(toks.metadata.price),
+              culture:toks.metadata.culture,
+              country:toks.metadata.country,
             },
             jdata: {
               image: toks.metadata.media,
               title: toks.metadata.title,
               description: toks.metadata.description,
+              culture:toks.metadata.culture,
+              country:toks.metadata.country,
             },
             owner: toks.owner_id,
           });
+          console.log("state",state )
         }
+
+        
       }
     })();
   }, []);
@@ -248,7 +258,7 @@ function LightEcommerceB(props) {
               <span className="ml-auto text-gray-900">
                 <span
                   className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.culture
+                    state?.jdata.country
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
                   } rounded-full`}

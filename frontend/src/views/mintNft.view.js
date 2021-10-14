@@ -22,6 +22,7 @@ import {
   getNearContract,
   storage_byte_cost,
 } from "../utils/near_interaction";
+
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
   const [mint, setmint] = React.useState({
@@ -57,20 +58,21 @@ function LightHeroE(props) {
         .max(300, "Menos de 50 caracteres")
         .required("Requerido")
         .min(30, "la descripción minimo es de 30 caracteres"),
-        
+
       price: Yup.number()
         .required("Requerido")
         .positive("el precio debe ser positivo")
         .moreThan(0, "no existen nft gratis")
         .min(0.000000000000000001, "el precio minimo es un wei"),
-        
-         
-        culture: Yup.string()
-        .required("Escribe el nombre de la cultura pertenenciente "),
-         
-        country: Yup.string()
-        .required("Escribe el nombre del pais pertenenciente "),
-       
+
+      culture: Yup.string().required(
+        "Escribe el nombre de la cultura pertenenciente "
+      ),
+
+      country: Yup.string().required(
+        "Escribe el nombre del pais pertenenciente "
+      ),
+
       image: Yup.string().required("Requerido"),
     }),
     onSubmit: async (values) => {
@@ -97,7 +99,6 @@ function LightHeroE(props) {
 
       console.log(JSON.stringify(values));
 
-     
       let token;
       if (mint.blockchain == "0") {
         //los datos de la transacccion
@@ -121,17 +122,22 @@ function LightHeroE(props) {
             media: values.image,
             media_hash: "hashhashhashhashhashhashhashhash",
             price: fromNearToYocto(values.price),
+            culture:values.culture,
+            country:values.country,
             on_sale: true,
           },
         };
+        console.log(payload);
         console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);
-
-        contract.minar(
+        alert(payload);
+      let tokenresult=  contract.minar(
           payload,
           300000000000000, // attached GAS (optional)
           amount
         );
+
+        console.log(tokenresult);
       }
       //if de error
       if (!token.status)
@@ -214,7 +220,7 @@ function LightHeroE(props) {
               className={`  my-4 title-font sm:text-4xl text-3xl w-full text-center ${
                 mint?.file ? "bg-white" : ""
               }
-            `}
+              `}
             >
               {mint?.file ? "Cambiar " : "Subir Imagen"}
             </div>
@@ -254,7 +260,13 @@ function LightHeroE(props) {
                 ) : null}
               </div>
 
-              <input                type="text"                id="title"                name="title"                {...formik.getFieldProps("title")}                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}/>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                {...formik.getFieldProps("title")}
+                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+              />
 
               <div className="flex justify-between ">
                 <label
@@ -272,8 +284,6 @@ function LightHeroE(props) {
                 ) : null}
               </div>
 
-
-              
               <input
                 type="number"
                 id="price"
@@ -282,55 +292,51 @@ function LightHeroE(props) {
                 {...formik.getFieldProps("price")}
               />
 
+              {/* /SE AGREGAN LOS CAMPOS CULTURA Y PAIS/ */}
+              <div className="flex justify-between ">
+                <label
+                  htmlFor="culture"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  Cultura
+                </label>{" "}
+                {formik.touched.culture && formik.errors.culture ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {formik.errors.culture}
+                  </div>
+                ) : null}
+              </div>
 
-
+              <input
+                type="text"
+                id="culture"
+                name="culture"
+                {...formik.getFieldProps("culture")}
+                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+              />
 
               <div className="flex justify-between ">
-              <label
-                htmlFor="culture"
-                className="leading-7 text-sm text-gray-600"
-              >
-                Cultura
-              </label>
-              {formik.touched.culture && formik.errors.culture ? (
-                <div className="leading-7 text-sm text-red-600">
-                  {formik.errors.culture}
-                </div>
-              ) : null}
-            </div>
-
-            <input
-              type="text"
-              id="culture"
-              name="culture"
-              {...formik.getFieldProps("culture")}
-              className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-            />
-
-
-            
-            
-            <div className="flex justify-between ">
-            <label
-              htmlFor="country"
-              className="leading-7 text-sm text-gray-600"
-            >
-              Pais
-            </label>
-            {formik.touched.country && formik.errors.country ? (
-              <div className="leading-7 text-sm text-red-600">
-                {formik.errors.country}
+                <label
+                  htmlFor="country"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  Pais{" "}
+                </label>
+                {formik.touched.country && formik.errors.country ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {" "}
+                    {formik.errors.country}{" "}
+                  </div>
+                ) : null}{" "}
               </div>
-            ) : null}
-          </div>
 
-          <input
-            type="text"
-            id="country"
-            name="country"
-            {...formik.getFieldProps("country")}
-            className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-          />
+              <input
+                type="text"
+                id="country"
+                name="country"
+                {...formik.getFieldProps("country")}
+                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+              />
 
               <div className="flex justify-between ">
                 <label
