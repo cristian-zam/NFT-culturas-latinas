@@ -95,9 +95,7 @@ function LightEcommerceA() {
                   //agrega el token al arreglo para mostrar
                   arr.push(infoe[0]);
                   }
-                  else{
-                    break;
-                  }
+                 
            //Concadena el token encontrado con los tokens que ya se mostraron
              setLanding({
               ...Landing,
