@@ -921,8 +921,8 @@
     "version": "0.8.1+commit.df193b15.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.4.2",
-  "updatedAt": "2021-10-11T22:12:10.782Z",
+  "schemaVersion": "3.4.3",
+  "updatedAt": "2021-10-14T19:32:34.239Z",
   "devdoc": {
     "details": "See https://eips.ethereum.org/EIPS/eip-721",
     "kind": "dev",
