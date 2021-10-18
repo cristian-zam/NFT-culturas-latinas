@@ -251,7 +251,7 @@ function LightHeroE(props) {
                   htmlFor="title"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Titulo
+                  Título
                 </label>
                 {formik.touched.title && formik.errors.title ? (
                   <div className="leading-7 text-sm text-red-600">
@@ -320,7 +320,7 @@ function LightHeroE(props) {
                   htmlFor="country"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Pais{" "}
+                  País{" "}
                 </label>
                 {formik.touched.country && formik.errors.country ? (
                   <div className="leading-7 text-sm text-red-600">
