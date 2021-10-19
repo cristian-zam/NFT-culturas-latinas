@@ -33,10 +33,10 @@ function LightStepC(props) {
             </div>
             <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
               <h2 className="font-medium title-font text-gray-900 mb-1 text-xl">
-                Instala y desbloquea metamask
+                Instala y utiliza metamask o tu Near wallet
               </h2>
               <p className="leading-relaxed">
-                con el podras comprar tus nft e ingresar a tu panel,
+                con ellos podrás comprar tus nft e ingresar a tu panel,
               </p>
             </div>
           </div>
@@ -74,7 +74,7 @@ function LightStepC(props) {
                 Selecciona el nft que mas te guste
               </h2>
               <p className="leading-relaxed">
-                ve a galeria y selecciona tu nft favorito despues procede con la
+                ve a galería y selecciona tu nft favorito despues procede con la
                 compra
               </p>
             </div>
@@ -120,8 +120,8 @@ function LightStepC(props) {
                 Revende
               </h2>
               <p className="leading-relaxed">
-                ¿ya no quieres tu nft ? lo puedes revender en tu panel al precio
-                que tu decidas
+                ¿ya no quieres tu nft? lo puedes revender en tu panel al precio
+                que tu decidas.
               </p>
             </div>
           </div>

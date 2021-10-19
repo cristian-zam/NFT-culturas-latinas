@@ -13,16 +13,17 @@ function LightEcommerceA() {
     theme: "yellow",
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
-    page: 0,
+    page: window.localStorage.getItem("page"),
     blockchain: localStorage.getItem("blockchain"),
-    tokensPerPage: 6,
+    tokensPerPage: 10,
+    tokensPerPageNear: 6,
   });
 
   async function getPage(pag) {
     let toks;
     if (Landing.blockchain == "0") {
       toks = await getContract()
-        .methods.obtenerPaginav2(Landing.tokensPerPage, pag)
+        .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
         .call();
 
       //filtrar tokens
@@ -74,45 +75,44 @@ function LightEcommerceA() {
   React.useEffect(() => {
     (async () => {
       let toks, onSaleToks;
+      let arr=[];
+      
       if (Landing.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-        await syncNets();
+                await syncNets();
+          //obtener cuantos tokens tiene el contrato
+          let totalSupply = await getContract().methods.totalSupply().call();
+          //obtener el numero de tokens a la venta
+          onSaleToks = await getContract().methods.nTokenOnSale.call().call();
 
-        //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
-        //dinamicos en memory
-        toks = await getContract()
-          .methods.obtenerPaginav2(Landing.tokensPerPage, Landing.page)
-          .call();
+            //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
+          for(let i =Landing.page*10; i<(parseInt(Landing.page)+1)*Landing.tokensPerPage ; i++) {
+            console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
+            //obtiene la informacion de x token
+            let infoe  = await getContract().methods.getItemInfo(i).call();
+            //Valida si está a la venta
+             if(infoe[0].onSale){
+                  //agrega el token al arreglo para mostrar
+                  arr.push(infoe[0]);
+                  }
+                 
+           //Concadena el token encontrado con los tokens que ya se mostraron
+             setLanding({
+              ...Landing,
+              tokens: arr,
+              nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+            });  
 
-        //es el numero de tokens a la venta
-        onSaleToks = await getContract().methods.nTokenOnSale.call().call();
-
-        //obtener cuantos tokens tiene el contrato
-        let totalSupply = await getContract().methods.totalSupply().call();
-        console.log(totalSupply);
-        console.log(toks);
-        console.log(onSaleToks);
-        //filtrar tokens
-        let copytoks = toks.filter((tok) => tok.onSale);
-
-        //convertir los precios de wei a eth
-        copytoks = copytoks.map((tok) => {
-          return { ...tok, price: fromWEItoEth(tok.price) };
-        });
-
-        //asignamos y filtramos todos los tokens que estan a  la venta
-        setLanding({
-          ...Landing,
-          tokens: copytoks,
-          nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
-        });
+          }
+           
+     
       } else {
         //instanciar contracto
         let contract = await getNearContract();
         //obtener tokens a la venta
         toks = await contract.obtener_pagina_v2({
-          from_index: Landing.page,
-          limit: Landing.tokensPerPage,
+          from_index: 0,
+          limit: 6,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -169,7 +169,11 @@ function LightEcommerceA() {
                         {tokenData.title}
                       </h2>
                       <p className="mt-1">
-                        {token.price + " " + Landing.currency}
+                        {Landing.blockchain==0 &&
+                            fromWEItoEth(token.price) + " " + Landing.currency}
+
+                        {Landing.blockchain!=0 &&
+                              token.price + " " + Landing.currency}
                       </p>
                     </div>
                   </a>
@@ -206,7 +210,7 @@ function LightEcommerceA() {
             {[...Array(Landing?.nPages)].map((page, index) => {
               return (
                 <a
-                  href="#"
+                  
                   className={`bg-white ${
                     Landing.page == index
                       ? "bg-yellow-100 border-yellow-500 text-yellow-600 hover:bg-yellow-200"
@@ -214,7 +218,9 @@ function LightEcommerceA() {
                   }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
-                    await getPage(index);
+                    //await getPage(index);
+                    window.localStorage.setItem("page",index);
+                    window.location.reload();
                   }}
                 >
                   {index + 1}

@@ -25,7 +25,7 @@ function LightFooterB(props) {
             <span className="ml-3 text-xl">LatinArt</span>
           </a>
           <p className="mt-2 text-sm text-gray-500">
-            Agradecemos tu vistia y preferencia
+            Agradecemos tu visita y preferencia
           </p>
           <div className="flex  items-center justify-between mt-8 ">
             <p>hecho con</p>
@@ -37,7 +37,7 @@ function LightFooterB(props) {
         <div className="flex-grow flex flex-wrap md:pr-20 -mb-10 md:text-left text-center order-first">
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <h2 className="title-font font-medium text-gray-900 tracking-widest text-sm mb-3">
-              RERCURSOS
+              RECURSOS
             </h2>
             <nav className="list-none mb-10">
               <li>
@@ -97,7 +97,7 @@ function LightFooterB(props) {
                   href="/terminos"
                   className="text-gray-600 hover:text-gray-800"
                 >
-                  Terminos S
+                  Términos (S)
                 </a>
               </li>
               <li>
@@ -105,7 +105,7 @@ function LightFooterB(props) {
                   href="/politicas"
                   className="text-gray-600 hover:text-gray-800"
                 >
-                  Politica P
+                  Política (P)
                 </a>
               </li>
             </nav>

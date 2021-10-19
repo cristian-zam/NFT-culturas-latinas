@@ -8,6 +8,7 @@ import Statisct from "../components/statistc.component";
 
 export default function Landing() {
   const [Landing, setLanding] = React.useState({ theme: "yellow" });
+  window.localStorage.setItem("page",0);
   return (
     <>
       <Hero />
