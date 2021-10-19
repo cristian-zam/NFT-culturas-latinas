@@ -7,7 +7,9 @@ import {
 } from "near-api-js";
 
 export const storage_byte_cost = 10000000000000000000;
-export const contract_name = "dev-1627316245657-69022433655295";
+export const contract_name = "dokxo.testnet";
+//export const contract_name = "dev-1627316245657-69022433655295";
+
 export const config = {
   testnet: {
     networkId: "testnet",
