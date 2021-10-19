@@ -33,10 +33,10 @@ function LightStepC(props) {
             </div>
             <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
               <h2 className="font-medium title-font text-gray-900 mb-1 text-xl">
-                Instala y desbloquea metamask
+                Instala y utiliza metamask o tu Near wallet
               </h2>
               <p className="leading-relaxed">
-                con el podrás comprar tus nft e ingresar a tu panel,
+                con ellos podrás comprar tus nft e ingresar a tu panel,
               </p>
             </div>
           </div>
