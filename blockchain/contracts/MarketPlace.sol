@@ -288,4 +288,36 @@ contract MarketPlace is ERC721Enumerable {
         }
         return userTokens;
     }
+//metodo para la obtencion de la metadata de un token en especidifco
+ function getItemInfo(uint256 _token)public view returns(tokenData[] memory){
+      tokenData[] memory getone = new tokenData[](1);
+        getone[0]=tokensData[ _token] ;
+      return getone;
+       
+    }
+//metodo para la obtencion de un rango de tokensData
+  function obtenerNftsbyrango(uint256 _Mintoken,uint256 _Maxtoken) public view returns (tokenData[] memory) {
+        //obetenemos el numero acutal de tokens
+       
+        require(_tokenIds.current()>0,"al menos debe haber un token");
+        
+
+
+    //es el numero de tokens
+        uint256 nTokens = _tokenIds.current();
+        //es un arreglo temporal con todos los nfts
+         uint256 arr = _Maxtoken - _Mintoken;
+        tokenData[] memory onSaleTokensData = new tokenData[](arr);
+        //sacamos los nft del mapping y los almacenamos en el arreglo
+        for (uint256 index = 0; index < nTokens; index++) {
+            if(index >= _Mintoken && index <_Maxtoken ){
+                 onSaleTokensData[index] = tokensData[index];
+            }
+             if (index == _Maxtoken  ) break;
+           
+        }
+
+        return onSaleTokensData;
+    }
+
 }

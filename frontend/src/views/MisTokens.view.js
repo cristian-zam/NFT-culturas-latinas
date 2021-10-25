@@ -211,7 +211,7 @@ function MisTokens(props) {
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
             {nfts.nfts.length > 0 ? null : (
               <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-                Actualmente no tienes tokens en tu pertenencía.
+                Actualmente no tienes tokens en tu pertenencia.
               </p>
             )}
           </div>
