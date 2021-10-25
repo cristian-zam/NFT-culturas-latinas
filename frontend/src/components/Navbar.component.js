@@ -53,7 +53,7 @@ function LightHeaderB(props) {
   async function changeBlockchain(index) {
     setState({ dropdown: blockchains[index] });
     localStorage.setItem("blockchain", index);
-
+    window.localStorage.setItem("page",0)
     await signOut();
     window.location.reload();
   }
