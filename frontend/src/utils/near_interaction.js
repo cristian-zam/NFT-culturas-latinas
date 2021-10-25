@@ -22,9 +22,9 @@ export const config = {
     networkId: "mainnet",
     keyStore: new keyStores.BrowserLocalStorageKeyStore(),
     nodeUrl: "https://rpc.mainnet.near.org",
-    walletUrl: "https://wallet.mainnet.near.org",
+    walletUrl: "https://wallet.near.org",
     helperUrl: "https://helper.mainnet.near.org",
-    explorerUrl: "https://explorer.mainnet.near.org",
+    explorerUrl: "https://explorer.near.org",
   },
 };
 //son los metodos que tenemos en el smart contract
