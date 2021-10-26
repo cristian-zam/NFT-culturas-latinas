@@ -124,6 +124,7 @@ function LightHeroE(props) {
             price: fromNearToYocto(values.price),
             culture:values.culture,
             country:values.country,
+            creator:await getNearAccount(),
             on_sale: true,
           },
         };
