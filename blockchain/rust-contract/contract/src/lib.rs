@@ -53,8 +53,8 @@ impl Contract {
             //Metadata al momento de crear el contrato
             NFTContractMetadata {
                 spec: NFT_METADATA_SPEC.to_string(),
-                name: "Marketplace comunidades latinas".to_string(),
-                symbol: "ARTL".to_string(),
+                name: "Nativo NFT".to_string(),
+                symbol: "NTV".to_string(),
                 icon: Some(DATA_IMAGE_SVG_LATINART_ICON.to_string()),
                 base_uri: None,
                 reference: None,
