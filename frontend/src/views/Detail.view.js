@@ -158,6 +158,10 @@ function LightEcommerceB(props) {
           return err;
         });
     } else {
+      
+      let amount=parseFloat(state.tokens.price);
+      console.log("amount",amount)
+  
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
@@ -166,7 +170,7 @@ function LightEcommerceB(props) {
           token_id: state.tokens.tokenID,
         },
         300000000000000,
-        fromNearToYocto(state.tokens.price)
+        fromNearToYocto(amount)
       );
 
       console.log(toks);
