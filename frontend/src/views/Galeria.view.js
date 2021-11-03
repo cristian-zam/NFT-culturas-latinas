@@ -8,6 +8,7 @@ import {
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
 
+
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
     theme: "yellow",
@@ -156,6 +157,7 @@ function LightEcommerceA() {
               const tokenData = JSON.parse(token.data);
               return (
                 <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
+                 {tokenData.image &&
                   <a href={"/detail/" + token.tokenID}>
                     <div className="block relative h-48 rounded overflow-hidden">
                       <img
@@ -177,6 +179,7 @@ function LightEcommerceA() {
                       </p>
                     </div>
                   </a>
+                  }
                 </div>
               );
             })}
