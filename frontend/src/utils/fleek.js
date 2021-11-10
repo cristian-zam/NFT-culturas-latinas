@@ -4,8 +4,8 @@ import fs from 'fs';
 
 
 
-const apiKey =  'iGf4a54cmG+pJbtI4S6mdg==';
-const apiSecret = 'XW/quViqnvK97/b7FkqAgiS4Jup6LdiiaxIzE5kLXk4=';
+const apiKey =  'lFDwSNp377Ka9xqPXhpMAA==';
+const apiSecret = 'hn5Hw/720WA0f9I7v1UjDqXOhqHYhWCy/g9cKJkKYMk=';
 
 
 // getFile es para obtener archivos individuales, 
