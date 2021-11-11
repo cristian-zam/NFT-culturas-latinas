@@ -77,6 +77,7 @@ function LightEcommerceB(props) {
             price: toks.metadata.price,
             culture:toks.metadata.culture,
             country:toks.metadata.country,
+            creator:toks.metadata.creator,
           });
 
           setstate({
@@ -87,6 +88,7 @@ function LightEcommerceB(props) {
               price: fromYoctoToNear(toks.metadata.price),
               culture:toks.metadata.culture,
               country:toks.metadata.country,
+              creator:toks.metadata.creator,
             },
             jdata: {
               image: toks.metadata.media,
@@ -94,6 +96,7 @@ function LightEcommerceB(props) {
               description: toks.metadata.description,
               culture:toks.metadata.culture,
               country:toks.metadata.country,
+              creator:toks.metadata.creator,
             },
             owner: toks.owner_id,
           });
@@ -155,6 +158,10 @@ function LightEcommerceB(props) {
           return err;
         });
     } else {
+      
+      let amount=parseFloat(state.tokens.price);
+      console.log("amount",amount)
+  
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
@@ -163,7 +170,7 @@ function LightEcommerceB(props) {
           token_id: state.tokens.tokenID,
         },
         300000000000000,
-        fromNearToYocto(state.tokens.price)
+        fromNearToYocto(amount)
       );
 
       console.log(toks);
@@ -274,6 +281,15 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">Propietario</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
                 {state?.owner}
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Creador</span>
+              <span className="ml-auto text-gray-900 text-xs self-center">
+                {state?.jdata.creator}
               </span>
             </div>
 

@@ -124,13 +124,14 @@ function LightHeroE(props) {
             price: fromNearToYocto(values.price),
             culture:values.culture,
             country:values.country,
+            creator:await getNearAccount(),
             on_sale: true,
           },
         };
         console.log(payload);
         console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);
-        alert(payload);
+       // alert(payload);
       let tokenresult=  contract.minar(
           payload,
           300000000000000, // attached GAS (optional)

@@ -8,15 +8,16 @@ import {
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
 
+
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
     theme: "yellow",
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
-    page: window.localStorage.getItem("page"),
+    page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 6,
+    tokensPerPageNear: 18,
   });
 
   async function getPage(pag) {
@@ -109,10 +110,11 @@ function LightEcommerceA() {
       } else {
         //instanciar contracto
         let contract = await getNearContract();
+        console.log("Page",Landing.page)
         //obtener tokens a la venta
         toks = await contract.obtener_pagina_v2({
-          from_index: 0,
-          limit: 6,
+          from_index: Landing.page,
+          limit: Landing.tokensPerPageNear,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -129,13 +131,13 @@ function LightEcommerceA() {
           };
         });
 
-        console.log(toks);
-        console.log(onSaleToks);
-
+        console.log("toks",toks);
+        console.log("onsale",onSaleToks);
+        console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
         });
       }
     })();
@@ -155,20 +157,22 @@ function LightEcommerceA() {
               //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
               return (
-                <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
+                <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                 {tokenData.image &&
                   <a href={"/detail/" + token.tokenID}>
-                    <div className="block relative h-48 rounded overflow-hidden">
+                    <div className="token">
+                    <div className="block relative h-48 overflow-hidden">
                       <img
                         alt="ecommerce"
-                        className="object-cover object-center w-full h-full block"
+                        className="imgaa object-cover object-center w-full h-full block"
                         src={`https://ipfs.io/ipfs/${tokenData.image}`}
                       />
                     </div>
                     <div className="mt-4">
-                      <h2 className="text-gray-900 title-font text-lg font-medium">
+                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
                         {tokenData.title}
                       </h2>
-                      <p className="mt-1">
+                      <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
@@ -176,7 +180,9 @@ function LightEcommerceA() {
                               token.price + " " + Landing.currency}
                       </p>
                     </div>
+                    </div>
                   </a>
+                  }
                 </div>
               );
             })}
@@ -185,7 +191,7 @@ function LightEcommerceA() {
           <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
-          >
+          > 
             {Landing?.page != 0 && (
               <a
                 href="#"
@@ -218,7 +224,7 @@ function LightEcommerceA() {
                   }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
-                    //await getPage(index);
+                    await getPage(index);
                     window.localStorage.setItem("page",index);
                     window.location.reload();
                   }}
