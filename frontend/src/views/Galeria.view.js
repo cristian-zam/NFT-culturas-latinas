@@ -158,14 +158,18 @@ function LightEcommerceA() {
               const tokenData = JSON.parse(token.data);
               return (
                 <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
-                 {tokenData.image &&
+                 {tokenData.image ?
                   <a href={"/detail/" + token.tokenID}>
                     <div className="block relative h-48 rounded overflow-hidden">
-                      <img
-                        alt="ecommerce"
-                        className="object-cover object-center w-full h-full block"
-                        src={`https://ipfs.io/ipfs/${tokenData.image}`}
-                      />
+                    
+                       <img
+                            alt="ecommerce"
+                            className="object-cover object-center w-full h-full block"
+                            src={`https://ipfs.io/ipfs/${tokenData.image}`}
+                          /> 
+               
+                   
+                           
                     </div>
                     <div className="mt-4">
                       <h2 className="text-gray-900 title-font text-lg font-medium">
@@ -180,6 +184,11 @@ function LightEcommerceA() {
                       </p>
                     </div>
                   </a>
+                  :
+                  <img 
+                     src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 
+                     className="object-cover object-center w-full h-full block" />
+
                   }
                 </div>
               );
