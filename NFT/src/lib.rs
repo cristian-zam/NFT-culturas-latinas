@@ -7,6 +7,7 @@ use near_contract_standards::non_fungible_token::NonFungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LazyOption;
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
+use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
     env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, PromiseOrValue,
 };
@@ -27,6 +28,25 @@ pub struct Contract {
     tokens: NonFungibleToken,
     metadata: LazyOption<NFTContractMetadata>,
     n_token_on_sale: u64,
+}
+#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Meta {
+    title : String,
+    description : String,
+    media : String,
+    culture : String,
+    country : String,
+    creator : String,
+    price : String,
+}
+#[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Extras {
+    culture : String,
+    country : String,
+    creator : String,
+    price : String,
 }
 impl Default for Contract {
     
@@ -149,6 +169,27 @@ impl Contract {
 
     pub fn storage_byte_cost() -> Balance {
         env::storage_byte_cost()
+    }
+
+    pub fn get_token(&self, token_id: TokenId) -> Meta {
+        let mut metadata = self
+            .tokens
+            .token_metadata_by_id
+            .as_ref()
+            .and_then(|by_id| by_id.get(&token_id))
+            .unwrap();
+        let newextradata = str::replace(&metadata.extra.as_ref().unwrap().to_string(), "'", "\"");
+        let extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();
+        let token = Meta {
+            title : metadata.title.as_ref().unwrap().to_string(),
+            description : metadata.description.as_ref().unwrap().to_string(),
+            media : metadata.media.as_ref().unwrap().to_string(),
+            culture : extradatajson.culture,
+            country : extradatajson.country,
+            creator : extradatajson.creator,
+            price : extradatajson.price
+        };
+        token
     }
  
  
