@@ -31,6 +31,7 @@ setup_alloc!();
 pub struct Contract {
     tokens: NonFungibleToken,
     metadata: LazyOption<NFTContractMetadata>,
+    nTokenOnAuction: u64,
     nTokenOnSale: u64,
 }
 
@@ -117,6 +118,19 @@ impl Contract {
         token_metadata: TokenMetadata,
     ) -> Token {
         self.nTokenOnSale += 1;
+        self.tokens.mint(
+            self.tokens.owner_by_id.len().to_string(),
+            token_owner_id,
+            Some(token_metadata),
+        )
+    }
+    #[payable]
+    pub fn minarauction(
+        &mut self,
+        token_owner_id: ValidAccountId,
+        token_metadata: TokenMetadata,
+    ) -> Token {
+        self.nTokenOnAuction += 1;
         self.tokens.mint(
             self.tokens.owner_by_id.len().to_string(),
             token_owner_id,
@@ -349,6 +363,7 @@ impl Contract {
             limit,
             inicioPag
         );
+        let mut token_id="1"
         let mut counter: usize = 0;
         self.tokens
             .owner_by_id

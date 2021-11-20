@@ -39,6 +39,11 @@ pub struct Meta {
     country : String,
     creator : String,
     price : String,
+    on_sale: bool, // sale status
+    on_auction: bool, //auction status
+    adressbidder: String,
+    highestbidder: String,
+    lowestbidder: String,
 }
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -47,6 +52,11 @@ pub struct Extras {
     country : String,
     creator : String,
     price : String,
+    on_sale: bool, // sale status
+    on_auction: bool, //auction status
+    adressbidder: String,
+    highestbidder: String,
+    lowestbidder: String,
 }
 impl Default for Contract {
     
@@ -171,6 +181,26 @@ impl Contract {
         env::storage_byte_cost()
     }
 
+    pub fn get_on_sale_toks(&self) -> u64 {
+        self.n_token_on_sale
+    }
+
+    pub fn update_token(&mut self, token_id: TokenId, extra: String) -> TokenMetadata {
+        //assert!(!env::state_exists(), "Already initialized");
+        let mut metadata = self
+            .tokens
+            .token_metadata_by_id
+            .as_ref()
+            .and_then(|by_id| by_id.get(&token_id))
+            .unwrap();
+        metadata.extra = Some(extra);
+        self.tokens
+            .token_metadata_by_id
+            .as_mut()
+            .and_then(|by_id| by_id.insert(&token_id, &metadata));
+        metadata
+    }
+
     pub fn get_token(&self, token_id: TokenId) -> Meta {
         let mut metadata = self
             .tokens
@@ -187,11 +217,31 @@ impl Contract {
             culture : extradatajson.culture,
             country : extradatajson.country,
             creator : extradatajson.creator,
-            price : extradatajson.price
+            price : extradatajson.price,
+            on_sale: extradatajson.on_sale, // sale status
+            on_auction: extradatajson.on_auction, //auction status
+            adressbidder: extradatajson.adressbidder,
+            highestbidder: extradatajson.highestbidder,
+            lowestbidder:extradatajson.lowestbidder
         };
         token
     }
  
+    pub fn obtener_pagina_v2(&self, from_index: usize, limit: u64) -> Vec<Token> {
+        // no estoy segyri de como convierte  de U128 a u128
+        let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
+        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
+        let inicioPag = start_index as usize * limit;
+
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");
+        let mut counter: usize = 0;
+        self.tokens
+            .owner_by_id
+            .iter()
+            .take(limit)
+            .map(|(token_id, owner_id)| self.enum_get_token(owner_id, token_id))
+            .collect()
+    }
  
     #[private]
     #[init(ignore_state)]

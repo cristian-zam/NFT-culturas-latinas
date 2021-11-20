@@ -34,6 +34,10 @@ pub struct OldTokenMetadata {
     pub culture: Option<String>, // is the culture
     pub country: Option<String>, // is the country
     pub on_sale: Option<bool>, // sale status
+    pub on_auction: Option<bool>, //auction status
+    pub adressbidder: Option<String>, //
+    pub highestbidder: Option<String>,
+    pub lowestbidder: Option<String>,
     pub expires_at: Option<String>, // ISO 8601 datetime when token expires
     pub starts_at: Option<String>, // ISO 8601 datetime when token starts being valid
     pub updated_at: Option<String>, // ISO 8601 datetime when token was last updated

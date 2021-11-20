@@ -7,9 +7,9 @@ import {
 } from "near-api-js";
 
 export const storage_byte_cost = 10000000000000000000;
-export const contract_name = "nativo.near";
+//export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-//export const contract_name = "dev-1635451183977-29695262843491";
+export const contract_name = "dev-1637267801859-20469714689569";
 
 export const config = {
   testnet: {
@@ -54,7 +54,7 @@ export const methodOptions = {
  *hacemos el signIn con near
  */
 export async function nearSignIn(URL) {
-  window.near = await connect(config.mainnet);
+  window.near = await connect(config.testnet);
   window.wallet = new WalletConnection(window.near, "latina");
 
   window.wallet.requestSignIn(
@@ -67,7 +67,7 @@ export async function nearSignIn(URL) {
 
 export async function isNearReady() {
   // conectarse a near
-  const near = await connect(config.mainnet);
+  const near = await connect(config.testnet);
 
   // crear una wallet
   const wallet = new WalletConnection(near);
@@ -80,7 +80,7 @@ export async function isNearReady() {
  */
 export async function getNearContract() {
   // conectarse a near
-  const near = await connect(config.mainnet);
+  const near = await connect(config.testnet);
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
@@ -114,7 +114,7 @@ export function fromYoctoToNear(yocto) {
  * */
 export async function getNearAccount() {
   // conectarse a near
-  const near = await connect(config.mainnet);
+  const near = await connect(config.testnet);
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
@@ -124,7 +124,7 @@ export async function getNearAccount() {
 
 export async function signOut() {
   // conectarse a near
-  const near = await connect(config.mainnet);
+  const near = await connect(config.testnet);
 
   // crear una wallet de
   const wallet = new WalletConnection(near);
