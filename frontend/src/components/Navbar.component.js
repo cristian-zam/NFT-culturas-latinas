@@ -169,7 +169,7 @@ function LightHeaderB(props) {
       </div>
     </header>
       <div className={`beta ${Beta ? "h-auto": ""}`}>
-        Beta
+      <p>Esta es una versión beta pública - Úselo bajo su propio riesgo - Código no auditado</p>
         <img src="x.png" title="Cerrar" onClick={e=>closeBeta()}/>
       </div>
     </>

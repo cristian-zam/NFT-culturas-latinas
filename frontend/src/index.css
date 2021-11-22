@@ -135,7 +135,7 @@ iframe {
   justify-content: center;
   align-items: center;
   color: white;
-  font-size: 20pt;
+  font-size: 12pt;
   position: relative;
   overflow: hidden;
   height: 0px;
@@ -147,10 +147,14 @@ iframe {
   padding: 3px;
 }
 
+.beta > p {
+  max-width:80%;
+  margin-right: 30px;
+}
 
 .beta > img {
   position: absolute;
-  right: 50px;
+  right: 20px;
   max-width: 20px;
   filter: invert(1);
   cursor: pointer;
