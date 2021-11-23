@@ -9,7 +9,7 @@ use near_sdk::collections::LazyOption;
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
-    env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, PromiseOrValue,
+    env, log, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, PromiseOrValue,
 };
  
 
@@ -32,6 +32,8 @@ pub struct Contract {
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct Meta {
+    token_id : String,
+    owner_id : String,
     title : String,
     description : String,
     media : String,
@@ -44,6 +46,8 @@ pub struct Meta {
     adressbidder: String,
     highestbidder: String,
     lowestbidder: String,
+    expires_at: String,
+    starts_at: String,
 }
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -57,6 +61,8 @@ pub struct Extras {
     adressbidder: String,
     highestbidder: String,
     lowestbidder: String,
+    expires_at: String,
+    starts_at: String,
 }
 impl Default for Contract {
     
@@ -177,6 +183,91 @@ impl Contract {
         )
     }
 
+    // #[payable]
+    // pub fn comprar_nft(&mut self, token_id: TokenId) -> TokenMetadata {
+    //     //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
+    //     //let token_id_u64 = token_id.parse::<u64>().unwrap();
+
+    //     assert_eq!(
+    //         token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(),
+    //         true,
+    //         "ese token no existe "
+    //     );
+    //     //obtener los metadatos de ese token
+    //     let mut metadata = self
+    //         .tokens
+    //         .token_metadata_by_id
+    //         .as_ref()
+    //         .and_then(|by_id| by_id.get(&token_id))
+    //         .unwrap();
+
+    //     // si no cuenta con los fondos hacemos rollback
+    //     let amount = env::attached_deposit();
+    //     assert_eq!(
+    //         metadata.price.as_ref().unwrap().parse::<u128>().unwrap(),
+    //         amount,
+    //         "fondos insuficientes"
+    //     );
+    //     assert_eq!(
+    //         metadata.on_sale.as_ref().unwrap(),
+    //         &true, 
+    //         "no esta a la venta"
+    //     );
+
+    //     //revisar que este a la venta
+    //     //obtener el dueño del token
+    //     let token_owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+    //     //obtener el creador del token
+    //     let creator_id = metadata.creator.as_ref().unwrap();
+    //     //obtener el comprador del token
+    //     let buyer_id = &env::signer_account_id();
+    //      //obtener la regalia,la comision de Nativo y el pagoa al autor del token
+    //      let mut  res:f64=0.0;
+    //      let mut  roy:f64=0.0;
+    //      let mut  gains:f64=0.0;
+    //      let mut  pay:f64=0.0;
+    //      roy = amount as f64 *0.10;
+    //      gains=amount as f64 *0.03;
+    //      pay=amount as f64 *0.87;
+          
+    //     let my_string = metadata.price.as_ref().unwrap().to_string();  // `parse()` works with `&str` and `String`!
+    //     let price_meta = my_string.parse::<u128>().unwrap();
+    //     let regal = amount-price_meta ;
+
+       
+    //     // el dueñp no puede comprar su propio token
+    //     assert_eq!(buyer_id == &token_owner_id, false, "eres el dueño del token ");
+    //     //cambiar la metadata
+    //     metadata.on_sale = Some(false);
+    //     //remplazamos la metadata
+    //     self.tokens
+    //         .token_metadata_by_id
+    //         .as_mut()
+    //         .and_then(|by_id| by_id.insert(&token_id, &metadata));
+    //     //transferir los nears
+    //     //TODO: entender como consultar si la transferencia fue exitosa
+
+    //     /*
+    //     let promise = Promise::new(owner_id.clone())
+    //         .transfer(amount)
+    //         .function_call("tx_status_callback".into(), vec![], 0, 0);
+    //     */
+    //     Promise::new(token_owner_id.clone()).transfer(pay as  u128);
+    
+    //     //TODO: transferir la regalia del token
+    //     Promise::new(creator_id.clone()).transfer(gains as u128);
+    //     //TODO: transferir la regalia del token
+    //     Promise::new(env::predecessor_account_id().clone()).transfer(roy as u128);
+    //     //transferir el nft
+    //     self.tokens
+    //         .internal_transfer_unguarded(&token_id, &token_owner_id, buyer_id);
+
+    //     //cambiar el numero de nfts disponibles
+    //     self.nTokenOnSale -= 1;
+    //     //retornar la metadata
+    //     metadata
+    // }
+
     pub fn storage_byte_cost() -> Balance {
         env::storage_byte_cost()
     }
@@ -201,7 +292,8 @@ impl Contract {
         metadata
     }
 
-    pub fn get_token(&self, token_id: TokenId) -> Meta {
+    pub fn get_token(&self, token_id: TokenId, owner_id: AccountId) -> Meta {
+        
         let mut metadata = self
             .tokens
             .token_metadata_by_id
@@ -211,6 +303,8 @@ impl Contract {
         let newextradata = str::replace(&metadata.extra.as_ref().unwrap().to_string(), "'", "\"");
         let extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();
         let token = Meta {
+            token_id : token_id.to_string(),
+            owner_id : owner_id.to_string(),
             title : metadata.title.as_ref().unwrap().to_string(),
             description : metadata.description.as_ref().unwrap().to_string(),
             media : metadata.media.as_ref().unwrap().to_string(),
@@ -222,12 +316,14 @@ impl Contract {
             on_auction: extradatajson.on_auction, //auction status
             adressbidder: extradatajson.adressbidder,
             highestbidder: extradatajson.highestbidder,
-            lowestbidder:extradatajson.lowestbidder
+            lowestbidder:extradatajson.lowestbidder,
+            expires_at: extradatajson.expires_at,
+            starts_at: extradatajson.starts_at,
         };
         token
     }
  
-    pub fn obtener_pagina_v2(&self, from_index: usize, limit: u64) -> Vec<Token> {
+    pub fn obtener_pagina_v2(&self, from_index: usize, limit: u64) -> Vec<Meta> {
         // no estoy segyri de como convierte  de U128 a u128
         let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
         let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
@@ -239,7 +335,7 @@ impl Contract {
             .owner_by_id
             .iter()
             .take(limit)
-            .map(|(token_id, owner_id)| self.enum_get_token(owner_id, token_id))
+            .map(|(token_id, owner_id)| self.get_token(token_id, owner_id))
             .collect()
     }
  

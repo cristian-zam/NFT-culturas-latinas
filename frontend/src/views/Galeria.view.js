@@ -28,9 +28,9 @@ function LightEcommerceA() {
         .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
         .call();
 
-      datatokens = await getContract()
-      .methods.get_token(Landing.tokensPerPage, 2)
-      .call();
+      // datatokens = await getContract()
+      // .methods.get_token(Landing.tokensPerPage, 2)
+      // .call();
       //filtrar tokens
       let copytoks = toks.filter((tok) => tok.onSale);
 
@@ -62,10 +62,10 @@ function LightEcommerceA() {
       toks = toks.map((tok) => {
         return {
           tokenID: tok.token_id,
-          price: fromYoctoToNear(tok.metadata.price),
+          price: fromYoctoToNear(tok.price),
           data: JSON.stringify({
-            title: tok.metadata.title,
-            image: tok.metadata.media,
+            title: tok.title,
+            image: tok.media,
           }),
         };
       });
@@ -128,10 +128,13 @@ function LightEcommerceA() {
         toks = toks.map((tok) => {
           return {
             tokenID: tok.token_id,
-            //price: fromYoctoToNear(tok.metadata.extra.price),
+            price: fromYoctoToNear(tok.price),
             data: JSON.stringify({
-              title: tok.metadata.title,
-              image: tok.metadata.media,
+              title: tok.title,
+              image: tok.media,
+              on_sale: tok.on_sale, // sale status
+              on_auction: tok.on_auction, //auction status
+              highestbidder: tok.highestbidder,
             }),
           };
         });

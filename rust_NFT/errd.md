@@ -25,6 +25,8 @@ near call dev-1636751893359-19496702378959 get_token '{"token_id": "1"}' --accou
 
 near call dev-1636751893359-19496702378959 update_token '{"token_id": "1", "extra":"{'"'culture'":"'Burriroca'","'country'":"'BurritoLand'","'creator'":"'dev-1636751893359-19496702378959'","'price'":"'20'"}'"}' --accountId dev-1636751893359-19496702378959
 
-near call dev-1636751893359-19496702378959 update_token '{"token_id": "1", "extra":"{'"'culture'":"'Burriroca'","'country'":"'BurritoLand'","'creator'":"'dev-1636751893359-19496702378959'","'price'":"'20'","'on_sale'":"true","'on_auction'":"false","'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'"}'"}' --accountId dev-1636751893359-19496702378959
+near call dev-1636751893359-19496702378959 update_token '{"token_id": "1", "extra":"{'"'culture'":"'Burriroca'","'country'":"'BurritoLand'","'creator'":"'dev-1636751893359-19496702378959'","'price'":"'20'","'on_sale'":"true","'on_auction'":"false","'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}' --accountId dev-1636751893359-19496702378959
 
 near view dev-1636751893359-19496702378959 obtener_pagina_v2 '{"from_index":1,"limit":3}' --accountId dev-1636751893359-19496702378959
+
+near call dev-1636751893359-19496702378959 minar '{"token_owner_id": "dev-1636751893359-19496702378959", "token_metadata": { "title": "Tenochtitlan", "description": "This is Tenochtitlan", "media": "imagenimagenimagenimagenimagenim","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'dev-1636751893359-19496702378959'","'price'":"'10'","'on_sale'":"true","'on_auction'":"false","'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}}' --accountId dev-1636751893359-19496702378959 --amount 0.1

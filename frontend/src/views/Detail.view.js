@@ -69,8 +69,7 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toksnft = await contract.nft_token({ token_id: tokenid });
-          let toks = await contract.get_token({ token_id: tokenid });
+          let toks = await contract.get_token({ token_id: tokenid ,owner_id: "hi"});
           console.log("Token")
           console.log(toks)
           // console.log({
@@ -85,7 +84,7 @@ function LightEcommerceB(props) {
           setstate({
             ...state,
             tokens: {
-              tokenID: toksnft.token_id,
+              tokenID: toks.token_id,
               onSale: toks.on_sale,
               price: fromYoctoToNear(toks.price),
               // culture:toks.culture,
@@ -100,7 +99,7 @@ function LightEcommerceB(props) {
               country:toks.country,
               creator:toks.creator,
             },
-            owner: toksnft.owner_id,
+            owner: toks.owner_id,
           });
           console.log("state",state )
         }
