@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name = "dev-1637267801859-20469714689569";
+export const contract_name = "dev-1636751893359-19496702378959";
 
 export const config = {
   testnet: {
@@ -34,20 +34,28 @@ export const config = {
 export const methodOptions = {
   viewMethods: [
     "obtener_pagina_v2",
+    "get_token",
+    "get_on_sale_toks",
+    "storage_byte_cost",
+    "enum_get_token",
     "nft_token",
     "nft_total_supply",
-    "nft_tokens",
-    "tokens_of",
-    "storage_byte_cost",
-    "get_on_sale_toks",
-    "nft_tokens_for_owner",
-    "nft_supply_for_owner",
+
+    // "nft_tokens",
+    // "tokens_of",
+    // "storage_byte_cost",
+    // "get_on_sale_toks",
+    // "nft_tokens_for_owner",
+    // "nft_supply_for_owner",
   ],
   changeMethods: [
+    "update_token",
     "minar",
-    "comprar_nft",
-    "revender",
-    "quitar_del_market_place",
+
+    // "minar",
+    // "comprar_nft",
+    // "revender",
+    // "quitar_del_market_place",
   ],
 };
 /**

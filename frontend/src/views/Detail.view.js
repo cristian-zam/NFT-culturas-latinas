@@ -69,36 +69,38 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toks = await contract.nft_token({ token_id: tokenid });
+          let toksnft = await contract.nft_token({ token_id: tokenid });
+          let toks = await contract.get_token({ token_id: tokenid });
+          console.log("Token")
           console.log(toks)
-          console.log({
-            tokenID: toks.token_id,
-            onSale: toks.metadata.on_sale,
-            price: toks.metadata.price,
-            culture:toks.metadata.culture,
-            country:toks.metadata.country,
-            creator:toks.metadata.creator,
-          });
+          // console.log({
+          //   tokenID: toks.token_id,
+          //   onSale: toks.metadata.on_sale,
+          //   price: toks.metadata.price,
+          //   culture:toks.metadata.culture,
+          //   country:toks.metadata.country,
+          //   creator:toks.metadata.creator,
+          // });
 
           setstate({
             ...state,
             tokens: {
-              tokenID: toks.token_id,
-              onSale: toks.metadata.on_sale,
-              price: fromYoctoToNear(toks.metadata.price),
-              culture:toks.metadata.culture,
-              country:toks.metadata.country,
-              creator:toks.metadata.creator,
+              tokenID: toksnft.token_id,
+              onSale: toks.on_sale,
+              price: fromYoctoToNear(toks.price),
+              // culture:toks.culture,
+              // country:toks.country,
+              // creator:toks.metadata.creator,
             },
             jdata: {
-              image: toks.metadata.media,
-              title: toks.metadata.title,
-              description: toks.metadata.description,
-              culture:toks.metadata.culture,
-              country:toks.metadata.country,
-              creator:toks.metadata.creator,
+              // image: toks.metadata.media,
+              // title: toks.metadata.title,
+              // description: toks.metadata.description,
+              culture:toks.culture,
+              country:toks.country,
+              creator:toks.creator,
             },
-            owner: toks.owner_id,
+            owner: toksnft.owner_id,
           });
           console.log("state",state )
         }

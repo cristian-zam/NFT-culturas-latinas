@@ -22,15 +22,20 @@ function LightEcommerceA() {
 
   async function getPage(pag) {
     let toks;
+    let datatokens;
     if (Landing.blockchain == "0") {
       toks = await getContract()
         .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
         .call();
 
+      datatokens = await getContract()
+      .methods.get_token(Landing.tokensPerPage, 2)
+      .call();
       //filtrar tokens
       let copytoks = toks.filter((tok) => tok.onSale);
 
       console.log(toks);
+      console.log(datatokens);
       //convertir los precios de wei a eth
       copytoks = copytoks.map((tok) => {
         return { ...tok, price: fromWEItoEth(tok.price) };
@@ -123,7 +128,7 @@ function LightEcommerceA() {
         toks = toks.map((tok) => {
           return {
             tokenID: tok.token_id,
-            price: fromYoctoToNear(tok.metadata.price),
+            //price: fromYoctoToNear(tok.metadata.extra.price),
             data: JSON.stringify({
               title: tok.metadata.title,
               image: tok.metadata.media,

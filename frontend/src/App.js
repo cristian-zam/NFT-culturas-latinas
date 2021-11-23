@@ -11,6 +11,7 @@ import Galeria from "./views/Galeria.view";
 import Detail from "./views/Detail.view";
 import Mint from "./views/mintNft.view";
 import MisNfts from "./views/MisTokens.view";
+import Auction from "./views/auction.view";
 
 import notFound from "./views/notFound.view";
 
@@ -60,6 +61,7 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
             <BlockchainProtectedRoute path="/galeria" component={Galeria} />
+            <BlockchainProtectedRoute path="/auction/:tokenid" component={Auction} />
             <BlockchainProtectedRoute
               path="/detail/:tokenid"
               component={Detail}
