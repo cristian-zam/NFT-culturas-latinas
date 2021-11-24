@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import nearicon from "../icons/near.svg";
-import Roadmap from '../assets/Roadmap.pdf'
+import Roadmap from '../assets/img/Roadmap.pdf'
 import nativoLogo from '../assets/img/nativologocrop.png'
 
 function LightFooterB(props) {
