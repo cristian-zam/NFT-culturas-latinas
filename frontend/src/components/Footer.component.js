@@ -33,7 +33,7 @@ function LightFooterB(props) {
             </h2>
             <nav className="list-none mb-10">
             <li>
-                <a href={Roadmap} target="_blank" className="text-gray-600 hover:text-gray-800">
+                <a href="https://drive.google.com/file/d/1IHNp3aHcUDjn8Iws8cObC3qWWVEVcj-7/view" target="_blank" className="text-gray-600 hover:text-gray-800">
                   Mapa de ruta
                 </a>
             </li>
