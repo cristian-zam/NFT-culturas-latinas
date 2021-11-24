@@ -32,37 +32,11 @@ function LightFooterB(props) {
             </h2>
             <nav className="list-none mb-10">
             <li>
-                <a href="/Roadmap Nativo NFT.pdf" target="_blank" className="text-gray-600 hover:text-gray-800">
+                <a href="/Roadmap.pdf" target="_blank" className="text-gray-600 hover:text-gray-800">
                 Mapa de ruta
                 </a>
               </li>
-              <li>
-                <a href="/blog" className="text-gray-600 hover:text-gray-800">
-                  Blog
-                </a>
-              </li>
-
-              <li>
-                <a href="/faq" className="text-gray-600 hover:text-gray-800">
-                  Faq
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/partners"
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  Partners
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contacto"
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  Contacto
-                </a>
-              </li>
+              
             </nav>
           </div>
 
