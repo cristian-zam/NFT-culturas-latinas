@@ -814,34 +814,73 @@ code {
   border: 1px solid rgb(226, 226, 226);
   border-radius: 5px ;
   margin-bottom: 15px;
+  padding: 3px;
+  position: relative;
+  /* height: 280px; */
   /* scale border mb-4 */
 }
 .token:hover{
-  transform: scale(1.05);
+  transform: scale(1.01);
   position: unset;
   border-color:  rgb(255, 212, 95);
+  
 }
-.token:active{
+.token-h:hover{
+  /* position: absolute; */
+  /* transform: ; */
+  /* height: 325px; */
+  /* transform: scale3d(200,0,00); */
+  /* transition: position 10s;  */
+  
+}
+
+.token-a1:active{
   border-color:  rgb(95, 236, 255);
-  transform: scale(1.04);
+  transform: scale(1.0);
 }
 .imgaa{
   transform: scale(1);
   animation-name:zoom; 
-  
 }
 .token:hover .imgaa{
-  transform: scale(1);
-  animation-duration: 7s;
+  transform: scale(1.05);
+  transition: transform 10s;
+
+
+  /* animation-duration: 7s;
   animation-direction: alternate;
-  animation-delay: 5s;
-  animation-iteration-count: infinite;
+  /* animation-delay: 5s; */
+  /* animation-iteration-count: infinite; */
 }
-@keyframes zoom{
-  from{
-    transform: scale(1);
-  }
-  to{
-    transform: scale(1.02);
-  }
+
+.auction-info{
+  position: absolute;
+  background: red;
+  top: 0;
+}
+
+.btn-1{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  background: rgb(230, 173, 19);
+  border-radius: 3px;
+  height: 0;
+  overflow: hidden;
+}
+
+.btn-1:hover{
+  transform: scale(1.005);
+  background: rgb(179, 135, 15);
+
+}
+
+.token:hover .btn-1{
+  padding: 5px;
+  height: 30px;
+}
+.btn-1:active{
+  transform: scale(1);
 }
