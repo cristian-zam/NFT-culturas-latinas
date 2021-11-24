@@ -167,7 +167,7 @@ function LightEcommerceA() {
               return (
                 <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
                  {tokenData.image ?
-                  <div href={"/detail/" + token.tokenID}>
+                  <a href={"/detail/" + token.tokenID}>
                     <div className="token token-h">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
@@ -191,10 +191,10 @@ function LightEcommerceA() {
                       <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
-                            Ultima puja  <b>{"0.00001 "+ Landing.currency}</b>
+                            Ultima puja:  <b>{"0.00001 "+ Landing.currency}</b>
                         {/* {"Ultima puja 0.0001 " + Landing.currency} */}
                       </p>
-                      <a href={"/detail/" + token.tokenID}
+                      {/* <a href={"/detail/" + token.tokenID}
                         className="btn-1"
                         // disabled={state?.btnDisabled}
                         onClick={async () => {
@@ -202,10 +202,10 @@ function LightEcommerceA() {
                         }}
                         >
                         Ver 
-                      </a>
+                      </a> */}
                     </div>
                     </div>
-                  </div>
+                  </a>
                   :
                   <img 
                      src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 

@@ -168,11 +168,12 @@ function LightEcommerceA() {
                 <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
                  {tokenData.image ?
                   <a href={"/detail/" + token.tokenID}>
+                    <div className="token">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
                        <img
                             alt="ecommerce"
-                            className="object-cover object-center w-full h-full block"
+                            className="imgaa object-cover object-center w-full h-full block"
                             src={`https://ipfs.io/ipfs/${tokenData.image}`}
                           /> 
                
@@ -180,16 +181,17 @@ function LightEcommerceA() {
                            
                     </div>
                     <div className="mt-4">
-                      <h2 className="text-gray-900 title-font text-lg font-medium">
+                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
                         {tokenData.title}
                       </h2>
-                      <p className="mt-1">
+                      <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
                               token.price + " " + Landing.currency}
                       </p>
+                    </div>
                     </div>
                   </a>
                   :
