@@ -69,7 +69,7 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toks = await contract.get_token({ token_id: tokenid ,owner_id: "hi"});
+          let toks = await contract.get_token({ token_id: tokenid ,owner_id: "dev-1636751893359-19496702378959"});
           console.log("Token")
           console.log(toks)
           // console.log({

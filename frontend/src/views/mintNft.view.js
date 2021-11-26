@@ -122,13 +122,10 @@ function LightHeroE(props) {
             description: values.description,
             media: values.image,
             media_hash: "hashhashhashhashhashhashhashhash",
-            price: fromNearToYocto(values.price),
-            culture:values.culture,
-            country:values.country,
-            creator:await getNearAccount(),
-            on_sale: true,
+            extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
         };
+        console.log(contract);
         console.log(payload);
         console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);

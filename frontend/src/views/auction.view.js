@@ -103,7 +103,7 @@ function LightEcommerceB(props) {
           window.location.href = "/galeria";
         } else {
           let toksnft = await contract.nft_token({ token_id: tokenid });
-          let toks = await contract.get_token({ token_id: tokenid });
+          let toks = await contract.get_token({ token_id: tokenid, owner_id: "dev-1636751893359-19496702378959" });
           console.log(toks)
           // console.log({
           //   tokenID: toks.token_id,
