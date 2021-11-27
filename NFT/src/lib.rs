@@ -180,16 +180,31 @@ impl Contract {
      */
     #[payable]
     pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,) -> Token {
-        self.n_token_on_sale += 1;
-        self.tokens.mint(
+        let Contractaccount: AccountId = "dev-1636751893359-19496702378959".parse().unwrap();
+        let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
+       // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
+       
+       self.n_token_on_sale += 1;
+
+       let mined= self.tokens.mint(
             self.tokens.owner_by_id.len().to_string(),
-            token_owner_id,//cambiar por la direccion del contrato
+            account,   // token_owner_id,//cambiar por la direccion del contrato this.address
             Some(token_metadata),
-        )
+        ); //Retorna    x.token_id
             //una vez minada hacer un tranfer del contract al owner
              //transferir el nft
-     /*    self.tokens
-        .internal_transfer_unguarded(&token_id, contractAddres, token_owner_id); */
+              let token_id: TokenId =self.n_token_on_sale.to_string();
+           /*  let owner_id = self.tokens.owner_by_id.get(&token_id);
+             let Contractowner_value = owner_id.as_deref().unwrap_or("default string");  
+   
+            
+             let mut owner = String::from(token_owner_id.to_string()); */
+           //  log!("owner {}, tokenid : {} ,contract {}",&owner,token_id,Contractowner_value.to_string());
+        self.tokens
+        .internal_transfer_unguarded(&token_id, &Contractaccount.to_string(), &token_owner_id.to_string());
+        //log!("tranfer done");
+        let mut originaltoken = Contract::enum_get_token( &self,  token_owner_id.to_string(),token_id.clone());
+        originaltoken
     }
 
     #[payable]
@@ -394,7 +409,7 @@ impl Contract {
             .owner_by_id
             .iter()
             .take(limit)
-            .map(|(token_id, owner_id)| self.get_token(token_id, owner_id))
+            .map(|(token_id, owner_id)| self.get_token(token_id, "dev-1636751893359-19496702378959".to_string()))
             .collect()
     }
  
