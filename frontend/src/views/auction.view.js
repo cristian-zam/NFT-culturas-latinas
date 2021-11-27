@@ -315,7 +315,7 @@ function LightEcommerceB(props) {
             </div>
 
             <div
-              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 bg-gray-50`}
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Creador</span>
               <span className="ml-auto text-gray-900 text-xs self-center">
@@ -326,6 +326,17 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
+              <span className="text-gray-500">Ultima puja</span>
+              <span className="ml-auto text-gray-900">
+                
+                  12 Near
+                
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
               <span className="text-gray-500">Tiempo restante</span>
               <span className="ml-auto text-gray-900">
                 
@@ -333,6 +344,8 @@ function LightEcommerceB(props) {
                 
               </span>
             </div>
+
+            
 
 
             

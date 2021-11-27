@@ -31,6 +31,12 @@ function LightFooterB(props) {
               RECURSOS
             </h2>
             <nav className="list-none mb-10">
+            <li>
+                <a href="/Roadmap Nativo NFT.pdf" target="_blank" className="text-gray-600 hover:text-gray-800">
+                Mapa de ruta
+                </a>
+              </li>
+
               <li>
                 <a href="/blog" className="text-gray-600 hover:text-gray-800">
                   Blog
