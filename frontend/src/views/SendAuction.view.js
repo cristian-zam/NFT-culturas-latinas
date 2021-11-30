@@ -23,6 +23,7 @@ import {
   storage_byte_cost,
 } from "../utils/near_interaction";
 import {Reader, uploadFile} from '../utils/fleek';
+import nt from '../assets/img/nativologo.png'
 
 function LightHeroE(props) {
   //este estado contiene toda la info de el componente
@@ -222,6 +223,17 @@ function LightHeroE(props) {
     } */
   }
 
+  const format = (v)=> {
+    return v < 10 ? "0"+v : v;
+  }
+  const fechaActual = () => {
+    const d = new Date();
+    const f = format(d.getFullYear())+"-"+(format(d.getMonth()+1))+"-"+format(d.getDate());
+    console.log(f);
+    return f;
+    
+  }
+
   return (
     <section className="text-gray-600 body-font">
       <form
@@ -229,33 +241,17 @@ function LightHeroE(props) {
         className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center"
       >
         <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0 items-center relative">
-          {mint?.file && (
             <img
               className="   bg-cover bg-center rounded  "
               alt="hero"
-              src={mint?.file}
+              // style={{height:"200px",width:"200px"}}
+              // src={mint?.file}
+              src={nt}
             />
-          )}
           <label
             className={` title-font sm:text-4xl text-3xl  font-medium absolute inset-0  w-full flex flex-col items-center   rounded-lg  tracking-wide uppercase  cursor-pointer justify-center`}
           >
-            <div
-              className={`  my-4 title-font sm:text-4xl text-3xl w-full text-center ${
-                mint?.file ? "bg-white" : ""
-              }
-              `}
-            >
-              {mint?.file ? "Cambiar " : "Subir Imagen"}
-            </div>
-            <input
-              onChange={imageChange}
-              onClick={imageClick}
-              type="file"
-              id="image"
-              name="image"
-              className={`  hidden `}
-              accept={acceptedFormats}
-            />
+           
           </label>
           {formik.touched.image && formik.errors.image ? (
             <div className="flex leading-7 text-sm text-red-600 text-center mt-20 justify-center">
@@ -265,7 +261,7 @@ function LightHeroE(props) {
         </div>
         <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center">
           <h1 className=" w-full title-font sm:text-4xl text-3xl mb-12 font-medium text-gray-900 text-center">
-            Nuevo NFT
+            Subastar
           </h1>
           <div className="flex w-full md:justify-start justify-center items-end">
             <div className="relative mr-4 lg:w-full xl:w-1/2 w-3/4">
@@ -283,20 +279,123 @@ function LightHeroE(props) {
                 ) : null}
               </div>
 
-              <input
-                type="text"
+              <div
+                
                 id="title"
                 name="title"
                 {...formik.getFieldProps("title")}
                 className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-              />
+              >
+                En construccion
+              </div>
+
+              {/* /SE AGREGAN LOS CAMPOS CULTURA Y PAIS/ */}
+              <div className="flex justify-between ">
+                <label
+                  htmlFor="culture"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  Cultura
+                </label>{" "}
+                {formik.touched.culture && formik.errors.culture ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {formik.errors.culture}
+                  </div>
+                ) : null}
+              </div>
+
+              <div
+                // type="text"
+                id="culture"
+                name="culture"
+                {...formik.getFieldProps("culture")}
+                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+              >
+                mixteca
+              </div>
+
+              <div className="flex justify-between ">
+                <label
+                  htmlFor="country"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  País{" "}
+                </label>
+                {formik.touched.country && formik.errors.country ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {" "}
+                    {formik.errors.country}{" "}
+                  </div>
+                ) : null}{" "}
+              </div>
+
+              <div
+                // type="text"
+                id="country"
+                name="country"
+                {...formik.getFieldProps("country")}
+                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+              >
+                Minecraft
+              </div>
+
+              <div className="flex justify-between ">
+                <label
+                  htmlFor="description"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  Descripción
+                </label>
+                {formik.touched.description && formik.errors.description ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {formik.errors.description}
+                  </div>
+                ) : null}
+              </div>
+
+              <div
+                // type="textarea"
+                id="description"
+                name="description"
+                rows="2"
+                {...formik.getFieldProps("description")}
+                className={`desc resize-none border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
+              >
+                En un país donde la currupción es lo del dia, tenemos que inovar 
+                y evolucionar.
+              </div>
+
+              <div className="flex justify-between ">
+                <label
+                  htmlFor="description"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  Fecha de expiracion
+                </label>
+                {formik.touched.description && formik.errors.description ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {formik.errors.description}
+                  </div>
+                ) : null}
+              </div>
+
+              <div
+                // type="textarea"
+                id="description"
+                name="description"
+                rows="2"
+                {...formik.getFieldProps("description")}
+                className={`date desc resize-none border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
+              >
+                <input type="date" min={`${fechaActual().toString()}`}/>
+              </div>
 
               <div className="flex justify-between ">
                 <label
                   htmlFor="price"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Precio en
+                  Precio inicial en 
                   {" " +
                     currencys[parseInt(localStorage.getItem("blockchain"))]}
                 </label>
@@ -315,80 +414,12 @@ function LightHeroE(props) {
                 {...formik.getFieldProps("price")}
               />
 
-              {/* /SE AGREGAN LOS CAMPOS CULTURA Y PAIS/ */}
-              <div className="flex justify-between ">
-                <label
-                  htmlFor="culture"
-                  className="leading-7 text-sm text-gray-600"
-                >
-                  Cultura
-                </label>{" "}
-                {formik.touched.culture && formik.errors.culture ? (
-                  <div className="leading-7 text-sm text-red-600">
-                    {formik.errors.culture}
-                  </div>
-                ) : null}
-              </div>
-
-              <input
-                type="text"
-                id="culture"
-                name="culture"
-                {...formik.getFieldProps("culture")}
-                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-              />
-
-              <div className="flex justify-between ">
-                <label
-                  htmlFor="country"
-                  className="leading-7 text-sm text-gray-600"
-                >
-                  País{" "}
-                </label>
-                {formik.touched.country && formik.errors.country ? (
-                  <div className="leading-7 text-sm text-red-600">
-                    {" "}
-                    {formik.errors.country}{" "}
-                  </div>
-                ) : null}{" "}
-              </div>
-
-              <input
-                type="text"
-                id="country"
-                name="country"
-                {...formik.getFieldProps("country")}
-                className={`  w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
-              />
-
-              <div className="flex justify-between ">
-                <label
-                  htmlFor="description"
-                  className="leading-7 text-sm text-gray-600"
-                >
-                  Descripción
-                </label>
-                {formik.touched.description && formik.errors.description ? (
-                  <div className="leading-7 text-sm text-red-600">
-                    {formik.errors.description}
-                  </div>
-                ) : null}
-              </div>
-
-              <textarea
-                type="textarea"
-                id="description"
-                name="description"
-                rows="2"
-                {...formik.getFieldProps("description")}
-                className={` resize-none border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
-              />
               <button
                 type="submit"
                 className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                 disabled={mint?.onSubmitDisabled}
               >
-                Minar
+                Subastar
               </button>
             </div>
           </div>

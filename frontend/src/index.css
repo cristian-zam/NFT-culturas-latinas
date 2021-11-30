@@ -839,3 +839,11 @@ code {
   transition: transform 10s;
 }
 
+
+.desc{
+  line-height: 21px;
+}
+
+.date > input[type="date"]{
+  width: 100%;
+}

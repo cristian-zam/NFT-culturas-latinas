@@ -23,6 +23,7 @@ function LightEcommerceA() {
   async function getPage(pag) {
     let toks;
     let datatokens;
+    
     if (Landing.blockchain == "0") {
       toks = await getContract()
         .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
@@ -47,12 +48,14 @@ function LightEcommerceA() {
         page: pag,
       });
     } else {
+      
       //instanciar contracto
       let contract = await getNearContract();
       let numberOfToks = pag * Landing.tokensPerPage;
       //obtener cuantos tokens estan a la venta
       let onSaleToks = await contract.get_on_sale_toks();
       //obtener tokens a la venta
+      window.contr = contract;
       toks = await contract.obtener_pagina_v2({
         from_index: pag,
         limit: Landing.tokensPerPage,
@@ -113,6 +116,7 @@ function LightEcommerceA() {
            
      
       } else {
+        window.contr = await getNearContract();
         //instanciar contracto
         let contract = await getNearContract();
         console.log("Page",Landing.page)

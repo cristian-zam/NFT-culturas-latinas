@@ -7,7 +7,7 @@ import {
 } from "../utils/blockchain_interaction";
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
-
+import TimeAution from '../utils/TimeAution'
 
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
@@ -53,6 +53,9 @@ function LightEcommerceA() {
       //obtener cuantos tokens estan a la venta
       let onSaleToks = await contract.get_on_sale_toks();
       //obtener tokens a la venta
+
+      TimeAution(contract, 1);
+
       toks = await contract.obtener_pagina_v2({
         from_index: pag,
         limit: Landing.tokensPerPage,
