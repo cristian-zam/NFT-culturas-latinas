@@ -32,7 +32,9 @@ pub struct OldContract {
 pub struct Contract {
     tokens: NonFungibleToken,
     metadata: LazyOption<NFTContractMetadata>,
+    n_total_tokens: u64,
     n_token_on_sale: u64,
+    n_token_on_auction: u64,
 }
 #[derive(Serialize, Deserialize, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -92,7 +94,9 @@ impl Default for Contract {
              Some(StorageKey::Approval),
          ) ,
          metadata: LazyOption::new(StorageKey::Metadata, Some(&meta)),
-         n_token_on_sale:0 ,
+         n_total_tokens: 0,
+         n_token_on_sale: 0,
+         n_token_on_auction: 0,
          
      }   }
 }
@@ -143,7 +147,9 @@ impl Contract {
                 Some(StorageKey::Approval),
             ),
             metadata: LazyOption::new(StorageKey::Metadata, Some(&metadata)),
+            n_total_tokens: 0,
             n_token_on_sale: 0,
+            n_token_on_auction: 0,
         }
     }
     
@@ -180,30 +186,28 @@ impl Contract {
      */
     #[payable]
     pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,) -> Token {
-        let Contractaccount: AccountId = "dev-1636751893359-19496702378959".parse().unwrap();
+        let Contractaccount: AccountId = "dev-1638228892358-63955043240214".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
+       let token_id: TokenId =self.n_total_tokens.to_string();
        
-       self.n_token_on_sale += 1;
 
        let mined= self.tokens.mint(
-            self.tokens.owner_by_id.len().to_string(),
+            token_id.clone(),
             account,   // token_owner_id,//cambiar por la direccion del contrato this.address
             Some(token_metadata),
         ); //Retorna    x.token_id
             //una vez minada hacer un tranfer del contract al owner
              //transferir el nft
-              let token_id: TokenId =self.n_token_on_sale.to_string();
-           /*  let owner_id = self.tokens.owner_by_id.get(&token_id);
-             let Contractowner_value = owner_id.as_deref().unwrap_or("default string");  
-   
-            
-             let mut owner = String::from(token_owner_id.to_string()); */
-           //  log!("owner {}, tokenid : {} ,contract {}",&owner,token_id,Contractowner_value.to_string());
+              
+              log!("tokenid {}",&token_id);
+          
         self.tokens
         .internal_transfer_unguarded(&token_id, &Contractaccount.to_string(), &token_owner_id.to_string());
-        //log!("tranfer done");
-        let mut originaltoken = Contract::enum_get_token( &self,  token_owner_id.to_string(),token_id.clone());
+        log!("tranfer done");
+        self.n_total_tokens  +=1;
+        self.n_token_on_sale += 1;
+        let mut originaltoken = Contract::enum_get_token( &self,self.tokens.owner_by_id.get(&token_id.to_string()).unwrap(),token_id.clone());
         originaltoken
     }
 
@@ -214,7 +218,7 @@ impl Contract {
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
         //let token_id_u64 = token_id.parse::<u64>().unwrap();
         assert_eq!(
-            token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(),
+            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
             true,
             "ese token no existe "
         );
@@ -240,7 +244,7 @@ impl Contract {
               } */
             let owner_id = self.tokens.owner_by_id.get(&token_id);
             let owner_value = owner_id.as_deref().unwrap_or("default string");
-            let mut metadataextra = Contract::get_token(self, token_id.clone(), owner_value.to_string());
+            let mut metadataextra = Contract::get_token(self, token_id.clone());
     /*     {
             token_id: '1',
             owner_id: 'dev-1636751893359-19496702378959',
@@ -341,6 +345,188 @@ impl Contract {
         originaltoken
     }
 
+    pub fn get_tokens_by_onwer(self,account_id: String, from_index:String,limit:String){
+        self.tokens.owner_by_id.tokens_per_owner.get(account_id);
+    }
+
+    
+    pub fn revender(&mut self, token_id: TokenId, price: String) -> TokenMetadata {
+        //comprobar que el token exista
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+        //comprobar que el revendedor sea el owner
+        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+        assert_eq!(
+            env::signer_account_id() == owner_id,
+            true,
+            "no eres el dueño del token "
+        );
+        //obtener los metadatos de ese token
+        let mut originaltoken = self
+            .tokens
+            .token_metadata_by_id.as_ref()
+            .and_then(|by_id| by_id.get(&token_id))
+            .unwrap();
+        //se  reemplaza los ' por \" en un string plano                "'", "\""
+        let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
+        //el string plano se convierte a JSon
+        let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+        //Se modifica el json
+        if price.trim().parse::<u128>().unwrap() > 0 {
+            extradatajson.price =  price ;
+        }
+        extradatajson.on_sale =  true ;
+        //  extradatajson: Extras = serde_json::to(&newextradata).unwrap();    
+        log!("{}",&extradatajson.on_sale.to_string());
+        // se convierte el Json a un String plano
+        let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+        let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+        log!("{}",&finalextrajson.to_string());
+        originaltoken.extra = Some(finalextrajson);
+        //remplazamos la metadata
+        self.tokens
+            .token_metadata_by_id
+            .as_mut()
+            .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+        //cambiar el numero de nfts disponibles
+        self.n_token_on_sale += 1;
+        //retornar la metadata
+        originaltoken
+    }
+
+    pub fn subastar_nft(&mut self, token_id: TokenId)   {
+     
+      
+        // Verificar  si existe:
+        if  token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(){
+            //recuperar el token
+            let mut  originaltoken = self
+              .tokens
+              .token_metadata_by_id.as_ref()
+              .and_then(|by_id| by_id.get(&token_id))
+              .unwrap();
+              //recuperar el owner del token
+            let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+           //1.- Verificar que seas el owner del token 
+            assert_eq!(token_owner_id != Some(env::signer_account_id().to_string()), false, "no eres el dueño del token ");
+           
+  
+              //cambiar la metadata
+                  
+                  //se  reemplaza los ' por \" en un string plano                "'", "\""
+                  let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
+                  //el string plano se convierte a JSon
+                  let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+                  //Se modifica el json
+                  extradatajson.on_sale = false;
+                  extradatajson.on_auction = true;
+                  extradatajson.lowestbidder="aqui vale precio de inicio de la subasta".to_string();
+                  extradatajson.expires_at="aqui va la fecha/dias que estara activa la subasta".to_string();
+                 
+                  // se convierte el Json a un String plano
+                  let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+                  let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+                 
+                  originaltoken.extra = Some(finalextrajson);
+                  //remplazamos la metadata
+                  self.tokens
+                      .token_metadata_by_id
+                      .as_mut()
+                      .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+         
+                //cambiar el numero de nfts disponibles
+                  self.n_token_on_sale -= 1;
+        }
+        else{
+        /*     //sino existe el token
+            //agregar la informacion al structurede tipo extra
+            let mut extradatajson: Extras = {
+              culture : "".to_string(),
+              country : "".to_string(),
+              creator : "".to_string(),
+              price : "".to_string(),
+              on_sale: false, // sale status
+              on_auction: true, //auction status
+              adressbidder: "".to_string(),
+              highestbidder: "".to_string(),
+              lowestbidder: "".to_string(),
+              expires_at: "".to_string(),
+              starts_at: "".to_string(),
+            }
+           
+  
+            //agregar el extra a la estructura del metatoken
+            let mut metatoken: Metadata = {
+               extra=extradatajson,
+            }
+           
+            //con la info completa minar un nuevo token y mandarlo al signer
+   */
+        }
+      
+  
+      
+      }
+
+
+      ///Re vender
+      /// 
+      pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
+        //comprobar que el token exista
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() < self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+
+        //comprobar que el revendedor sea el owner
+        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+        assert_eq!(
+            env::signer_account_id() == owner_id,
+            true,
+            "no eres el dueño del token "
+        );
+
+
+
+         //obtener los metadatos de ese token
+         let mut originaltoken = self
+         .tokens
+         .token_metadata_by_id.as_ref()
+         .and_then(|by_id| by_id.get(&token_id))
+         .unwrap();
+      
+     //se  reemplaza los ' por \" en un string plano                "'", "\""
+     let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
+     //el string plano se convierte a JSon
+     let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+     //Se modifica el json
+     
+     
+     extradatajson.on_sale =  false ;
+ 
+     // se convierte el Json a un String plano
+     let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+     let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+    
+     originaltoken.extra = Some(finalextrajson);
+     //remplazamos la metadata
+     self.tokens
+         .token_metadata_by_id
+         .as_mut()
+         .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+
+
+        //cambiar el numero de nfts disponibles
+        self.n_token_on_sale += 1;
+        //retornar la metadata
+        originaltoken
+    }
+
+
     pub fn storage_byte_cost() -> Balance {
         env::storage_byte_cost()
     }
@@ -365,7 +551,7 @@ impl Contract {
         metadata
     }
 
-    pub fn get_token(&self, token_id: TokenId, owner_id: AccountId) -> Meta {
+    pub fn get_token(&self, token_id: TokenId) -> Meta {
         
         let mut metadata = self
             .tokens
@@ -373,6 +559,7 @@ impl Contract {
             .as_ref()
             .and_then(|by_id| by_id.get(&token_id))
             .unwrap();
+        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
         let newextradata = str::replace(&metadata.extra.as_ref().unwrap().to_string(), "'", "\"");
         let extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();
         let token = Meta {
@@ -402,15 +589,22 @@ impl Contract {
         let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
         let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
         let inicioPag = start_index as usize * limit;
-
+        
         assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        let mut counter: usize = 0;
+        let mut counter: u128 = 0;
         self.tokens
             .owner_by_id
             .iter()
             .take(limit)
-            .map(|(token_id, owner_id)| self.get_token(token_id, "dev-1636751893359-19496702378959".to_string()))
+            .map(|token_id| { counter +=1; self.get_token(token_id.0)})
             .collect()
+         
+    }
+
+    pub fn tokens_of(&self, account_id: ValidAccountId,from_index: U128,limit: u64,) -> Vec<Token> {
+        return self
+            .tokens
+            .nft_tokens_for_owner(account_id, Some(from_index), Some(limit));
     }
  
     #[private]
@@ -421,7 +615,9 @@ impl Contract {
            
             tokens:old_state.tokens,
             metadata: old_state.metadata,
+            n_total_tokens:0,
             n_token_on_sale: old_state.n_token_on_sale,
+            n_token_on_auction:0,
         }
     }
    

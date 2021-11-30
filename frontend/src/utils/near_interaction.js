@@ -9,7 +9,7 @@ import {
 export const storage_byte_cost = 10000000000000000000;
 //export const contract_name = "nativo.near";
 //export const contract_name = "dokxo.testnet";
-export const contract_name = "dev-1636751893359-19496702378959";
+export const contract_name = "dev-1638228892358-63955043240214";
 
 export const config = {
   testnet: {
@@ -51,7 +51,7 @@ export const methodOptions = {
 
     // "minar",
     "comprar_nft",
-    // "revender",
+    "revender",
     // "quitar_del_market_place",
   ],
 };
