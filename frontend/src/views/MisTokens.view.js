@@ -126,17 +126,18 @@ function MisTokens(props) {
         let balance = await contract.nft_supply_for_owner({
           account_id: account,
         });
-        console.log(nftsArr);
-
+        console.log(nftsArr[0].metadata.extra);
+       
         //convertir los datos al formato esperado por la vista
         nftsArr = nftsArr.map((tok) => {
+          console.log("->",tok)
           return {
             tokenID: tok.token_id,
-            price: fromYoctoToNear(tok.metadata.price),
-            onSale: tok.metadata.on_sale,
+            price: 0,//fromYoctoToNear(tok.metadata.price),
+            onSale: tok.true,// tok.metadata.on_sale,
             data: JSON.stringify({
-              title: tok.metadata.title,
-              image: tok.metadata.media,
+              title: tok.metadata.title,//"2sdfeds",// tok.metadata.title,
+              image:tok.metadata.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
             }),
           };
         });

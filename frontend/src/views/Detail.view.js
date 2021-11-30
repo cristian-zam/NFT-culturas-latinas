@@ -69,7 +69,7 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toks = await contract.get_token({ token_id: tokenid ,owner_id: "dev-1636751893359-19496702378959"});
+          let toks = await contract.get_token({ token_id: tokenid});
           console.log("Token")
           console.log(toks)
           // console.log({
@@ -86,13 +86,13 @@ function LightEcommerceB(props) {
             tokens: {
               tokenID: toks.token_id,
               onSale: toks.on_sale,
-              price: fromYoctoToNear(toks.price),
+              price: toks.price,
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
             },
             jdata: {
-              // image: toks.metadata.media,
+              image: toks.media,
               // title: toks.metadata.title,
               // description: toks.metadata.description,
               culture:toks.culture,
@@ -162,7 +162,7 @@ function LightEcommerceB(props) {
       
       let amount=parseFloat(state.tokens.price);
       console.log("amount",amount)
-  
+   
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta

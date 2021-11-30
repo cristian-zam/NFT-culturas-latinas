@@ -17,7 +17,7 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 6,
+    tokensPerPageNear: 15,
   });
 
   async function getPage(pag) {
@@ -62,7 +62,7 @@ function LightEcommerceA() {
       toks = toks.map((tok) => {
         return {
           tokenID: tok.token_id,
-          price: fromYoctoToNear(tok.price),
+          price: tok.price,
           data: JSON.stringify({
             title: tok.title,
             image: tok.media,
@@ -128,7 +128,7 @@ function LightEcommerceA() {
         toks = toks.map((tok) => {
           return {
             tokenID: tok.token_id,
-            price: fromYoctoToNear(tok.price),
+            price: tok.price,
             data: JSON.stringify({
               title: tok.title,
               image: tok.media,
@@ -184,6 +184,7 @@ function LightEcommerceA() {
                         {tokenData.title}
                       </h2>
                       <p className="mt-1">
+                        {"Tokenid"+ token.tokenID}
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
