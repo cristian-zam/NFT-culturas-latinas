@@ -15,8 +15,8 @@ function LightEcommerceA() {
     tokens: [],
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
-    tokensPerPage: 10,
-    tokensPerPageNear: 6,
+    tokensPerPage: 200,
+    tokensPerPageNear: 200,
   });
   async function getPage(pag) {
     let toks;
@@ -271,7 +271,7 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
                       <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
-                            Ultima puja:  <b>{tokenData.highestbidder+" "+ Landing.currency}</b>
+                            Ultima puja:  <b>{fromYoctoToNear(tokenData.highestbidder)+" "+ Landing.currency}</b>
                         {/* {"Ultima puja 0.0001 " + Landing.currency} */}
                       </p>
                       {/* <a href={"/detail/" + token.tokenID}

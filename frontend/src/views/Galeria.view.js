@@ -199,7 +199,7 @@ function LightEcommerceA() {
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
-                              token.price + " " + Landing.currency}
+                              fromYoctoToNear(token.price) + " " + Landing.currency}
                       </p>
                     </div>
                     </div>

@@ -87,7 +87,7 @@ function LightEcommerceB(props) {
             tokens: {
               tokenID: toks.token_id,
               onSale: toks.on_sale,
-              price: toks.price,
+              price: fromYoctoToNear(toks.price),
               // culture:toks.culture,
               // country:toks.country,
               // creator:toks.metadata.creator,
