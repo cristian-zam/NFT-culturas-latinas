@@ -58,6 +58,7 @@ function LightEcommerceB(props) {
             jdata: JSON.parse(toks.data),
             owner,
           });
+          console.log(toks.data);
         }
       } else {
         //instanciar contracto
