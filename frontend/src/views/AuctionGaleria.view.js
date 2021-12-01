@@ -247,7 +247,7 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
   return(
     <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
                  {tokenData.image ?
-                  <a href={"/detail/" + token.tokenID}>
+                  <a href={"/auction/" + token.tokenID}>
                     <div className="token token-h">
                     <div className="block relative h-48 rounded overflow-hidden">
                     
