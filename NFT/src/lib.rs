@@ -8,7 +8,8 @@ use near_contract_standards::non_fungible_token::metadata::{
 use near_contract_standards::non_fungible_token::{Token, TokenId};
 use near_contract_standards::non_fungible_token::NonFungibleToken;
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-// use near_sdk::collections::{LazyOption,HashMap};
+use std::sync::{Mutex};
+use lazy_static::lazy_static;
 use near_sdk::collections::LazyOption;
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
@@ -75,7 +76,10 @@ pub struct Extras {
     expires_at: String,
     starts_at: String,
 }
-// let mut auctionList = HashMap::new();
+
+lazy_static! {
+    static ref USER_TOKEN_HASHMAP: Mutex<HashMap<String, HashMap<String,String>>> = Mutex::new(HashMap::new());
+}
 
 impl Default for Contract {
     
@@ -450,73 +454,63 @@ impl Contract {
                 //cambiar el numero de nfts disponibles
                   
                   self.n_token_on_auction+=1;
-       
-      
-                  
-      
       }
     
-    //   pub fn ofertar_subasta(&mut self, token_id: TokenId){
-     
-      
-    //     // Verificar  si existe:
-    //     assert_eq!(
-    //         token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
-    //         true,
-    //         "ese token no existe "
-    //     );
-    //         //recuperar el token
-    //         let mut  originaltoken = self
-    //           .tokens
-    //           .token_metadata_by_id.as_ref()
-    //           .and_then(|by_id| by_id.get(&token_id))
-    //           .unwrap();
-    //           //recuperar el owner del token
-    //         let token_owner_id = self.tokens.owner_by_id.get(&token_id);
-    //        //1.- Verificar que seas el owner del token 
-    //         assert_eq!(token_owner_id == Some(env::signer_account_id().to_string()), false, "Eres el dueño del token ");
-           
-  
-    //           //cambiar la metadata
-                  
-    //               //se  reemplaza los ' por \" en un string plano                "'", "\""
-    //               let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
-    //               //el string plano se convierte a JSon
-    //               let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
-    //               //Se modifica el json
-    //               if(extradatajson.lowerbidder < "el bid actual" && extradatajson.highestbidder < "el bid actual"){
-    //                     if(extradatajson.highestbidder > 0){
-    //                           //regresar el bid al singer anterior
-    //                              Promise::new(extradatajson.adressbidder.clone().to_string()).transfer(extradatajson.highestbidder as  u128);
-                       
-    //                     }
-    //                    //actualizar el nuevo  signer y bid
-    //                     extradatajson.highestbidder = "aqui va el precio del bid actual".to_string();;
-    //                     extradatajson.adressbidder=env::signer_account_id().to_string();
-                    
-    //               }
-    //               // se convierte el Json a un String plano
-    //               let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
-    //               let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
-                 
-    //               originaltoken.extra = Some(finalextrajson);
-    //               //remplazamos la metadata
-    //               self.tokens
-    //                   .token_metadata_by_id
-    //                   .as_mut()
-    //                   .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
-         
-    //             //cambiar el numero de nfts disponibles
-                  
-    //             // List<token ,List<signer,bid>>  lists de subasta -> lista de offertas
-    //             // let mut Biddinginfo = HashMap::new();
-    //             // Biddinginfo.insert(env::signer_account_id().to_string(),"la oferta".to_string());
-    //             // auctionList.insert(&token_id,Biddinginfo);
-      
-    //   }
+      #[payable]
+      pub fn ofertar_subasta(&mut self, token_id: TokenId  ){
+        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
+        let mut amountsended=env::attached_deposit();
+        
+        // Verificar  si existe:
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+            //recuperar el token
+            let mut  originaltoken = self
+              .tokens
+              .token_metadata_by_id.as_ref()
+              .and_then(|by_id| by_id.get(&token_id))
+              .unwrap();
+              //recuperar el owner del token
+            let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+           //1.- Verificar que seas el owner del token
+            assert_eq!(token_owner_id == Some(env::signer_account_id().to_string()), false, "Eres el dueño del token ");
+              //cambiar la metadata
+                  //se  reemplaza los ' por \" en un string plano                "'", "\""
+                  let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
+                  //el string plano se convierte a JSon
+                  let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+                  //Se modifica el json
+                  if extradatajson.lowestbidder.parse::<u128>().unwrap() < amountsended
+                         && extradatajson.highestbidder.parse::<u128>().unwrap() < amountsended {
+                    if extradatajson.highestbidder.parse::<u128>().unwrap() > 0 {
+                              //regresar el bid al singer anterior
+                                Promise::new(extradatajson.adressbidder.clone().to_string()).transfer(extradatajson.highestbidder.parse::<u128>().unwrap());
+                        }
+                       //actualizar el nuevo  signer y bid
+                        extradatajson.highestbidder =amountsended.to_string();
+                        extradatajson.adressbidder=env::signer_account_id().to_string();
+                        Promise::new(Contractaccount.clone().to_string()).transfer( amountsended.clone() );
+                  }
+                  // se convierte el Json a un String plano
+                  let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+                  let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+                  originaltoken.extra = Some(finalextrajson);
+                  //remplazamos la metadata
+                  self.tokens
+                      .token_metadata_by_id
+                      .as_mut()
+                      .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+                //cambiar el numero de nfts disponibles
+                // List<token ,List<signer,bid>>  lists de subasta -> lista de offertas
+                 let mut bidding_info = HashMap::new();
+                 let mut _map = USER_TOKEN_HASHMAP.lock().unwrap();
+                 bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
+                 _map.insert(token_id,bidding_info);
+      }
 
-
-      ///Re vender
       /// 
       pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
         //comprobar que el token exista
