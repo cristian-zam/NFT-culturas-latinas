@@ -121,6 +121,7 @@ function LightEcommerceA() {
         let contract = await getNearContract();
         console.log("Page",Landing.page)
         //obtener tokens a la venta
+        
         toks = await contract.obtener_pagina_v2({
           from_index: Landing.page,
           limit: Landing.tokensPerPageNear,
@@ -132,6 +133,7 @@ function LightEcommerceA() {
         toks = toks.map((tok) => {
           return {
             tokenID: tok.token_id,
+            ownerId: tok.owner_id,
             price: tok.price,
             data: JSON.stringify({
               title: tok.title,
@@ -189,7 +191,10 @@ function LightEcommerceA() {
                         {tokenData.title}
                       </h2>
                       <p className="mt-1 mb-4 ml-2">
-                        {"Tokenid"+ token.tokenID}
+                        {"Tokenid: "+ token.tokenID }
+                        <br/>
+                        { "Owner: "+token.ownerId+"\n"}
+                        <br/>
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
