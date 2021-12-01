@@ -11,6 +11,9 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use std::sync::{Mutex};
 use lazy_static::lazy_static;
 use near_sdk::collections::LazyOption;
+use chrono;
+use chrono::prelude::*;
+use chrono::{Local, NaiveTime};
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
@@ -196,7 +199,7 @@ impl Contract {
      */
     #[payable]
     pub fn minar(&mut self,token_owner_id: ValidAccountId,token_metadata: TokenMetadata,) -> Token {
-        let Contractaccount: AccountId = "dev-1638228892358-63955043240214".parse().unwrap();
+        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
         let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap();
        // log!("token_owner_id {} ,contr {} ",&token_owner_id ,&account.to_string());
        let token_id: TokenId =self.n_total_tokens.to_string();
@@ -223,7 +226,7 @@ impl Contract {
 
     #[payable]
     pub fn comprar_nft(&mut self, token_id: TokenId) -> TokenMetadata {
-        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
+        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
 
         //asegurarnos de que el numero sea positivo y este dentro el rango de tokens minados
         //let token_id_u64 = token_id.parse::<u64>().unwrap();
@@ -277,7 +280,7 @@ impl Contract {
         // si no cuenta con los fondos hacemos rollback
         let amount = env::attached_deposit();
         assert_eq!(
-            metadataextra.price.parse::<u128>().unwrap()*1000000000000000000000000,
+            metadataextra.price.parse::<u128>().unwrap(),
             amount,
             "fondos insuficientes"
         );
@@ -458,7 +461,7 @@ impl Contract {
     
       #[payable]
       pub fn ofertar_subasta(&mut self, token_id: TokenId  ){
-        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
+        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
         let mut amountsended=env::attached_deposit();
         
         // Verificar  si existe:
@@ -510,6 +513,68 @@ impl Contract {
                  bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
                  _map.insert(token_id,bidding_info);
       }
+
+      pub fn finalizar_subasta(&mut self, token_id: TokenId){
+        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
+        // Verificar  si existe:
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+            //recuperar el token
+            let mut  originaltoken = self
+              .tokens
+              .token_metadata_by_id.as_ref()
+              .and_then(|by_id| by_id.get(&token_id))
+              .unwrap();
+              //recuperar el owner del token
+            let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+            //se  reemplaza los ' por \" en un string plano                "'", "\""
+            let newextradata = str::replace(&originaltoken.extra.as_ref().unwrap().to_string(), "'", "\"");
+            //el string plano se convierte a JSon
+            let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
+            //Validar si ha finalizado
+            //convierte el string a DateTime
+            let datetime = DateTime::parse_from_str(&extradatajson.expires_at, "%Y-%m-%d %H:%M:%S %z").unwrap();
+            //compara la info del token con el DateTime en UTC
+            assert_eq!( datetime < chrono::offset::Utc::now(), false,"la subasta aun no termina" );
+            let amount =extradatajson.highestbidder.parse::<f64>().unwrap();
+            //si ya termino la subasta
+            //pagamos las ganancias al al onwer anterior,ganancias al contrato y  regalias al creator
+                     //obtener la regalia,la comision de Nativo y el pagoa al autor del token
+                        let mut  res:f64=0.0;
+                        let mut  roy:f64=0.0;
+                        let mut  gains:f64=0.0;
+                        let mut  pay:f64=0.0;
+                        roy  = amount  *0.10;
+                        gains= amount  *0.03;
+                        pay  = amount  *0.87;
+                    //transferir los nears
+                    Promise::new( token_owner_id.as_ref().unwrap().to_string() ).transfer(pay as  u128);
+                    //TODO: transferir la regalia del token
+                    Promise::new(extradatajson.creator.clone()).transfer(roy as u128);
+                    //TODO: transferir la regalia del token
+                    Promise::new(Contractaccount.clone()).transfer(gains as u128);
+                        //cambiamos el on sale/on auction a false
+                        extradatajson.on_sale=false;
+                        extradatajson.on_auction=false;
+                        // se convierte el Json a un String plano
+                    let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+                    let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+                    originaltoken.extra = Some(finalextrajson);
+                    //remplazamos la metadata
+                    self.tokens
+                        .token_metadata_by_id
+                        .as_mut()
+                        .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+            //el costo/subastaminima no se modifica hasta que lo ponga a la venta/subasta
+            //lo transferimos al nuevo onwer
+            //
+            self.tokens
+            .internal_transfer_unguarded(&token_id, &token_owner_id.as_ref().unwrap().to_string(), &extradatajson.adressbidder.to_string());
+            self.n_token_on_auction-=1;
+    }
 
       /// 
       pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
