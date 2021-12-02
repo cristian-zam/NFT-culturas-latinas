@@ -478,7 +478,7 @@ impl Contract {
               .unwrap();
               //recuperar el owner del token
             let token_owner_id = self.tokens.owner_by_id.get(&token_id);
-           //1.- Verificar que seas el owner del token
+           //1.- Verificar que no seas el owner del token
             assert_eq!(token_owner_id == Some(env::signer_account_id().to_string()), false, "Eres el dueño del token ");
               //cambiar la metadata
                   //se  reemplaza los ' por \" en un string plano                "'", "\""
@@ -486,6 +486,12 @@ impl Contract {
                   //el string plano se convierte a JSon
                   let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
                   //Se modifica el json
+
+                   //Validar sino ha finalizado
+                    
+                        assert_eq!(extradatajson.expires_at.parse::<i64>().unwrap()
+                                    >   chrono::offset::Utc::now().timestamp() ,
+                                        self.finalizar_subasta(token_id.clone()), "la subasta ya terminó" );
                   if extradatajson.lowestbidder.parse::<u128>().unwrap() < amountsended
                          && extradatajson.highestbidder.parse::<u128>().unwrap() < amountsended {
                     if extradatajson.highestbidder.parse::<u128>().unwrap() > 0 {
@@ -514,8 +520,8 @@ impl Contract {
                  _map.insert(token_id,bidding_info);
       }
 
-      pub fn finalizar_subasta(&mut self, token_id: TokenId){
-        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
+      pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
+        let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
         // Verificar  si existe:
         assert_eq!(
             token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
@@ -575,9 +581,10 @@ impl Contract {
             self.tokens
             .internal_transfer_unguarded(&token_id, &token_owner_id.as_ref().unwrap().to_string(), &extradatajson.adressbidder.to_string());
             self.n_token_on_auction-=1;
+        return false ;
     }
     pub fn extraer_token(&mut self, token_id: TokenId){
-        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
+         
 
         // Verificar  si existe:
         assert_eq!(
@@ -594,15 +601,15 @@ impl Contract {
               //recuperar el owner del token
             let token_owner_id = self.tokens.owner_by_id.get(&token_id);
             assert_eq!(
-                env::signer_account_id() == token_owner_id.as_ref().unwrap().to_string(),
-                true,
+                env::signer_account_id() != token_owner_id.as_ref().unwrap().to_string(),
+                false,
                 "no eres el dueño del token "
             ); 
             let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
             let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
             let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
             let apro: Option<u64> = Some(0);
- 
+                self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
             self.tokens.nft_transfer(account  , token_id, apro, msj );
            log!("transfer done");
     }
