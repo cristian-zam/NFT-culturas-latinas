@@ -11,9 +11,8 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use std::sync::{Mutex};
 use lazy_static::lazy_static;
 use near_sdk::collections::LazyOption;
-use chrono;
-use chrono::prelude::*;
-use chrono::{Local, NaiveTime};
+//use std::time::{Duration, Instant};
+
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
@@ -486,12 +485,18 @@ impl Contract {
                   //el string plano se convierte a JSon
                   let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
                   //Se modifica el json
-
-                   //Validar sino ha finalizado
-                    
-                        assert_eq!(extradatajson.expires_at.parse::<i64>().unwrap()
-                                    >   chrono::offset::Utc::now().timestamp() ,
-                                        self.finalizar_subasta(token_id.clone()), "la subasta ya terminó" );
+                   //Validar sino ha finalizado  
+                let expires_at_token=   extradatajson.expires_at.parse::<i64>().unwrap();
+                //let local: DateTime = Local::now();
+                
+            //     let now = Instant::now();
+               
+            //   //  let noww= chrono::offset::Utc::now().timestamp() ;
+            //        log!("token date : {},today: {:?}",expires_at_token,now);  
+           /*  assert_eq!(extradatajson.expires_at.parse::<i64>().unwrap()
+                        >   chrono::offset::Utc::now().timestamp() ,
+                           false,// self.finalizar_subasta(token_id.clone())
+                             "la subasta ya terminó" ); */
                   if extradatajson.lowestbidder.parse::<u128>().unwrap() < amountsended
                          && extradatajson.highestbidder.parse::<u128>().unwrap() < amountsended {
                     if extradatajson.highestbidder.parse::<u128>().unwrap() > 0 {
@@ -502,8 +507,8 @@ impl Contract {
                         extradatajson.highestbidder =amountsended.to_string();
                         extradatajson.adressbidder=env::signer_account_id().to_string();
                         Promise::new(Contractaccount.clone().to_string()).transfer( amountsended.clone() );
-                  }
-                  // se convierte el Json a un String plano
+
+                        // se convierte el Json a un String plano
                   let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
                   let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
                   originaltoken.extra = Some(finalextrajson);
@@ -518,6 +523,8 @@ impl Contract {
                  let mut _map = USER_TOKEN_HASHMAP.lock().unwrap();
                  bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
                  _map.insert(token_id,bidding_info);
+                  }
+                  
       }
 
       pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
@@ -542,10 +549,10 @@ impl Contract {
             let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
             //Validar si ha finalizado
            
-            assert_eq!( extradatajson.expires_at.parse::<i64>().unwrap()
+          /*   assert_eq!( extradatajson.expires_at.parse::<i64>().unwrap()
             <
                  chrono::offset::Utc::now().timestamp()  , false,"la subasta aun no termina" );
-
+ */
             let amount =extradatajson.highestbidder.parse::<f64>().unwrap();
             //si ya termino la subasta
             //pagamos las ganancias al al onwer anterior,ganancias al contrato y  regalias al creator
@@ -583,7 +590,8 @@ impl Contract {
             self.n_token_on_auction-=1;
         return false ;
     }
-    pub fn extraer_token(&mut self, token_id: TokenId){
+    #[payable]
+    pub fn extraer_token(&mut self, token_id: TokenId,apro:u64){
          
 
         // Verificar  si existe:
@@ -600,18 +608,27 @@ impl Contract {
               .unwrap();
               //recuperar el owner del token
             let token_owner_id = self.tokens.owner_by_id.get(&token_id);
-            assert_eq!(
+         /*    assert_eq!(
                 env::signer_account_id() != token_owner_id.as_ref().unwrap().to_string(),
                 false,
                 "no eres el dueño del token "
-            ); 
+            );  */
             let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
             let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
             let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
-            let apro: Option<u64> = Some(0);
-                self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
+            let apro: Option<u64> = Some(apro);
+             //   self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
             self.tokens.nft_transfer(account  , token_id, apro, msj );
            log!("transfer done");
+    }
+    #[payable]
+    pub fn aproved_token(&mut self, token_id: TokenId){
+        let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+        let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
+            let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
+            let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
+            let apro: Option<u64> = Some(0);
+            self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
     }
       /// 
       pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
