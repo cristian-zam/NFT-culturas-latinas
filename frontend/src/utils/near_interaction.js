@@ -53,6 +53,7 @@ export const methodOptions = {
     // "minar",
     "comprar_nft",
     "revender",
+    "subastar_nft"
     // "quitar_del_market_place",
   ],
 };

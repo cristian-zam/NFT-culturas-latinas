@@ -25,11 +25,16 @@ function MisTokens(props) {
   const [nfts, setNfts] = useState({
     nfts: [],
     page: 0,
-    tokensPerPage: 6,
+    tokensPerPage: 9,
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
   }); //state de los token nft
   const [modal, setModal] = useState({
+    //state para la ventana modal
+    show: false,
+  });
+
+  const [modalSub, setModalSub] = useState({
     //state para la ventana modal
     show: false,
   });
@@ -294,8 +299,8 @@ function MisTokens(props) {
                           <button
                             className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             onClick={() => {
-                              setModal({
-                                ...modal,
+                              setModalSub({
+                                ...modalSub,
                                 show: true,
                                 tokenId: nft.tokenID,
                                 title: "Subastar NFT",
@@ -304,7 +309,7 @@ function MisTokens(props) {
                                 message:
                                   "Ingresa el monto base al que quieres subastar este NFT junto a su fecha y hora de finalizacion.",
                                 buttonName: "Cancelar",
-                                change: setModal,
+                                change: setModalSub,
                               });
                             }}
                           >
@@ -347,7 +352,8 @@ function MisTokens(props) {
         </div>
 
         {/* Mandamos a llamar al modal con el state como props*/}
-        <ModalSubasta {...modal} />
+        <ModalSubasta {...modalSub} />
+        <Modal {...modal} />
       </section>
     </>
   );
