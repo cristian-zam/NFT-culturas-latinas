@@ -535,10 +535,11 @@ impl Contract {
             //el string plano se convierte a JSon
             let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
             //Validar si ha finalizado
-            //convierte el string a DateTime
-            let datetime = DateTime::parse_from_str(&extradatajson.expires_at, "%Y-%m-%d %H:%M:%S %z").unwrap();
-            //compara la info del token con el DateTime en UTC
-            assert_eq!( datetime < chrono::offset::Utc::now(), false,"la subasta aun no termina" );
+           
+            assert_eq!( extradatajson.expires_at.parse::<i64>().unwrap()
+            <
+                 chrono::offset::Utc::now().timestamp()  , false,"la subasta aun no termina" );
+
             let amount =extradatajson.highestbidder.parse::<f64>().unwrap();
             //si ya termino la subasta
             //pagamos las ganancias al al onwer anterior,ganancias al contrato y  regalias al creator
@@ -575,7 +576,36 @@ impl Contract {
             .internal_transfer_unguarded(&token_id, &token_owner_id.as_ref().unwrap().to_string(), &extradatajson.adressbidder.to_string());
             self.n_token_on_auction-=1;
     }
+    pub fn extraer_token(&mut self, token_id: TokenId){
+        let Contractaccount: AccountId = "nativo.testnet".parse().unwrap();
 
+        // Verificar  si existe:
+        assert_eq!(
+            token_id.trim().parse::<u64>().unwrap() <= self.tokens.owner_by_id.len(),
+            true,
+            "ese token no existe "
+        );
+            //recuperar el token
+            let mut  originaltoken = self
+              .tokens
+              .token_metadata_by_id.as_ref()
+              .and_then(|by_id| by_id.get(&token_id))
+              .unwrap();
+              //recuperar el owner del token
+            let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+            assert_eq!(
+                env::signer_account_id() == token_owner_id.as_ref().unwrap().to_string(),
+                true,
+                "no eres el dueño del token "
+            ); 
+            let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
+            let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
+            let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
+            let apro: Option<u64> = Some(0);
+ 
+            self.tokens.nft_transfer(account  , token_id, apro, msj );
+           log!("transfer done");
+    }
       /// 
       pub fn quitar_del_market_place(&mut self, token_id: TokenId) -> TokenMetadata {
         //comprobar que el token exista
