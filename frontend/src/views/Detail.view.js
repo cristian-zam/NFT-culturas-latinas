@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
+import { isNearReady } from "../utils/near_interaction";
+import { nearSignIn } from "../utils/near_interaction";
 import {
   syncNets,
   getSelectedAccount,
@@ -25,6 +27,8 @@ function LightEcommerceB(props) {
   const [modal, setModal] = React.useState({
     show: false,
   });
+  //Esta logeado
+  const [stateLogin, setStateLogin] = useState(false);
   //es el parametro de tokenid
   const { tokenid } = useParams();
   //es el historial de busqueda
@@ -32,6 +36,8 @@ function LightEcommerceB(props) {
 
   React.useEffect(() => {
     (async () => {
+      setStateLogin(await isNearReady());
+      
       let totalSupply;
 
       if (localStorage.getItem("blockchain") == "0") {
@@ -303,15 +309,27 @@ function LightEcommerceB(props) {
                 $ {state?.tokens.price}
                 {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
               </span>
-              <button
-                className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                disabled={state?.btnDisabled}
-                onClick={async () => {
-                  comprar();
-                }}
-              >
-                Comprar
-              </button>
+              {stateLogin ? 
+                            <button
+                            className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                            disabled={state?.btnDisabled}
+                            onClick={async () => {
+                              comprar();
+                            }}
+                            >
+                              Comprar {stateLogin.toString()}
+                            </button>
+                          : 
+                          <button
+                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                          disabled={state?.btnDisabled}
+                          onClick={async () => {
+                            nearSignIn(window.location.href);
+                          }}
+                          >
+                            Iniciar Sesión para Comprar {stateLogin.toString()}
+                          </button>
+              }
             </div>
           </div>
         </div>

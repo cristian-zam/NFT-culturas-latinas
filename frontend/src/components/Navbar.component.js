@@ -17,6 +17,9 @@ function LightHeaderB(props) {
   }
 
   useEffect(() => {
+    if(state.dropdown == 'Blockchain'){
+      changeBlockchain(1);
+    }
     /*  (async () => {
       const { keyStores, connect, WalletConnection } = nearAPI;
       const keyStore = new keyStores.BrowserLocalStorageKeyStore();

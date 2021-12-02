@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
+import { isNearReady } from "../utils/near_interaction";
+import { nearSignIn } from "../utils/near_interaction";
 import {
   syncNets,
   getSelectedAccount,
@@ -25,6 +27,8 @@ function LightEcommerceB(props) {
   const [modal, setModal] = React.useState({
     show: false,
   });
+  //Esta logeado
+  const [stateLogin, setStateLogin] = useState(false);
   // Tiempo de conclucion de la subasta
   let finalTime = 0;
   const setFinalTime = (c) => { finalTime = c };
@@ -54,6 +58,7 @@ function LightEcommerceB(props) {
 
   React.useEffect(() => {
     (async () => {
+      setStateLogin(await isNearReady());      
       let totalSupply;
 
       if (localStorage.getItem("blockchain") == "0") {
@@ -371,33 +376,41 @@ function LightEcommerceB(props) {
               </span>
             </div>
 
-
-
-
-
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
-            <div className="puja">
-              {/* <span className=""> */}
-              <input type="number" 
-                min={(state?.jdata.lowestbidder)} 
-                value={puja}
-                className="title-font font-medium text-2xl text-gray-900" 
-                onChange={e=>{
-                  setpuja(e.target.value);
-                }}
-               />
-              <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
-              {/* </span> */}
-              <button
-                className={`flex text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                disabled={state?.btnDisabled}
-                onClick={async () => {
-                  sendOfert();
-                }}
-              >
-                Puja
-              </button>
-            </div>
+            {stateLogin ? 
+                          <div className="puja">
+                            {/* <span className=""> */}
+                            <input type="number" 
+                              min={(state?.jdata.lowestbidder)} 
+                              value={puja}
+                              className="title-font font-medium text-2xl text-gray-900" 
+                              onChange={e=>{
+                                setpuja(e.target.value);
+                              }}
+                              />
+                            <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
+                            {/* </span> */}
+                            <button
+                              className={`flex text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                              disabled={state?.btnDisabled}
+                              onClick={async () => {
+                                sendOfert();
+                              }}
+                            >
+                              Puja
+                            </button>
+                          </div>
+                          : 
+                          <button
+                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                          disabled={state?.btnDisabled}
+                          onClick={async () => {
+                            nearSignIn(window.location.href);
+                          }}
+                          >
+                            Iniciar Sesión para Ofertar
+                          </button>
+              }
           </div>
         </div>
       </div>
