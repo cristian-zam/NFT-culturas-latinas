@@ -825,7 +825,6 @@ code {
   border-color:  rgb(255, 212, 95);
   
 }
-
 .token:active{
   border-color:  rgb(95, 236, 255);
   transform: scale(1.0);
@@ -838,12 +837,23 @@ code {
   transform: scale(1.05);
   transition: transform 10s;
 }
-
-
 .desc{
   line-height: 21px;
 }
-
 .date > input[type="date"]{
   width: 100%;
+}
+.date, .date-hm,select{
+  width: 50%;
+  border: solid 1px rgb(185, 185, 185);
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 5px;
+  margin-right: 3px;
+}
+select{
+  width: 100%;
+}
+.date-hm{
+  width: 23%;
 }

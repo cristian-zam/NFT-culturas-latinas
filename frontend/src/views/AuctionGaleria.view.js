@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
 import {
   fromWEItoEth,
   getContract,
@@ -8,7 +8,6 @@ import {
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
 import TimeAution from '../utils/TimeAution'
-
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
     theme: "yellow",
@@ -16,10 +15,9 @@ function LightEcommerceA() {
     tokens: [],
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
-    tokensPerPage: 10,
-    tokensPerPageNear: 6,
+    tokensPerPage: 200,
+    tokensPerPageNear: 200,
   });
-
   async function getPage(pag) {
     let toks;
     let datatokens;
@@ -27,20 +25,17 @@ function LightEcommerceA() {
       toks = await getContract()
         .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
         .call();
-
       // datatokens = await getContract()
       // .methods.get_token(Landing.tokensPerPage, 2)
       // .call();
       //filtrar tokens
       let copytoks = toks.filter((tok) => tok.onSale);
-
       console.log(toks);
       console.log(datatokens);
       //convertir los precios de wei a eth
       copytoks = copytoks.map((tok) => {
         return { ...tok, price: fromWEItoEth(tok.price) };
       });
-
       setLanding({
         ...Landing,
         tokens: copytoks,
@@ -49,19 +44,16 @@ function LightEcommerceA() {
     } else {
       //instanciar contracto
       let contract = await getNearContract();
+      
       let numberOfToks = pag * Landing.tokensPerPage;
       //obtener cuantos tokens estan a la venta
       let onSaleToks = await contract.get_on_sale_toks();
       //obtener tokens a la venta
-
-      TimeAution(contract, 1);
-
       toks = await contract.obtener_pagina_v2({
         from_index: pag,
         limit: Landing.tokensPerPage,
       });
-
-      //convertir los datos al formato esperado por la vista
+    
       toks = toks.map((tok) => {
         return {
           tokenID: tok.token_id,
@@ -69,6 +61,7 @@ function LightEcommerceA() {
           data: JSON.stringify({
             title: tok.title,
             image: tok.media,
+            time: TimeAution(contract, tok.token_id) 
           }),
         };
       });
@@ -80,7 +73,7 @@ function LightEcommerceA() {
       });
     }
   }
-
+  let ttt = 0;
   React.useEffect(() => {
     (async () => {
       let toks, onSaleToks;
@@ -93,7 +86,6 @@ function LightEcommerceA() {
           let totalSupply = await getContract().methods.totalSupply().call();
           //obtener el numero de tokens a la venta
           onSaleToks = await getContract().methods.nTokenOnSale.call().call();
-
             //indices del arreglo para la paginacion :::0*10=0 1*10=10  1*10=10 2*10=20
           for(let i =Landing.page*10; i<(parseInt(Landing.page)+1)*Landing.tokensPerPage ; i++) {
             console.log("ini",Landing.page*10,"actual",i,"fin",(parseInt(Landing.page)+1)*Landing.tokensPerPage)
@@ -111,13 +103,13 @@ function LightEcommerceA() {
               tokens: arr,
               nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
             });  
-
           }
            
      
       } else {
         //instanciar contracto
         let contract = await getNearContract();
+        window.contr = contract;
         console.log("Page",Landing.page)
         //obtener tokens a la venta
         toks = await contract.obtener_pagina_v2({
@@ -126,9 +118,16 @@ function LightEcommerceA() {
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
-
+        const data = await contract.account.connection.provider.block({
+          finality: "final",
+      });
+      //convertir los datos al formato esperado por la vista
+        toks = toks.filter(tok => tok.on_auction);
         //convertir los datos al formato esperado por la vista
         toks = toks.map((tok) => {
+          // const [state, setstate] = useState("");
+          
+          const dateActual = (data.header.timestamp)/1000000;
           return {
             tokenID: tok.token_id,
             price: fromYoctoToNear(tok.price),
@@ -139,9 +138,10 @@ function LightEcommerceA() {
               on_auction: tok.on_auction, //auction status
               highestbidder: tok.highestbidder,
             }),
+            time: (tok.expires_at - dateActual <= 0 ? 0 : (tok.expires_at - dateActual) / 1000)
+            
           };
         });
-
         console.log("toks",toks);
         console.log("onsale",onSaleToks);
         console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
@@ -152,7 +152,9 @@ function LightEcommerceA() {
         });
       }
     })();
+    
   }, []);
+  
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 py-24 mx-auto">
@@ -168,54 +170,7 @@ function LightEcommerceA() {
               //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
               return (
-                <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
-                 {tokenData.image ?
-                  <a href={"/detail/" + token.tokenID}>
-                    <div className="token token-h">
-                    <div className="block relative h-48 rounded overflow-hidden">
-                    
-                       <img
-                            alt="ecommerce"
-                            className="imgaa object-cover object-center w-full h-full block"
-                            // src={`https://ipfs.io/ipfs/${tokenData.image}`}
-                            src="https://cdn.pixabay.com/photo/2021/08/25/20/42/field-6574455__340.jpg"
-                          /> 
-               
-                   
-                           
-                    </div>
-                    <div className="mt-4">
-                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
-                        {tokenData.title}
-                      </h2>
-                      <p className="mt-1 ml-2">
-                        Tiempo restante: <b>d2 23:24:05</b> 
-                      </p>
-                      <p className="mt-1 mb-4 ml-2">
-                        {Landing.blockchain==0 &&
-                            fromWEItoEth(token.price) + " " + Landing.currency}
-                            Ultima puja:  <b>{"0.00001 "+ Landing.currency}</b>
-                        {/* {"Ultima puja 0.0001 " + Landing.currency} */}
-                      </p>
-                      {/* <a href={"/detail/" + token.tokenID}
-                        className="btn-1"
-                        // disabled={state?.btnDisabled}
-                        onClick={async () => {
-                          // comprar();
-                        }}
-                        >
-                        Ver 
-                      </a> */}
-                    </div>
-                    </div>
-                  </a>
-                  :
-                  <img 
-                     src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 
-                     className="object-cover object-center w-full h-full block" />
-
-                  }
-                </div>
+                <TokenCart Landing={Landing} tokenData={tokenData} token={token} key={key}/>
               );
             })}
         </div>
@@ -271,5 +226,72 @@ function LightEcommerceA() {
     </section>
   );
 }
-
+const TokenCart = ({tokenData, token, Landing ,key}) => {
+  const [time, settime] = useState(token.time);
+  useEffect(() => {
+    const id = setInterval(() => {
+      if(time > 0){
+        settime(time => time -1);
+      }else{
+        clearInterval(id);
+      }
+    }, 1000);
+  }, [])
+  const timeFormat = () => {
+     const s = parseInt(time % 60);
+     const m = parseInt(time / 60 % 60);
+     const h = parseInt(time / 3600 % 24);
+     const d = parseInt(time / 86400);
+    return (d == 0 ? "" : d+"d")+" "+h+":"+m+":"+s;
+  }
+  return(
+    <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
+                 {tokenData.image ?
+                  <a href={"/auction/" + token.tokenID}>
+                    <div className="token token-h">
+                    <div className="block relative h-48 rounded overflow-hidden">
+                    
+                       <img
+                            alt="ecommerce"
+                            className="imgaa object-cover object-center w-full h-full block"
+                            src={`https://ipfs.io/ipfs/${tokenData.image}`}
+                            //src="https://cdn.pixabay.com/photo/2021/08/25/20/42/field-6574455__340.jpg"
+                          /> 
+               
+                   
+                           
+                    </div>
+                    <div className="mt-4">
+                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
+                        {tokenData.title}
+                      </h2>
+                      <p className="mt-1 ml-2">
+                        Tiempo restante: <b>{timeFormat()}</b> 
+                      </p>
+                      <p className="mt-1 mb-4 ml-2">
+                        {Landing.blockchain==0 &&
+                            fromWEItoEth(token.price) + " " + Landing.currency}
+                            Ultima puja:  <b>{fromYoctoToNear(tokenData.highestbidder)+" "+ Landing.currency}</b>
+                        {/* {"Ultima puja 0.0001 " + Landing.currency} */}
+                      </p>
+                      {/* <a href={"/detail/" + token.tokenID}
+                        className="btn-1"
+                        // disabled={state?.btnDisabled}
+                        onClick={async () => {
+                          // comprar();
+                        }}
+                        >
+                        Ver 
+                      </a> */}
+                    </div>
+                    </div>
+                  </a>
+                  :
+                  <img 
+                     src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 
+                     className="object-cover object-center w-full h-full block" />
+                  }
+                </div>
+  )
+}
 export default LightEcommerceA;

@@ -27,36 +27,25 @@ function LightEcommerceB(props) {
   });
   // Tiempo de conclucion de la subasta
   let finalTime = 0;
-  const setFinalTime = (c) => {finalTime = c};
+  const setFinalTime = (c) => { finalTime = c };
   const [Time, setTime] = useState(0);
   // setea una fecha dada y retorna un TimeStamp
-  // resive como parametros numeros enteros
-  const setFecha = (dia, mes, año) => {
-    const fechaActual = new Date();
-    fechaActual.setDate(dia);
-    fechaActual.setMonth(mes-1);
-    fechaActual.setFullYear(año);
-    if(new Date().getTime() < fechaActual.getTime()){
-      setFinalTime((fechaActual.getTime()- new Date().getTime()) / 1000);
-      return ((fechaActual.getTime()- new Date().getTime()) / 1000);
-    }
-    return false;
-  }
+
 
   const getFecha = () => {
-    if(finalTime > 0){
+    if (finalTime > 0) {
       // const time = parseInt((finalTime - new Date().getTime()) / 1000);
       const s = parseInt(finalTime % 60);
       const m = parseInt((finalTime / 60) % 60);
-      const h = parseInt((finalTime / 3600 ) % 24);
-      const d = parseInt((finalTime / 86400 ));
+      const h = parseInt((finalTime / 3600) % 24);
+      const d = parseInt((finalTime / 86400));
       finalTime--;
-      return `${d}d ${h+":"+m+":"+s}`;
+      return `${d}d ${h + ":" + m + ":" + s}`;
     }
     return false;
   }
 
-  
+
 
   //es el parametro de tokenid
   const { tokenid } = useParams();
@@ -91,6 +80,7 @@ function LightEcommerceB(props) {
             jdata: JSON.parse(toks.data),
             owner,
           });
+          console.log(toks.data)
         }
       } else {
         //instanciar contracto
@@ -125,32 +115,42 @@ function LightEcommerceB(props) {
               // creator:toks.metadata.creator,
             },
             jdata: {
-              // image: toks.metadata.media,
+              image: toks.media,
               // title: toks.metadata.title,
               // description: toks.metadata.description,
-              culture:toks.culture,
-              country:toks.country,
-              creator:toks.creator,
+              culture: toks.culture,
+              country: toks.country,
+              creator: toks.creator,
+              highestbidder: toks.highestbidder,
+              expires_at: new Date(toks.expires_at * 1).toString(),
+              starts_at: new Date(toks.starts_at * 1).toLocaleTimeString(),
             },
             owner: toksnft.owner_id,
           });
-          console.log("state",state )
+          const data = await contract.account.connection.provider.block({
+            finality: "final",
+          });
+
+          const dateActual = (data.header.timestamp) / 1000000;
+          finalTime = ((parseInt(toks.expires_at) - dateActual) / 1000);
+          console.log(finalTime);
+
+          const timer = setInterval(() => {
+            const v = getFecha();
+            if (v) {
+              setTime(v);
+            } else {
+              clearInterval(timer);
+            }
+            // console.log(pun().length);   
+          }, 1000);
         }
 
-        
+
       }
     })();
-    
-    setFecha(24,11,2021);
-      const time = setInterval(() => {
-        const v = getFecha();
-        if (v) {
-          setTime(v);
-        }else{
-            clearInterval(time);
-        } 
-        // console.log(pun().length);   
-      }, 1000);
+
+
   }, []);
 
   async function comprar() {
@@ -203,10 +203,10 @@ function LightEcommerceB(props) {
           return err;
         });
     } else {
-      
-      let amount=parseFloat(state.tokens.price);
-      console.log("amount",amount)
-  
+
+      let amount = parseFloat(state.tokens.price);
+      console.log("amount", amount)
+
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
@@ -270,20 +270,19 @@ function LightEcommerceB(props) {
                 {state?.tokens.tokenID}
               </span>
             </div>
-            
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Cultura</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.culture
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.culture
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
-                  {state?.jdata.culture  }
+                  {state?.jdata.culture}
                 </span>
               </span>
             </div>
@@ -294,13 +293,12 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">País de origen</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.country
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.country
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
-                  {state?.jdata.country  }
+                  {state?.jdata.country}
                 </span>
               </span>
             </div>
@@ -322,15 +320,15 @@ function LightEcommerceB(props) {
                 {state?.jdata.creator}
               </span>
             </div>
-            
+
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
               <span className="text-gray-500">Ultima puja</span>
               <span className="ml-auto text-gray-900">
-                
-                  12 Near
-                
+
+                {state?.jdata.highestbidder} Near
+
               </span>
             </div>
 
@@ -339,27 +337,27 @@ function LightEcommerceB(props) {
             >
               <span className="text-gray-500">Tiempo restante</span>
               <span className="ml-auto text-gray-900">
-                
-                  {Time}
-                
+
+                {Time}
+
               </span>
             </div>
 
-            
 
 
-            
+
+
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="puja">
               {/* <span className=""> */}
-                <input type="number"  className="title-font font-medium text-2xl text-gray-900"/>
-                <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
+              <input type="number" className="title-font font-medium text-2xl text-gray-900" />
+              <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
               {/* </span> */}
               <button
                 className={`flex text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
                 disabled={state?.btnDisabled}
                 onClick={async () => {
-                  
+
                 }}
               >
                 Puja

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -30,6 +30,8 @@ function LightHeroE(props) {
     file: undefined,
     blockchain: localStorage.getItem("blockchain"),
   });
+
+  const [combo, setcombo] = useState(true);
   //guarda el estado de el modal
   const [modal, setModal] = React.useState({
     show: false,
@@ -38,6 +40,12 @@ function LightHeroE(props) {
     loading: true,
     disabled: true,
   });
+
+  const [actualDate,setactualDate] = useState("");
+
+  useEffect(() => {
+    fechaActual();
+  },[])
   //guardara todos los valores del formulario
   const formik = useFormik({
     initialValues: {
@@ -47,6 +55,9 @@ function LightHeroE(props) {
       culture: "",
       country: "",
       image: "",
+      date: "",
+      hrs: "",
+      min: "",
     },
     //validaciones
     validationSchema: Yup.object({
@@ -98,8 +109,10 @@ function LightHeroE(props) {
         disabled: true,
       });
 
-      console.log(JSON.stringify(values));
-
+      console.log(JSON.stringify(values))
+      const date = new Date(values.date)
+      date.setHours(values.hrs)
+      date.setMinutes(values.min)
       let token;
       if (mint.blockchain == "0") {
         //los datos de la transacccion
@@ -115,14 +128,20 @@ function LightHeroE(props) {
           });
       } else {
         let contract = await getNearContract();
+        const data = await contract.account.connection.provider.block({
+          finality: "final",
+        });
+        const dateActual = (data.header.timestamp)/1000000;
+        const owner = await getNearAccount()
         let payload = {
-          token_owner_id: await getNearAccount(),
+          token_owner_id: owner,
           token_metadata: {
             title: values.title,
             description: values.description,
             media: values.image,
             media_hash: "hashhashhashhashhashhashhashhash",
-            extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
+            extra: "{'culture':'"+values.culture+"','country':'"+values.country+"','creator':'"+owner+"','price':'"+(fromNearToYocto(values.price))+"','on_sale':"+combo+",'on_auction':"+(!combo)+",'adressbidder':'accountbidder','highestbidder':'"+(!combo ? 0 : "notienealtos" )+"','lowestbidder':'"+(!combo ? fromNearToYocto(values.price) : "notienebajos" )+"','expires_at':'"+date.getTime()+"','starts_at':'"+dateActual+"'}"
+            //extra: "{'culture':'Azteca','country':'Mexico','creator':'joehank.testnet','price':'10','on_sale':true,'on_auction':false,'adressbidder':'accountbidder','highestbidder':'notienealtos','lowestbidder':'notienebajos','expires_at':'noexpira','starts_at':'noinicia'}"
           },
         };
         console.log(contract);
@@ -136,7 +155,7 @@ function LightHeroE(props) {
           amount
         );
 
-        console.log(tokenresult);
+       
       }
       //if de error
       if (!token.status)
@@ -218,6 +237,19 @@ function LightHeroE(props) {
       };
     } */
   }
+  const format = (v)=> {
+    return v < 10 ? "0"+v : v;
+  }
+  const fechaActual = async () => {
+    let contract = await getNearContract();
+    const data = await contract.account.connection.provider.block({
+      finality: "final",
+    });
+    const dateActual =new Date((data.header.timestamp)/1000000);
+    const fs = format(dateActual.getFullYear())+"-"+(format(dateActual.getMonth()+1))+"-"+format(dateActual.getDate());
+    console.log(fs)
+    setactualDate(fs)
+  }
 
   return (
     <section className="text-gray-600 body-font">
@@ -266,6 +298,13 @@ function LightHeroE(props) {
           </h1>
           <div className="flex w-full md:justify-start justify-center items-end">
             <div className="relative mr-4 lg:w-full xl:w-1/2 w-3/4">
+              <select onChange={e=>{
+                setcombo(e.target.value == "A la venta");
+              }}>
+                <option>A la venta</option>
+                <option>En subasta</option>
+              </select>
+              
               <div className="flex justify-between ">
                 <label
                   htmlFor="title"
@@ -293,7 +332,8 @@ function LightHeroE(props) {
                   htmlFor="price"
                   className="leading-7 text-sm text-gray-600"
                 >
-                  Precio en
+                  
+                  {combo ? "Precio en " : "Precio inicial en "}
                   {" " +
                     currencys[parseInt(localStorage.getItem("blockchain"))]}
                 </label>
@@ -380,12 +420,35 @@ function LightHeroE(props) {
                 {...formik.getFieldProps("description")}
                 className={` resize-none border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
               />
+            {!combo ? ( 
+              <>
+              <div className="flex justify-between ">
+                <label
+                  htmlFor="description"
+                  className="leading-7 text-sm text-gray-600"
+                >
+                  Fecha de expiracion
+                </label>
+                {formik.touched.description && formik.errors.description ? (
+                  <div className="leading-7 text-sm text-red-600">
+                    {formik.errors.description}
+                  </div>
+                ) : null}
+              </div>
+              <input className="date" id="date" name="date" {...formik.getFieldProps("date")} type="date" min={`${actualDate}`}/>
+              <input className="date-hm" id="hrs" name="hrs" {...formik.getFieldProps("hrs")} type="number" min="0" max="23" placeholder="Hrs" />
+              <input className="date-hm" id="min" name="min" {...formik.getFieldProps("min")} type="number" min="0" max="59" placeholder="Min" />
+
+              </>
+
+              ) : ""
+            }
               <button
                 type="submit"
                 className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                 disabled={mint?.onSubmitDisabled}
               >
-                Minar
+                {combo ? "Minar" : "Subastar"}
               </button>
             </div>
           </div>
