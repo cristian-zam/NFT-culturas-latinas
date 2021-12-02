@@ -20,6 +20,9 @@ export default function ModalRevender(props) {
   const formik = useFormik({
     initialValues: {
       price: 0,
+      date: "",
+      hrs: "",
+      min: "",
     },
     validationSchema: Yup.object({
       price: Yup.number()
@@ -44,14 +47,27 @@ export default function ModalRevender(props) {
           });
       } else {
         let contract = await getNearContract();
+        const data = await contract.account.connection.provider.block({
+          finality: "final",
+        });
+        const dateActual = (data.header.timestamp)/1000000;
+        console.log(values.date)
+        const date = new Date(values.date)
+        date.setDate(date.getDate()+1)
+        date.setHours(values.hrs)
+        date.setMinutes(values.min)
+        console.log(date)
         let payload = {
           token_id: props.tokenId,
           price: fromNearToYocto(values.price),
+          lowestbidder: fromNearToYocto(values.price),
+          expires_at: date.getTime().toString(),
+          starts_at: dateActual.toString(),
         };
         let amount = fromNearToYocto(0);
         console.log(amount);
         console.log(payload);
-        revender = await contract.revender(
+        revender = await contract.subastar_nft(
           payload,
           300000000000000, // attached GAS (optional)
           amount
@@ -108,7 +124,8 @@ export default function ModalRevender(props) {
                   <br/>
                   <input
                     type="date"
-                    
+                    name="date"
+                    id="date"{...formik.getFieldProps("date")}
                     className={`mb-1 date-modal border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out-${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
                     // {...formik.getFieldProps("price")}
                   />
@@ -116,6 +133,9 @@ export default function ModalRevender(props) {
                   <input
                     type="number"
                     placeholder="Hrs"
+                    type="hrs"
+                    name="hrs"
+                    id="date"{...formik.getFieldProps("hrs")}
                     min="0"
                     max="24"
                     className={`mb-1 hm-modal border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out-${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}
@@ -124,6 +144,9 @@ export default function ModalRevender(props) {
                   <input
                     type="number"
                     placeholder="Min"
+                    type="min"
+                    name="min"
+                    id="date"{...formik.getFieldProps("min")}
                     min="0"
                     max="59"
                     className={`mb-1 hm-modal border-none w-full bg-gray-100 bg-opacity-50 rounded   focus:bg-transparent  text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out-${props.theme}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`}

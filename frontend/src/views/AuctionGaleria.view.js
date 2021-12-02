@@ -278,7 +278,7 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
                       <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
-                            Ultima puja:  <b>{fromYoctoToNear(tokenData.lowestbidder)+" "+ Landing.currency}</b>
+                            Ultima puja:  <b>{fromYoctoToNear(tokenData.highestbidder)+" "+ Landing.currency}</b>
                         {/* {"Ultima puja 0.0001 " + Landing.currency} */}
                       </p>
                       {/* <a href={"/detail/" + token.tokenID}

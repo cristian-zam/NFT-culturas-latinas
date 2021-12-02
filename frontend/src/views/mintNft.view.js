@@ -111,6 +111,7 @@ function LightHeroE(props) {
 
       console.log(JSON.stringify(values))
       const date = new Date(values.date)
+      date.setDate(date.getDate()+1)
       date.setHours(values.hrs)
       date.setMinutes(values.min)
       let token;
@@ -149,7 +150,7 @@ function LightHeroE(props) {
         console.log(fromYoctoToNear("5700000000000000000000"));
         let amount = fromNearToYocto(0.1);
        // alert(payload);
-      let tokenresult=  contract.minar(
+       let tokenresult=  contract.minar(
           payload,
           300000000000000, // attached GAS (optional)
           amount

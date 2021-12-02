@@ -317,7 +317,7 @@ function LightEcommerceB(props) {
                               comprar();
                             }}
                             >
-                              Comprar {stateLogin.toString()}
+                              Comprar
                             </button>
                           : 
                           <button
@@ -327,7 +327,7 @@ function LightEcommerceB(props) {
                             nearSignIn(window.location.href);
                           }}
                           >
-                            Iniciar Sesión para Comprar {stateLogin.toString()}
+                            Iniciar Sesión para Comprar
                           </button>
               }
             </div>
