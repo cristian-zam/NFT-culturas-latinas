@@ -137,6 +137,7 @@ function LightEcommerceA() {
               on_sale: tok.on_sale, // sale status
               on_auction: tok.on_auction, //auction status
               highestbidder: tok.highestbidder,
+              lowestbidder: tok.lowestbidder
             }),
             time: (tok.expires_at - dateActual <= 0 ? 0 : (tok.expires_at - dateActual) / 1000)
             
@@ -268,10 +269,16 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
                       <p className="mt-1 ml-2">
                         Tiempo restante: <b>{timeFormat()}</b> 
                       </p>
+                      <p className="mt-1 ml-2">
+                        {Landing.blockchain==0 &&
+                            fromWEItoEth(token.price) + " " + Landing.currency}
+                            Precio base:  <b>{token.price+" "+ Landing.currency}</b>
+                        {/* {"Ultima puja 0.0001 " + Landing.currency} */}
+                      </p>
                       <p className="mt-1 mb-4 ml-2">
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
-                            Ultima puja:  <b>{fromYoctoToNear(tokenData.highestbidder)+" "+ Landing.currency}</b>
+                            Ultima puja:  <b>{fromYoctoToNear(tokenData.lowestbidder)+" "+ Landing.currency}</b>
                         {/* {"Ultima puja 0.0001 " + Landing.currency} */}
                       </p>
                       {/* <a href={"/detail/" + token.tokenID}

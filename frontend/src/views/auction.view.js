@@ -85,6 +85,7 @@ function LightEcommerceB(props) {
       } else {
         //instanciar contracto
         let contract = await getNearContract();
+        window.cont= contract;
         totalSupply = await contract.nft_total_supply();
         console.log(totalSupply);
 
@@ -118,10 +119,12 @@ function LightEcommerceB(props) {
               image: toks.media,
               // title: toks.metadata.title,
               // description: toks.metadata.description,
+              postor: toks.adressbidder,
               culture: toks.culture,
               country: toks.country,
               creator: toks.creator,
-              highestbidder: toks.highestbidder,
+              highestbidder: fromYoctoToNear(toks.highestbidder),
+              lowestbidder: fromYoctoToNear(toks.lowestbidder),
               expires_at: new Date(toks.expires_at * 1).toString(),
               starts_at: new Date(toks.starts_at * 1).toLocaleTimeString(),
             },
@@ -153,7 +156,9 @@ function LightEcommerceB(props) {
 
   }, []);
 
-  async function comprar() {
+
+  const [puja, setpuja] = useState(state?.jdata.lowestbidder+0.0001);
+  async function sendOfert() {
     //evitar doble compra
     setstate({ ...state, btnDisabled: true });
     let account, toks;
@@ -204,13 +209,13 @@ function LightEcommerceB(props) {
         });
     } else {
 
-      let amount = parseFloat(state.tokens.price);
+      let amount = puja;//parseFloat(state.tokens.price);
       console.log("amount", amount)
 
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
-      toks = await contract.comprar_nft(
+      toks = await contract.ofertar_subasta(
         {
           token_id: state.tokens.tokenID,
         },
@@ -237,7 +242,7 @@ function LightEcommerceB(props) {
       setModal({
         show: true,
         title: "exito",
-        message: "token comprado con exito",
+        message: "Oferta realizada",
         loading: false,
         disabled: false,
         change: setModal,
@@ -246,6 +251,9 @@ function LightEcommerceB(props) {
       setstate({ ...state, btnDisabled: false });
     }
   }
+
+
+
   return (
     <section className="text-gray-600 body-font overflow-hidden">
       <div className="container px-5 py-24 mx-auto">
@@ -324,6 +332,26 @@ function LightEcommerceB(props) {
             <div
               className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
             >
+              <span className="text-gray-500">Postor</span>
+              <span className="ml-auto text-gray-900 text-xs self-center">
+                {state?.jdata.postor}
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
+              <span className="text-gray-500">Precio inicial</span>
+              <span className="ml-auto text-gray-900">
+
+                {state?.jdata.lowestbidder} Near
+
+              </span>
+            </div>
+
+            <div
+              className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+            >
               <span className="text-gray-500">Ultima puja</span>
               <span className="ml-auto text-gray-900">
 
@@ -350,14 +378,21 @@ function LightEcommerceB(props) {
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="puja">
               {/* <span className=""> */}
-              <input type="number" className="title-font font-medium text-2xl text-gray-900" />
+              <input type="number" 
+                min={(state?.jdata.lowestbidder)} 
+                value={puja}
+                className="title-font font-medium text-2xl text-gray-900" 
+                onChange={e=>{
+                  setpuja(e.target.value);
+                }}
+               />
               <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
               {/* </span> */}
               <button
                 className={`flex text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
                 disabled={state?.btnDisabled}
                 onClick={async () => {
-
+                  sendOfert();
                 }}
               >
                 Puja

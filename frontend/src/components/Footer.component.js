@@ -31,39 +31,13 @@ function LightFooterB(props) {
               RECURSOS
             </h2>
             <nav className="list-none mb-10">
-            <li>
-                <a href="/Roadmap Nativo NFT.pdf" target="_blank" className="text-gray-600 hover:text-gray-800">
+              <li>
+                <a href="https://drive.google.com/file/d/1IHNp3aHcUDjn8Iws8cObC3qWWVEVcj-7/view" target="_blank" className="text-gray-600 hover:text-gray-800">
                 Mapa de ruta
                 </a>
               </li>
 
-              <li>
-                <a href="/blog" className="text-gray-600 hover:text-gray-800">
-                  Blog
-                </a>
-              </li>
-
-              <li>
-                <a href="/faq" className="text-gray-600 hover:text-gray-800">
-                  Faq
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/partners"
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  Partners
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/contacto"
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  Contacto
-                </a>
-              </li>
+              
             </nav>
           </div>
 

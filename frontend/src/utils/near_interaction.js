@@ -48,6 +48,7 @@ export const methodOptions = {
   changeMethods: [
     "update_token",
     "minar",
+    "ofertar_subasta",
 
     // "minar",
     "comprar_nft",

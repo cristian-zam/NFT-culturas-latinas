@@ -857,3 +857,18 @@ select{
 .date-hm{
   width: 23%;
 }
+.price{
+  width: 100%;
+}
+.hm-modal, .date-modal{
+  margin-right: 3px;
+}
+.date-modal{
+  width: calc(70% - 9px);
+}
+.hm-modal{
+  width: 15%;
+}
+.hm-modal:last-child{
+  background: red;
+}

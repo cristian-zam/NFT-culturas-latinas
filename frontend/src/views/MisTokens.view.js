@@ -10,7 +10,7 @@ import {
 } from "../utils/blockchain_interaction";
 
 import { useHistory } from "react-router";
-
+import ModalSubasta from '../components/modalSubasta.component'
 import Modal from "../components/modalRevender.component";
 import { currencys } from "../utils/constraint";
 import {
@@ -292,7 +292,7 @@ function MisTokens(props) {
                             Poner en venta
                           </button>
                           <button
-                            className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                            className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             onClick={() => {
                               setModal({
                                 ...modal,
@@ -347,7 +347,7 @@ function MisTokens(props) {
         </div>
 
         {/* Mandamos a llamar al modal con el state como props*/}
-        <Modal {...modal} />
+        <ModalSubasta {...modal} />
       </section>
     </>
   );
