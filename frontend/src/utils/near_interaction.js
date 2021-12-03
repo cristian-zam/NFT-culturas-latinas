@@ -46,6 +46,7 @@ export const methodOptions = {
     "nft_supply_for_owner",
     "nft_tokens",
     "tokens_of",
+    "obtener_pagina_v2_by_owner",
     
   ],
   changeMethods: [
@@ -57,8 +58,8 @@ export const methodOptions = {
     "comprar_nft",
     "revender",
     "subastar_nft",
-    "finalizar_subasta"
-    // "quitar_del_market_place",
+    "finalizar_subasta",
+    "quitar_del_market_place",
   ],
 };
 /**

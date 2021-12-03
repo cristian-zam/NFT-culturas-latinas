@@ -26,7 +26,7 @@ function MisTokens(props) {
     nfts: [],
     page:  parseInt( window.localStorage.getItem("Mypage")),
     tokensPerPage: 9,
-    tokensPerPageNear: 8,
+    tokensPerPageNear: 15,
 
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
@@ -118,7 +118,7 @@ function MisTokens(props) {
         setNfts({
           ...nfts,
           nfts: copytoks,
-          nPages: Math.ceil(balance / nfts.tokensPerPage),
+          nPages: Math.ceil(balance / nfts.tokensPerPage)+1,
           owner: account,
         });
       } else {
@@ -126,29 +126,30 @@ function MisTokens(props) {
         let account = await getNearAccount();
         console.log(account);
         let payload = {
-          account_id: account,
-          from_index: nfts.page.toString(), 
+          account : account,
+          from_index: nfts.page , 
           limit: nfts.tokensPerPageNear,
         };
 
-        let nftsArr = await contract.nft_tokens_for_owner(payload);
+        let nftsArr = await contract.obtener_pagina_v2_by_owner(payload);
         let balance = await contract.nft_supply_for_owner({
           account_id: account,
         });
-        console.log("extras:",nftsArr[0].metadata.extra);
+        console.log("extras:",nftsArr  );
         console.log("balance",balance);
-
+ 
         //convertir los datos al formato esperado por la vista
         nftsArr = nftsArr.map((tok) => {
-          console.log("X->",  tok.metadata.extra )
+          console.log("X->",  tok  )
          
           return {
             tokenID: tok.token_id,
-            price: 0,//fromYoctoToNear(tok.metadata.price),
-            onSale: tok.true,// tok.metadata.on_sale,
+            price:  fromYoctoToNear(tok.price),
+            onSale: tok.on_sale,// tok.metadata.on_sale,
+            onAuction: tok.on_auction,
             data: JSON.stringify({
-              title: tok.metadata.title,//"2sdfeds",// tok.metadata.title,
-              image:tok.metadata.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
+              title: tok.title,//"2sdfeds",// tok.metadata.title,
+              image:tok.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
             }),
           };
         });
@@ -256,7 +257,7 @@ function MisTokens(props) {
                           <span className="ml-auto text-gray-900">
                             <span
                               className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                                nftData.onSale
+                                nft.onSale
                                   ? "text-green-100 bg-green-500"
                                   : "text-red-100 bg-red-500"
                               } rounded-full`}
