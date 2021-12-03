@@ -142,6 +142,8 @@ function LightEcommerceB(props) {
           const dateActual = (data.header.timestamp) / 1000000;
           finalTime = ((parseInt(toks.expires_at) - dateActual) / 1000);
           console.log(finalTime);
+          
+          
 
           const timer = setInterval(() => {
             const v = getFecha();
@@ -149,6 +151,7 @@ function LightEcommerceB(props) {
               setTime(v);
             } else {
               clearInterval(timer);
+              
             }
             // console.log(pun().length);   
           }, 1000);

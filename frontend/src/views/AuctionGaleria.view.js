@@ -229,12 +229,24 @@ function LightEcommerceA() {
 }
 const TokenCart = ({tokenData, token, Landing ,key}) => {
   const [time, settime] = useState(token.time);
+  const finalizarSubasta = async (tokenID) =>{
+    let contract = await getNearContract();
+    let payload = {
+      token_id: tokenID,
+    }
+    await contract.finalizar_subasta(
+      payload,
+      300000000000000, // attached GAS (optional)
+    );
+    
+  }
   useEffect(() => {
     const id = setInterval(() => {
       if(time > 0){
         settime(time => time -1);
       }else{
         clearInterval(id);
+        finalizarSubasta(token.tokenID)
       }
     }, 1000);
   }, [])
@@ -245,6 +257,8 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
      const d = parseInt(time / 86400);
     return (d == 0 ? "" : d+"d")+" "+h+":"+m+":"+s;
   }
+
+  
   return(
     <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
                  {tokenData.image ?

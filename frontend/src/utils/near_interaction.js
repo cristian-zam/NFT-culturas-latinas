@@ -44,6 +44,7 @@ export const methodOptions = {
     "nft_supply_for_owner",
     "nft_tokens",
     "tokens_of",
+    
   ],
   changeMethods: [
     "update_token",
@@ -53,7 +54,8 @@ export const methodOptions = {
     // "minar",
     "comprar_nft",
     "revender",
-    "subastar_nft"
+    "subastar_nft",
+    "finalizar_subasta"
     // "quitar_del_market_place",
   ],
 };
