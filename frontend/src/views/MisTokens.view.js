@@ -157,7 +157,7 @@ function MisTokens(props) {
         setNfts({
           ...nfts,
           nfts: nftsArr,
-          nPages: Math.ceil(nftsArr.length / nfts.tokensPerPage)+1,
+          nPages: Math.ceil(nftsArr.length / nfts.tokensPerPageNear)+1,
           owner: account,
         });
       }
@@ -248,7 +248,7 @@ function MisTokens(props) {
                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                           {nftData.title}
                         </h1>
-                        <p className="leading-relaxed">{nftData.description}</p>
+                        <p className="leading-relaxed">{nftData.description }</p>
                         {/* Etiqueta de token en venta */}
                         <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -263,6 +263,25 @@ function MisTokens(props) {
                               } rounded-full`}
                             >
                               {nft.onSale ? "Disponible" : "No disponible"}
+                            </span>
+                          </span>
+                        </div>
+                         
+                        <p className="leading-relaxed">{nftData.description }</p>
+                        {/* Etiqueta de token en subasta */}
+                        <div
+                          className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+                        >
+                          <span className="text-gray-500">OnAuction</span>
+                          <span className="ml-auto text-gray-900">
+                            <span
+                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
+                                nft.onAuction
+                                  ? "text-green-100 bg-green-500"
+                                  : "text-red-100 bg-red-500"
+                              } rounded-full`}
+                            >
+                              {nft.onAuction ? "Disponible" : "No disponible"}
                             </span>
                           </span>
                         </div>
@@ -284,7 +303,7 @@ function MisTokens(props) {
                           </button>
                         ) : (
                           <>
-                          <button
+                          {!nft.onAuction && <>  <button
                             className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             onClick={() => {
                               setModal({
@@ -323,8 +342,11 @@ function MisTokens(props) {
                             }}
                           >
                             Poner en subasta
-                          </button>
+                          </button></>}
+                        
                         </>
+
+                        
                         )}
                       </div>
                     </div>

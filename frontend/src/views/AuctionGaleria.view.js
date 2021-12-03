@@ -243,6 +243,7 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
       payload,
       300000000000000, // attached GAS (optional)
     );
+    window.location.reload();
     
   }
   useEffect(() => {
@@ -251,7 +252,8 @@ const TokenCart = ({tokenData, token, Landing ,key}) => {
         settime(time => time -1);
       }else{
         clearInterval(id);
-        finalizarSubasta(token.tokenID)
+        finalizarSubasta(token.tokenID);
+       
       }
     }, 1000);
   }, [])

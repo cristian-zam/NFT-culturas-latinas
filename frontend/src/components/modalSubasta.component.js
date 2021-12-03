@@ -67,21 +67,22 @@ export default function ModalRevender(props) {
         let amount = fromNearToYocto(0);
         console.log(amount);
         console.log(payload);
-        revender = await contract.subastar_nft(
+         
+          await contract.subastar_nft(
           payload,
           300000000000000, // attached GAS (optional)
           amount
         );
-        alert("revender",revender);
-        revender.status = revender.on_sale;
+        /* console.log("revender",revender);
+        revender.status = revender.on_sale; */
        
       }
 
       setstate({ disabled: false });
       //recargar la pantalla si la transacción se ejecuto correctamente
-      if (revender.status) {
+    /*   if (revender.status) {
         history.go(0);
-      }
+      } */
       window.location.reload();
     },
   });

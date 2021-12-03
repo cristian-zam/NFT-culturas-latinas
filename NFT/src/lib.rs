@@ -257,31 +257,31 @@ impl Contract {
             let owner_id = self.tokens.owner_by_id.get(&token_id);
             let owner_value = owner_id.as_deref().unwrap_or("default string");
             let mut metadataextra = Contract::get_token(self, token_id.clone());
-    /*     {
-            token_id: '1',
-            owner_id: 'dev-1636751893359-19496702378959',
-            title: 'Mr Burrito',
-            description: 'This is a burrito',
-            media: 'imagenimagenimagenimagenimagenim',
-            culture: 'Burriroca',
-            country: 'BurritoLand',
-            creator: 'dev-1636751893359-19496702378959',
-            price: '20',
-            on_sale: true,
-            on_auction: false,
-            adressbidder: 'accountbidder',
-            highestbidder: 'notienealtos',
-            lowestbidder: 'notienebajos',
-            expires_at: 'noexpira',
-            starts_at: 'noinicia'
-          } */
-        
-        // si no cuenta con los fondos hacemos rollback
+        /*     {
+                token_id: '1',
+                owner_id: 'dev-1636751893359-19496702378959',
+                title: 'Mr Burrito',
+                description: 'This is a burrito',
+                media: 'imagenimagenimagenimagenimagenim',
+                culture: 'Burriroca',
+                country: 'BurritoLand',
+                creator: 'dev-1636751893359-19496702378959',
+                price: '20',
+                on_sale: true,
+                on_auction: false,
+                adressbidder: 'accountbidder',
+                highestbidder: 'notienealtos',
+                lowestbidder: 'notienebajos',
+                expires_at: 'noexpira',
+                starts_at: 'noinicia'
+            } */
+            
+            // si no cuenta con los fondos hacemos rollback
         let amount = env::attached_deposit();
         assert_eq!(
             metadataextra.price.parse::<u128>().unwrap(),
             amount,
-            "fondos insuficientes"
+            "Cantidad incorrecta,verifica el costo exacto!"
         );
         assert_eq!(
             metadataextra.on_sale,
@@ -387,6 +387,11 @@ impl Contract {
         //el string plano se convierte a JSon
         let mut extradatajson: Extras = serde_json::from_str(&newextradata).unwrap();    
         //Se modifica el json
+        assert_eq!(
+            extradatajson.on_auction==true,
+            false,
+            "Lo sentimos,este token se encuentra en subasta y aun no termina!"
+        );
         if price.trim().parse::<u128>().unwrap() > 0 {
             extradatajson.price =  price ;
         }
@@ -499,37 +504,41 @@ impl Contract {
                         >   chrono::offset::Utc::now().timestamp() ,
                            false,// self.finalizar_subasta(token_id.clone())
                              "la subasta ya terminó" ); */
-                  if extradatajson.lowestbidder.parse::<u128>().unwrap() < amountsended
+                             log!("low:{},high:{},send:{}", extradatajson.lowestbidder.parse::<u128>().unwrap(),extradatajson.highestbidder.parse::<u128>().unwrap(),amountsended);
+ assert_eq!( extradatajson.lowestbidder.parse::<u128>().unwrap() > amountsended, false, "la cantidad enviada es menos que el minimo");
+ assert_eq!( extradatajson.highestbidder.parse::<u128>().unwrap() >= amountsended, false, "la cantidad enviada es menor o igual que la ultima puja");
+                                 
+                  if extradatajson.lowestbidder.parse::<u128>().unwrap() <= amountsended
                          && extradatajson.highestbidder.parse::<u128>().unwrap() < amountsended {
                     if extradatajson.highestbidder.parse::<u128>().unwrap() > 0 {
                               //regresar el bid al singer anterior
                                 Promise::new(extradatajson.adressbidder.clone().to_string()).transfer(extradatajson.highestbidder.parse::<u128>().unwrap());
                         }
-                       //actualizar el nuevo  signer y bid
-                        extradatajson.highestbidder =amountsended.to_string();
-                        extradatajson.adressbidder=env::signer_account_id().to_string();
-                        Promise::new(Contractaccount.clone().to_string()).transfer( amountsended.clone() );
+                            //actualizar el nuevo  signer y bid
+                                extradatajson.highestbidder =amountsended.to_string();
+                                extradatajson.adressbidder=env::signer_account_id().to_string();
+                                Promise::new(Contractaccount.clone().to_string()).transfer( amountsended.clone() );
 
-                        // se convierte el Json a un String plano
-                  let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
-                  let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
-                  originaltoken.extra = Some(finalextrajson);
-                  //remplazamos la metadata
-                  self.tokens
-                      .token_metadata_by_id
-                      .as_mut()
-                      .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
-                //cambiar el numero de nfts disponibles
-                // List<token ,List<signer,bid>>  lists de subasta -> lista de offertas
-                 let mut bidding_info = HashMap::new();
-                 let mut _map = USER_TOKEN_HASHMAP.lock().unwrap();
-                 bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
-                 _map.insert(token_id,bidding_info);
+                                // se convierte el Json a un String plano
+                        let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
+                        let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
+                        originaltoken.extra = Some(finalextrajson);
+                        //remplazamos la metadata
+                        self.tokens
+                            .token_metadata_by_id
+                            .as_mut()
+                            .and_then(|by_id| by_id.insert(&token_id, &originaltoken));
+                        //cambiar el numero de nfts disponibles
+                        // List<token ,List<signer,bid>>  lists de subasta -> lista de offertas
+                        let mut bidding_info = HashMap::new();
+                        let mut _map = USER_TOKEN_HASHMAP.lock().unwrap();
+                        bidding_info.insert(env::signer_account_id().to_string(),amountsended.to_string());
+                        _map.insert(token_id,bidding_info);
                   }
                   
       }
 
-        fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
+      pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
         let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
         // Verificar  si existe:
         assert_eq!(
@@ -700,7 +709,7 @@ impl Contract {
         self.n_token_on_auction
     }
 
-    pub fn update_token(&mut self, token_id: TokenId, extra: String) -> TokenMetadata {
+     /* fn update_token(&mut self, token_id: TokenId, extra: String) -> TokenMetadata {
         //assert!(!env::state_exists(), "Already initialized");
         let mut metadata = self
             .tokens
@@ -708,13 +717,15 @@ impl Contract {
             .as_ref()
             .and_then(|by_id| by_id.get(&token_id))
             .unwrap();
+        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+        //assert_eq!(owner_id!= env::signer_account_id() && owner != ,false,"");
         metadata.extra = Some(extra);
         self.tokens
             .token_metadata_by_id
             .as_mut()
             .and_then(|by_id| by_id.insert(&token_id, &metadata));
         metadata
-    }
+    } */
 
     pub fn get_token(&self, token_id: TokenId) -> Meta {
         
@@ -756,12 +767,89 @@ impl Contract {
         let inicioPag = start_index as usize * limit;
         
         assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        let mut counter: u128 = 0;
+        let mut counter: usize = 0;
         self.tokens
             .owner_by_id
             .iter()
+            .filter(|x| {
+                if self.get_token(x.0.clone())
+                .on_sale
+                   
+                {
+                    counter += 1;
+                    if counter > inicioPag {
+                        true
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                }
+            })
             .take(limit)
-            .map(|token_id| { counter +=1; self.get_token(token_id.0)})
+            .map(|token_id|    self.get_token(token_id.0))
+            .collect()
+         
+    }
+    pub fn obtener_pagina_v2_auction(&self, from_index: usize, limit: u64) -> Vec<Meta> {
+        // no estoy segyri de como convierte  de U128 a u128
+        let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
+        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
+        let inicioPag = start_index as usize * limit;
+        
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");
+        let mut counter: usize = 0;
+        self.tokens
+            .owner_by_id
+            .iter()
+            .filter(|x| {
+                if self.get_token(x.0.clone())
+                .on_auction
+                   
+                {
+                    counter += 1;
+                    if counter > inicioPag {
+                        true
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                }
+            })
+            .take(limit)
+            .map(|token_id|    self.get_token(token_id.0))
+            .collect()
+         
+    }
+    pub fn obtener_pagina_v2_by_owner(&self,account: ValidAccountId, from_index: usize, limit: u64) -> Vec<Meta> {
+        // no estoy segyri de como convierte  de U128 a u128
+        let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
+        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
+        let inicioPag = start_index as usize * limit;
+        
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");
+        let mut counter: usize = 0;
+        self.tokens
+            .owner_by_id
+            .iter()
+            .filter(|x| {
+                if self.get_token(x.0.clone())
+                .owner_id==account.to_string()
+                   
+                {
+                    counter += 1;
+                    if counter > inicioPag {
+                        true
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                }
+            })
+            .take(limit)
+            .map(|token_id|    self.get_token(token_id.0))
             .collect()
          
     }
