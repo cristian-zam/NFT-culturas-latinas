@@ -820,7 +820,7 @@ code {
   /* scale border mb-4 */
 }
 .token:hover{
-  transform: scale(1.01);
+  transform: scale(1.05);
   position: unset;
   border-color:  rgb(255, 212, 95);
   
