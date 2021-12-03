@@ -34,8 +34,10 @@ export const config = {
 export const methodOptions = {
   viewMethods: [
     "obtener_pagina_v2",
+    "obtener_pagina_v2_auction",
     "get_token",
     "get_on_sale_toks",
+    "get_on_auction_toks",
     "storage_byte_cost",
     "enum_get_token",
     "nft_token",

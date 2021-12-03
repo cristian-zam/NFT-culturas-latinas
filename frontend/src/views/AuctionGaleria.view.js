@@ -13,10 +13,10 @@ function LightEcommerceA() {
     theme: "yellow",
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
-    page: parseInt( window.localStorage.getItem("page")),
+    page: parseInt( window.localStorage.getItem("auctionpage")),
     blockchain: localStorage.getItem("blockchain"),
-    tokensPerPage: 200,
-    tokensPerPageNear: 200,
+    tokensPerPage: 15,
+    tokensPerPageNear: 6,
   });
   async function getPage(pag) {
     let toks;
@@ -45,15 +45,16 @@ function LightEcommerceA() {
       //instanciar contracto
       let contract = await getNearContract();
       
-      let numberOfToks = pag * Landing.tokensPerPage;
+      let numberOfToks = pag * Landing.tokensPerPageNear;
       //obtener cuantos tokens estan a la venta
       let onSaleToks = await contract.get_on_sale_toks();
+      let onAuctionToks = await contract.get_on_auction_toks();
       //obtener tokens a la venta
-      toks = await contract.obtener_pagina_v2({
+      toks = await contract.obtener_pagina_v2_auction({
         from_index: pag,
-        limit: Landing.tokensPerPage,
+        limit: Landing.tokensPerPageNear,
       });
-    
+    console.log("57 get toks from getpage",toks);
       toks = toks.map((tok) => {
         return {
           tokenID: tok.token_id,
@@ -78,7 +79,8 @@ function LightEcommerceA() {
     (async () => {
       let toks, onSaleToks;
       let arr=[];
-      
+      window.localStorage.setItem("auctionpage",0);
+
       if (Landing.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
                 await syncNets();
@@ -110,19 +112,20 @@ function LightEcommerceA() {
         //instanciar contracto
         let contract = await getNearContract();
         window.contr = contract;
-        console.log("Page",Landing.page)
+        console.log("Page",Landing.page,"PerNEar",Landing.tokensPerPageNear)
+        
         //obtener tokens a la venta
-        toks = await contract.obtener_pagina_v2({
+        toks = await contract.obtener_pagina_v2_auction({
           from_index: Landing.page,
           limit: Landing.tokensPerPageNear,
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
+        let onAuctionToks = await contract.get_on_auction_toks();
         const data = await contract.account.connection.provider.block({
           finality: "final",
       });
       //convertir los datos al formato esperado por la vista
-        toks = toks.filter(tok => tok.on_auction);
         //convertir los datos al formato esperado por la vista
         toks = toks.map((tok) => {
           // const [state, setstate] = useState("");
@@ -145,11 +148,13 @@ function LightEcommerceA() {
         });
         console.log("toks",toks);
         console.log("onsale",onSaleToks);
+        console.log("onauction",onAuctionToks);
         console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
+         
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
+          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear)+1,
         });
       }
     })();
@@ -212,8 +217,8 @@ function LightEcommerceA() {
                   }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
-                    await getPage(index);
-                    window.localStorage.setItem("page",index);
+                   // await getPage(index);
+                    window.localStorage.setItem("auctionpage",index);
                     window.location.reload();
                   }}
                 >
