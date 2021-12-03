@@ -409,7 +409,7 @@ impl Contract {
         originaltoken
     }
 
-    pub fn subastar_nft(&mut self, token_id: TokenId){
+    pub fn subastar_nft(&mut self, token_id: TokenId,lowestbidder:String,starts_at:String,expires_at:String){
      
       
         // Verificar  si existe:
@@ -439,9 +439,11 @@ impl Contract {
                   //Se modifica el json
                   extradatajson.on_sale = false;
                   extradatajson.on_auction = true;
-                  extradatajson.lowestbidder="aqui vale precio de inicio de la subasta".to_string();
-                  extradatajson.expires_at="aqui va la fecha/dias que estara activa la subasta".to_string();
-                 
+                  extradatajson.lowestbidder=lowestbidder.clone();
+                  extradatajson.price=lowestbidder;
+                  extradatajson.highestbidder=0.to_string();
+                  extradatajson.expires_at=expires_at;
+                  extradatajson.starts_at=starts_at; 
                   // se convierte el Json a un String plano
                   let extradatajsontostring  = serde_json::to_string(&extradatajson).unwrap();          // se  reemplaza los " por \' en un string plano
                   let finalextrajson = str::replace(&extradatajsontostring.to_string(),"\"","'");
@@ -527,7 +529,7 @@ impl Contract {
                   
       }
 
-      pub fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
+        fn finalizar_subasta(&mut self, token_id: TokenId) -> bool {
         let Contractaccount: AccountId = "nativodeploy.testnet".parse().unwrap();
         // Verificar  si existe:
         assert_eq!(
@@ -571,6 +573,9 @@ impl Contract {
                     //TODO: transferir la regalia del token
                     Promise::new(Contractaccount.clone()).transfer(gains as u128);
                         //cambiamos el on sale/on auction a false
+                        if(extradatajson.highestbidder.parse::<u128>().unwrap() == 0 as u128){
+                            extradatajson.adressbidder=token_owner_id.as_ref().unwrap().to_string();
+                        }
                         extradatajson.on_sale=false;
                         extradatajson.on_auction=false;
                         // se convierte el Json a un String plano
