@@ -16,7 +16,7 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("auctionpage")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 15,
-    tokensPerPageNear: 6,
+    tokensPerPageNear: 8,
   });
   async function getPage(pag) {
     let toks;

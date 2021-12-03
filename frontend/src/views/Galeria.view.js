@@ -17,7 +17,7 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 15,
+    tokensPerPageNear: 8,
   });
 
   async function getPage(pag) {
@@ -109,7 +109,7 @@ function LightEcommerceA() {
              setLanding({
               ...Landing,
               tokens: arr,
-              nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+              nPages: Math.ceil(arr.length / Landing.tokensPerPage),
             });  
 
           }
@@ -117,6 +117,7 @@ function LightEcommerceA() {
      
       } else {
         window.contr = await getNearContract();
+      
         //instanciar contracto
         let contract = await getNearContract();
         console.log("Page",Landing.page)
@@ -151,7 +152,7 @@ function LightEcommerceA() {
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
+          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear)+1,
         });
       }
     })();
@@ -251,7 +252,7 @@ function LightEcommerceA() {
                   }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
-                    await getPage(index);
+                  //  await getPage(index);
                     window.localStorage.setItem("page",index);
                     window.location.reload();
                   }}
