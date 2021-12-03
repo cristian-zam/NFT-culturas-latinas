@@ -29,6 +29,10 @@ function LightEcommerceB(props) {
   });
   //Esta logeado
   const [stateLogin, setStateLogin] = useState(false);
+  //Precio minimo subasta
+  const [bidderMin, setStateBidderMin] = useState(0.0);
+  //Puja
+  const [puja, setpuja] = useState(0.0);
   // Tiempo de conclucion de la subasta
   let finalTime = 0;
   const setFinalTime = (c) => { finalTime = c };
@@ -85,7 +89,7 @@ function LightEcommerceB(props) {
             jdata: JSON.parse(toks.data),
             owner,
           });
-          console.log(toks.data)
+            console.log(toks.data)
         }
       } else {
         //instanciar contracto
@@ -100,7 +104,15 @@ function LightEcommerceB(props) {
         } else {
           let toksnft = await contract.nft_token({ token_id: tokenid });
           let toks = await contract.get_token({ token_id: tokenid, owner_id: "dev-1636751893359-19496702378959" });
-          console.log(toks)
+          if(fromYoctoToNear(toks.highestbidder) == 0){
+            setStateBidderMin((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
+            setpuja((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
+          } else {
+            setStateBidderMin((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+            setpuja((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+            console.log((parseFloat(fromYoctoToNear(toks.highestbidder))+0.1).toFixed(1));
+          }
+          
           // console.log({
           //   tokenID: toks.token_id,
           //   onSale: toks.metadata.on_sale,
@@ -164,8 +176,12 @@ function LightEcommerceB(props) {
 
   }, []);
 
+  function validatePuja(newPuja){
+    if(newPuja < bidderMin){
+      setpuja(bidderMin)
+    }
+  }
 
-  const [puja, setpuja] = useState(state?.jdata.lowestbidder+0.0001);
   async function sendOfert() {
     //evitar doble compra
     setstate({ ...state, btnDisabled: true });
@@ -259,8 +275,6 @@ function LightEcommerceB(props) {
       setstate({ ...state, btnDisabled: false });
     }
   }
-
-
 
   return (
     <section className="text-gray-600 body-font overflow-hidden">
@@ -384,11 +398,13 @@ function LightEcommerceB(props) {
                           <div className="puja">
                             {/* <span className=""> */}
                             <input type="number" 
-                              min={(state?.jdata.lowestbidder)} 
+                              min={bidderMin} 
                               value={puja}
+                              step="0.1"
                               className="title-font font-medium text-2xl text-gray-900" 
                               onChange={e=>{
                                 setpuja(e.target.value);
+                                validatePuja(e.target.value);
                               }}
                               />
                             <p className="title-font font-medium text-2xl text-gray-900">{" " + currencys[parseInt(localStorage.getItem("blockchain"))]}</p>
