@@ -5,19 +5,21 @@ import { ChevronDownIcon } from "@heroicons/react/solid";
 import { config, signOut } from "../utils/near_interaction";
 import * as nearAPI from "near-api-js";
 import { blockchains } from "../utils/constraint";
-import nativoLogo from '../assets/img/nativologocrop.png';
+import nativoLogo from '../assets/img/nativologocrop.png'
 function LightHeaderB(props) {
   const [state, setState] = useState({
     dropdown:
       blockchains[parseInt(localStorage.getItem("blockchain"))] || "Blockchain",
   });
-  const [Beta, setBeta] = useState(false);
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
 
   useEffect(() => {
+    if(state.dropdown == 'Blockchain'){
+      changeBlockchain(1);
+    }
     /*  (async () => {
       const { keyStores, connect, WalletConnection } = nearAPI;
       const keyStore = new keyStores.BrowserLocalStorageKeyStore();
@@ -44,9 +46,6 @@ function LightHeaderB(props) {
       console.log(await account.getAccountDetails());
       console.log(await account.state());
     })();*/
-    if(!window.localStorage.getItem("beta")){
-      setBeta(true);
-    }
   }, []);
 
   /**
@@ -61,18 +60,7 @@ function LightHeaderB(props) {
     await signOut();
     window.location.reload();
   }
-
-  
-  
-  const closeBeta = () => {
-    window.localStorage.setItem("beta","beta");
-      setBeta(false);
-  }
- 
-
-
   return (
-    <>
     <header className="text-gray-600 body-font shadow-sm">
       <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center">
         <a
@@ -89,6 +77,9 @@ function LightHeaderB(props) {
           </a>
           <a href="/minar" className="mr-5 hover:text-gray-900">
             Minar
+          </a>
+          <a href="/auctions" className="mr-5 hover:text-gray-900">
+            Subastas
           </a>
           <a href="/mis_nfts" className="mr-5 hover:text-gray-900">
             Mis Nfts
@@ -168,11 +159,6 @@ function LightHeaderB(props) {
         </Menu>
       </div>
     </header>
-      <div className={`beta ${Beta ? "h-auto": ""}`}>
-      <p>Esta es una versión beta pública - Úselo bajo su propio riesgo - Código no auditado</p>
-        <img src="x.png" title="Cerrar" onClick={e=>closeBeta()}/>
-      </div>
-    </>
   );
 }
 

@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import nearicon from "../icons/near.svg";
-import Roadmap from '../assets/img/Roadmap.pdf'
 import nativoLogo from '../assets/img/nativologocrop.png'
 
 function LightFooterB(props) {
@@ -32,11 +31,12 @@ function LightFooterB(props) {
               RECURSOS
             </h2>
             <nav className="list-none mb-10">
-            <li>
+              <li>
                 <a href="https://drive.google.com/file/d/1IHNp3aHcUDjn8Iws8cObC3qWWVEVcj-7/view" target="_blank" className="text-gray-600 hover:text-gray-800">
-                  Mapa de ruta
+                Mapa de ruta
                 </a>
-            </li>
+              </li>
+
               
             </nav>
           </div>

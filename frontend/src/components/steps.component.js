@@ -1,128 +1,97 @@
 import React from "react";
 import PropTypes from "prop-types";
+import "../styles/landing.css";
 
 function LightStepC(props) {
   return (
     <section className="text-gray-600 body-font bg-gray-100">
       <div className="container px-5 py-24 mx-auto flex flex-wrap">
-        <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
-          <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
-            <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
-          </div>
-          <div
-            className={`flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-${props.theme}-500 text-white relative z-10 title-font font-medium text-sm`}
-          >
-            1
-          </div>
-          <div className="flex-grow md:pl-8 pl-6 flex sm:items-center items-start flex-col sm:flex-row">
-            <div
-              className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center`}
-            >
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-12 h-12"
-                viewBox="0 0 24 24"
-              >
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
-              </svg>
-            </div>
-            <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
-              <h2 className="font-medium title-font text-gray-900 mb-1 text-xl">
-                Instala y utiliza metamask o tu Near wallet
-              </h2>
-              <p className="leading-relaxed">
-                con ellos podrás comprar tus nft e ingresar a tu panel,
-              </p>
+        <div class="grid grid-cols-1 gap-4 w-screen	justify-center">
+          {/* CONFIGURACIÓN */}
+          <div className="text-center">
+            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
+              Instala y utiliza metamask o tu Near wallet
+            </h1>
+            <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
+              <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
+                <p className="leading-relaxed">
+                  Con ellos podrás comprar tus nft e ingresar a tu panel
+                </p>
+                <div className="flex justify-center">
+                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                    <img src="https://img.icons8.com/color/48/000000/settings--v1.png" />
+                  </div>
+                  <div className="h-full w-6 absolute flex items-center justify-center">
+                    <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
-          <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
-            <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
-          </div>
-          <div
-            className={`flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-${props.theme}-500 text-white relative z-10 title-font font-medium text-sm`}
-          >
-            2
-          </div>
-          <div className="flex-grow md:pl-8 pl-6 flex sm:items-center items-start flex-col sm:flex-row">
-            <div
-              className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center`}
-            >
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-12 h-12"
-                viewBox="0 0 24 24"
-              >
-                <g id="_62.check" data-name="62.check">
-                  <circle className="cls-1" cx="12" cy="12" r="11" />
-                  <polyline className="cls-1" points="6 13 9 16 17 8" />
-                </g>
-              </svg>
-            </div>
-            <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
-              <h2 className="font-medium title-font text-gray-900 mb-1 text-xl">
-                Selecciona el nft que mas te guste
-              </h2>
-              <p className="leading-relaxed">
-                ve a galería y selecciona tu nft favorito despues procede con la
-                compra
-              </p>
+          {/* SELECCIONA */}
+          <div className="text-center mt-8">
+            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
+            Como artista crea nuevos NFT
+            </h1>
+            <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
+              <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
+                <p className="leading-relaxed">
+                  Recibe <span className="tooltip">ganancias<span className="tooltiptext">del 87%</span></span> y <span className="tooltip">regalias<span className="tooltiptext">del 10%</span></span> por ellos
+                </p>
+                <div className="flex justify-center">
+                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                    <img src="https://img.icons8.com/color/96/000000/artist-skin-type-3.png" style={{width: 80+'%'}}/>
+                  </div>
+                  <div className="h-full w-6 absolute flex items-center justify-center">
+                    <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
-          <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
-            <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
-          </div>
-          <div
-            className={`flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-${props.theme}-500 text-white relative z-10 title-font font-medium text-sm`}
-          >
-            3
-          </div>
-          <div className="flex-grow md:pl-8 pl-6 flex sm:items-center items-start flex-col sm:flex-row">
-            <div
-              className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center`}
-            >
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-12 h-12"
-                viewBox="0 0 50 50"
-              >
-                <g id="Layer_1">
-                  <path
-                    d="M25,1C11.767,1,1,11.767,1,25s10.767,24,24,24s24-10.767,24-24S38.233,1,25,1z M25,47C12.869,47,3,37.131,3,25
-		S12.869,3,25,3s22,9.869,22,22S37.131,47,25,47z"
-                  />
-                  <path
-                    d="M23,13h4c2.757,0,5,2.243,5,5h2c0-3.86-3.141-7-7-7h-1V8h-2v3h-1c-3.859,0-7,3.14-7,7v1c0,3.86,3.141,7,7,7h4
-		c2.757,0,5,2.243,5,5v1c0,2.757-2.243,5-5,5h-4c-2.757,0-5-2.243-5-5h-2c0,3.86,3.141,7,7,7h1v3h2v-3h1c3.859,0,7-3.14,7-7v-1
-		c0-3.86-3.141-7-7-7h-4c-2.757,0-5-2.243-5-5v-1C18,15.243,20.243,13,23,13z"
-                  />
-                </g>
-              </svg>
+
+        <div class="grid grid-cols-2 gap-4 w-screen	justify-center">
+          {/* COMPRA/VENTA */}
+          <div className="text-center">
+            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
+              Revende
+            </h1>
+            <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
+              <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
+                <p className="leading-relaxed">
+                  ¿Ya no quieres tu NFT? lo puedes revender en tu panel al precio que tu decidas.
+                </p>
+                <div className="flex justify-center">
+                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                    <img src="https://img.icons8.com/color/96/000000/shopping-basket.png" />
+                  </div>
+                  <div className="h-full w-6 absolute flex items-center justify-center">
+                    <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
-              <h2 className="font-medium title-font text-gray-900 mb-1 text-xl">
-                Revende
-              </h2>
-              <p className="leading-relaxed">
-                ¿ya no quieres tu nft? lo puedes revender en tu panel al precio
-                que tu decidas.
-              </p>
+          </div>
+          {/* SUBASTA */}
+          <div className="text-center">
+            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
+              Subasta
+            </h1>
+            <div className="flex relative pb-20 sm:items-center md:w-2/3 mx-auto">
+              <div className="flex-grow sm:pl-6 mt-6 sm:mt-0">
+                <p className="leading-relaxed">
+                  ¿Quieres ver cuanto ofrecen por tu NFT? puedes subastarlo y ver a cuanto asciende el precio
+                </p>
+                <div className="flex justify-center">
+                  <div className={`flex-shrink-0 w-24 h-24 bg-${props.theme}-100 text-${props.theme}-500 rounded-full inline-flex items-center justify-center z-10 absolute mt-5`}>
+                    <img src="https://img.icons8.com/plasticine/100/000000/auction.png" />
+                  </div>
+                  <div className="h-full w-6 absolute flex items-center justify-center">
+                    <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

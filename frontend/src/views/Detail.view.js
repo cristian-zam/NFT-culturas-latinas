@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
+import { isNearReady } from "../utils/near_interaction";
+import { nearSignIn } from "../utils/near_interaction";
 import {
   syncNets,
   getSelectedAccount,
@@ -25,6 +27,8 @@ function LightEcommerceB(props) {
   const [modal, setModal] = React.useState({
     show: false,
   });
+  //Esta logeado
+  const [stateLogin, setStateLogin] = useState(false);
   //es el parametro de tokenid
   const { tokenid } = useParams();
   //es el historial de busqueda
@@ -32,6 +36,8 @@ function LightEcommerceB(props) {
 
   React.useEffect(() => {
     (async () => {
+      setStateLogin(await isNearReady());
+      
       let totalSupply;
 
       if (localStorage.getItem("blockchain") == "0") {
@@ -58,6 +64,7 @@ function LightEcommerceB(props) {
             jdata: JSON.parse(toks.data),
             owner,
           });
+          console.log(toks.data);
         }
       } else {
         //instanciar contracto
@@ -69,34 +76,35 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toks = await contract.nft_token({ token_id: tokenid });
+          let toks = await contract.get_token({ token_id: tokenid});
+          console.log("Token")
           console.log(toks)
-          console.log({
-            tokenID: toks.token_id,
-            onSale: toks.metadata.on_sale,
-            price: toks.metadata.price,
-            culture:toks.metadata.culture,
-            country:toks.metadata.country,
-            creator:toks.metadata.creator,
-          });
+          // console.log({
+          //   tokenID: toks.token_id,
+          //   onSale: toks.metadata.on_sale,
+          //   price: toks.metadata.price,
+          //   culture:toks.metadata.culture,
+          //   country:toks.metadata.country,
+          //   creator:toks.metadata.creator,
+          // });
 
           setstate({
             ...state,
             tokens: {
               tokenID: toks.token_id,
-              onSale: toks.metadata.on_sale,
-              price: fromYoctoToNear(toks.metadata.price),
-              culture:toks.metadata.culture,
-              country:toks.metadata.country,
-              creator:toks.metadata.creator,
+              onSale: toks.on_sale,
+              price: fromYoctoToNear(toks.price),
+              // culture:toks.culture,
+              // country:toks.country,
+              // creator:toks.metadata.creator,
             },
             jdata: {
-              image: toks.metadata.media,
-              title: toks.metadata.title,
-              description: toks.metadata.description,
-              culture:toks.metadata.culture,
-              country:toks.metadata.country,
-              creator:toks.metadata.creator,
+              image: toks.media,
+              // title: toks.metadata.title,
+              // description: toks.metadata.description,
+              culture:toks.culture,
+              country:toks.country,
+              creator:toks.creator,
             },
             owner: toks.owner_id,
           });
@@ -161,7 +169,7 @@ function LightEcommerceB(props) {
       
       let amount=parseFloat(state.tokens.price);
       console.log("amount",amount)
-  
+   
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
@@ -301,15 +309,27 @@ function LightEcommerceB(props) {
                 $ {state?.tokens.price}
                 {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
               </span>
-              <button
-                className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                disabled={state?.btnDisabled}
-                onClick={async () => {
-                  comprar();
-                }}
-              >
-                Comprar
-              </button>
+              {stateLogin ? 
+                            <button
+                            className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                            disabled={state?.btnDisabled}
+                            onClick={async () => {
+                              comprar();
+                            }}
+                            >
+                              Comprar
+                            </button>
+                          : 
+                          <button
+                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                          disabled={state?.btnDisabled}
+                          onClick={async () => {
+                            nearSignIn(window.location.href);
+                          }}
+                          >
+                            Iniciar Sesión para Comprar
+                          </button>
+              }
             </div>
           </div>
         </div>

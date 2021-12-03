@@ -10,7 +10,7 @@ import {
 } from "../utils/blockchain_interaction";
 
 import { useHistory } from "react-router";
-
+import ModalSubasta from '../components/modalSubasta.component'
 import Modal from "../components/modalRevender.component";
 import { currencys } from "../utils/constraint";
 import {
@@ -24,12 +24,19 @@ function MisTokens(props) {
   //Hooks para el manejo de estados
   const [nfts, setNfts] = useState({
     nfts: [],
-    page: 0,
-    tokensPerPage: 6,
+    page:  parseInt( window.localStorage.getItem("Mypage")),
+    tokensPerPage: 9,
+    tokensPerPageNear: 15,
+
     blockchain: localStorage.getItem("blockchain"),
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
   }); //state de los token nft
   const [modal, setModal] = useState({
+    //state para la ventana modal
+    show: false,
+  });
+
+  const [modalSub, setModalSub] = useState({
     //state para la ventana modal
     show: false,
   });
@@ -54,10 +61,11 @@ function MisTokens(props) {
     } else {
       let contract = await getNearContract();
       let account = await getNearAccount();
+      console.log("pag",pag,"nfts.tokensPerPageNear",nfts.tokensPerPageNear)
       let payload = {
-        account_id: account,
-        from_index: (pag * nfts.tokensPerPage).toString(),
-        limit: nfts.tokensPerPage,
+        account_id: account.toString(),
+        from_index: ""+pag.toString(),
+        limit: nfts.tokensPerPageNear.toString(),
       };
 
       let nftsArr = await contract.nft_tokens_for_owner(payload);
@@ -86,6 +94,8 @@ function MisTokens(props) {
   //Hook para el manejo de efectos
   useEffect(() => {
     (async () => {
+      window.localStorage.setItem("Mypage",0);
+     
       if (nfts.blockchain == "0") {
         //Comparamos la red en el combo de metamask con la red de aurora
         await syncNets();
@@ -109,34 +119,39 @@ function MisTokens(props) {
         setNfts({
           ...nfts,
           nfts: copytoks,
-          nPages: Math.ceil(balance / nfts.tokensPerPage),
+          nPages: Math.ceil(balance / nfts.tokensPerPage)+1,
           owner: account,
         });
       } else {
+        
         let contract = await getNearContract();
         let account = await getNearAccount();
         console.log(account);
         let payload = {
-          account_id: account,
-          from_index: (nfts.page * nfts.tokensPerPage).toString(),
-          limit: nfts.tokensPerPage,
+          account : account,
+          from_index: nfts.page , 
+          limit: nfts.tokensPerPageNear,
         };
 
-        let nftsArr = await contract.nft_tokens_for_owner(payload);
+        let nftsArr = await contract.obtener_pagina_v2_by_owner(payload);
         let balance = await contract.nft_supply_for_owner({
           account_id: account,
         });
-        console.log(nftsArr);
-
+        console.log("extras:",nftsArr  );
+        console.log("balance",balance);
+ 
         //convertir los datos al formato esperado por la vista
         nftsArr = nftsArr.map((tok) => {
+          console.log("X->",  tok  )
+         
           return {
             tokenID: tok.token_id,
-            price: fromYoctoToNear(tok.metadata.price),
-            onSale: tok.metadata.on_sale,
+            price:  fromYoctoToNear(tok.price),
+            onSale: tok.on_sale,// tok.metadata.on_sale,
+            onAuction: tok.on_auction,
             data: JSON.stringify({
-              title: tok.metadata.title,
-              image: tok.metadata.media,
+              title: tok.title,//"2sdfeds",// tok.metadata.title,
+              image:tok.media,//"vvvvvvvvvvvvvv",//tok.metadata.media,
             }),
           };
         });
@@ -144,7 +159,7 @@ function MisTokens(props) {
         setNfts({
           ...nfts,
           nfts: nftsArr,
-          nPages: Math.ceil(balance / nfts.tokensPerPage),
+          nPages: Math.ceil(nftsArr.length / nfts.tokensPerPageNear)+1,
           owner: account,
         });
       }
@@ -221,7 +236,7 @@ function MisTokens(props) {
               nfts.nfts.map((nft, key) => {
                 //obtenemos la data del token nft
                 const nftData = JSON.parse(nft.data);
-                console.log(nft);
+                console.log("Aquiiii",nft);
                 return (
                   //devolvemos un card por cada token nft del usuario
                   <div className="lg:w-1/3 sm:w-1/2 p-4" key={key}>
@@ -235,7 +250,7 @@ function MisTokens(props) {
                         <h1 className="title-font text-lg font-medium text-gray-900 mb-3">
                           {nftData.title}
                         </h1>
-                        <p className="leading-relaxed">{nftData.description}</p>
+                        <p className="leading-relaxed">{nftData.description }</p>
                         {/* Etiqueta de token en venta */}
                         <div
                           className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
@@ -250,6 +265,25 @@ function MisTokens(props) {
                               } rounded-full`}
                             >
                               {nft.onSale ? "Disponible" : "No disponible"}
+                            </span>
+                          </span>
+                        </div>
+                         
+                        <p className="leading-relaxed">{nftData.description }</p>
+                        {/* Etiqueta de token en subasta */}
+                        <div
+                          className={`flex border-l-4 border-${props.theme}-500 py-2 px-2 my-2 bg-gray-50`}
+                        >
+                          <span className="text-gray-500">OnAuction</span>
+                          <span className="ml-auto text-gray-900">
+                            <span
+                              className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
+                                nft.onAuction
+                                  ? "text-green-100 bg-green-500"
+                                  : "text-red-100 bg-red-500"
+                              } rounded-full`}
+                            >
+                              {nft.onAuction ? "Disponible" : "No disponible"}
                             </span>
                           </span>
                         </div>
@@ -270,7 +304,8 @@ function MisTokens(props) {
                             Quitar del marketplace
                           </button>
                         ) : (
-                          <button
+                          <>
+                          {!nft.onAuction && <>  <button
                             className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             onClick={() => {
                               setModal({
@@ -285,10 +320,35 @@ function MisTokens(props) {
                                 buttonName: "Cancelar",
                                 change: setModal,
                               });
+                             
                             }}
                           >
                             Poner en venta
                           </button>
+                          <button
+                            className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                            onClick={() => {
+                              setModalSub({
+                                ...modalSub,
+                                show: true,
+                                tokenId: nft.tokenID,
+                                title: "Subastar NFT",
+                                currency: nfts.currency,
+                                blockchain: nfts.blockchain,
+                                message:
+                                  "Ingresa el monto base al que quieres subastar este NFT junto a su fecha y hora de finalizacion.",
+                                buttonName: "Cancelar",
+                                change: setModalSub,
+                              });
+                             
+                            }}
+                          >
+                            Poner en subasta
+                          </button></>}
+                        
+                        </>
+
+                        
                         )}
                       </div>
                     </div>
@@ -313,7 +373,8 @@ function MisTokens(props) {
                     }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                     key={index}
                     onClick={async () => {
-                      await getPage(index);
+                      window.localStorage.setItem("Mypage",index);
+                      window.location.reload();
                     }}
                   >
                     {index + 1}
@@ -325,6 +386,7 @@ function MisTokens(props) {
         </div>
 
         {/* Mandamos a llamar al modal con el state como props*/}
+        <ModalSubasta {...modalSub} />
         <Modal {...modal} />
       </section>
     </>

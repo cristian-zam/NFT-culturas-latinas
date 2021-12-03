@@ -11,16 +11,17 @@ import Galeria from "./views/Galeria.view";
 import Detail from "./views/Detail.view";
 import Mint from "./views/mintNft.view";
 import MisNfts from "./views/MisTokens.view";
-import Aution from "./views/auction.view";
+import AuctionGaleria from "./views/AuctionGaleria.view";
+import Auction from "./views/auction.view";
+import SendAuction from "./views/SendAuction.view";
 
 import notFound from "./views/notFound.view";
-
 
 //este hoc nos regresa el componente que le mandamos si tiene instalado metamask
 import MetamaskProtectedRoute from "./HOCS/MetamaskProtectedRoute.hoc";
 import BlockchainProtectedRoute from "./HOCS/BlockchainProtectedRoute.hoc";
 const { create } = require("ipfs-http-client");
-localStorage.setItem("blockchain", "1");
+
 //instancia de ipfs
 window.ipfs = create({
   host: "ipfs.infura.io",
@@ -52,7 +53,7 @@ class App extends Component {
       theme: "yellow",
     };
   }
-
+    
   render() {
     return (
       <>
@@ -61,13 +62,11 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Landing} />
             <BlockchainProtectedRoute path="/minar" component={Mint} />
-            <BlockchainProtectedRoute path="/galeria" component={Galeria} />
-            <BlockchainProtectedRoute path="/aution/:tokenid" component={Aution} />
-            <BlockchainProtectedRoute
-              path="/detail/:tokenid"
-              component={Detail}
-            />
-
+            <Route path="/galeria" component={Galeria} />
+            <Route path="/auctions" component={AuctionGaleria} />
+            <Route path="/auction/:tokenid" component={Auction} />
+            <BlockchainProtectedRoute path="/sendauction/:tokenid" component={SendAuction} />
+            <Route path="/detail/:tokenid" component={Detail}/>
             <BlockchainProtectedRoute path="/mis_nfts" component={MisNfts} />
             <Route component={notFound} />
           </Switch>

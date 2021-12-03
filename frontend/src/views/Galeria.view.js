@@ -17,20 +17,26 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 12,
+    tokensPerPageNear: 8,
   });
 
   async function getPage(pag) {
     let toks;
+    let datatokens;
+    
     if (Landing.blockchain == "0") {
       toks = await getContract()
         .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
         .call();
 
+      // datatokens = await getContract()
+      // .methods.get_token(Landing.tokensPerPage, 2)
+      // .call();
       //filtrar tokens
       let copytoks = toks.filter((tok) => tok.onSale);
 
       console.log(toks);
+      console.log(datatokens);
       //convertir los precios de wei a eth
       copytoks = copytoks.map((tok) => {
         return { ...tok, price: fromWEItoEth(tok.price) };
@@ -42,12 +48,14 @@ function LightEcommerceA() {
         page: pag,
       });
     } else {
+      
       //instanciar contracto
       let contract = await getNearContract();
       let numberOfToks = pag * Landing.tokensPerPage;
       //obtener cuantos tokens estan a la venta
       let onSaleToks = await contract.get_on_sale_toks();
       //obtener tokens a la venta
+      window.contr = contract;
       toks = await contract.obtener_pagina_v2({
         from_index: pag,
         limit: Landing.tokensPerPage,
@@ -57,10 +65,10 @@ function LightEcommerceA() {
       toks = toks.map((tok) => {
         return {
           tokenID: tok.token_id,
-          price: fromYoctoToNear(tok.metadata.price),
+          price: tok.price,
           data: JSON.stringify({
-            title: tok.metadata.title,
-            image: tok.metadata.media,
+            title: tok.title,
+            image: tok.media,
           }),
         };
       });
@@ -101,17 +109,20 @@ function LightEcommerceA() {
              setLanding({
               ...Landing,
               tokens: arr,
-              nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+              nPages: Math.ceil(arr.length / Landing.tokensPerPage),
             });  
 
           }
            
      
       } else {
+        window.contr = await getNearContract();
+      
         //instanciar contracto
         let contract = await getNearContract();
         console.log("Page",Landing.page)
         //obtener tokens a la venta
+        
         toks = await contract.obtener_pagina_v2({
           from_index: Landing.page,
           limit: Landing.tokensPerPageNear,
@@ -123,10 +134,14 @@ function LightEcommerceA() {
         toks = toks.map((tok) => {
           return {
             tokenID: tok.token_id,
-            price: fromYoctoToNear(tok.metadata.price),
+            ownerId: tok.owner_id,
+            price: tok.price,
             data: JSON.stringify({
-              title: tok.metadata.title,
-              image: tok.metadata.media,
+              title: tok.title,
+              image: tok.media,
+              on_sale: tok.on_sale, // sale status
+              on_auction: tok.on_auction, //auction status
+              highestbidder: tok.highestbidder,
             }),
           };
         });
@@ -137,7 +152,7 @@ function LightEcommerceA() {
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
+          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear)+1,
         });
       }
     })();
@@ -161,23 +176,31 @@ function LightEcommerceA() {
                  {tokenData.image ?
                   <a href={"/detail/" + token.tokenID}>
                     <div className="token">
-                    <div className="block relative h-48 overflow-hidden">
-                      <img
-                        alt="ecommerce"
-                        className="imgaa object-cover object-center w-full h-full block"
-                        src={`https://ipfs.io/ipfs/${tokenData.image}`}
-                      />
+                    <div className="block relative h-48 rounded overflow-hidden">
+                    
+                       <img
+                            alt="ecommerce"
+                            className="imgaa object-cover object-center w-full h-full block"
+                            src={`https://ipfs.io/ipfs/${tokenData.image}`}
+                          /> 
+               
+                   
+                           
                     </div>
                     <div className="mt-4">
                       <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
                         {tokenData.title}
                       </h2>
                       <p className="mt-1 mb-4 ml-2">
+                        {"Tokenid: "+ token.tokenID }
+                        <br/>
+                        { "Owner: "+token.ownerId+"\n"}
+                        <br/>
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
-                              token.price + " " + Landing.currency}
+                              fromYoctoToNear(token.price) + " " + Landing.currency}
                       </p>
                     </div>
                     </div>
@@ -229,7 +252,7 @@ function LightEcommerceA() {
                   }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
-                    await getPage(index);
+                  //  await getPage(index);
                     window.localStorage.setItem("page",index);
                     window.location.reload();
                   }}

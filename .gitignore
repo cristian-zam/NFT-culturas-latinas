@@ -1,5 +1,7 @@
 /.vscode
 
 node_modules
+/NFT/node_modules
+/NFT/target
 /blockchain/contract/target
 /blockchain/near-contract-standards-3.2.0/target
