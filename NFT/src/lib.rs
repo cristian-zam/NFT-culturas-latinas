@@ -605,7 +605,7 @@ impl Contract {
         return false ;
     }
     #[payable]
-    pub fn extraer_token(&mut self, token_id: TokenId,apro:u64){
+    pub fn extraer_token(&mut self, token_id: TokenId){
          
 
         // Verificar  si existe:
@@ -630,9 +630,10 @@ impl Contract {
             let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
             let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
             let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
-            let apro: Option<u64> = Some(apro);
+            //let msj2: String = Some("withdraw succesfully,enjoy it! :)".to_string());
+            //let apro: Option<u64> = Some(apro);
              //   self.tokens.nft_approve(token_id.clone(),account.clone(),msj.clone());
-            self.tokens.nft_transfer(account  , token_id, apro, msj );
+            self.tokens.nft_transfer_call(account, token_id, None,msj, "".to_string());
            log!("transfer done");
     }
     #[payable]

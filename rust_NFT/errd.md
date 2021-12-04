@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 near call dev-1638228892358-63955043240214 new_default_meta '{"owner_id":"joehank.testnet"}' --accountId dev-1638228892358-63955043240214
 
 near call dev-1636747327239-18935385243808 minar '{ "token_owner_id":"dokxo.testnet","token_metadata":"{"title":"nombre del token","description":"descripción","media":"imagenim","media_hash":"imageni"}"}' --accountId dev-1636747327239-18935385243808 --amount 0.1 
@@ -35,7 +34,6 @@ near call dev-1638316774838-87871339743164 minar '{"token_owner_id": "joehank.te
 near call nft nft_approve '{ "token_id": "0", "account_id": "ejemplo.testnet" }' --accountId joehank --amount .000000000000000000000001
 
 near call dev-1638320499944-43021039384357 minar '{"token_owner_id": "dokxo.testnet", "token_metadata": { "title": "Auction_1", "description": "Auction_1", "media": "imagenimagenimagenimagenimagenim","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'dokxo.testnet'","'price'":"'0'","'on_sale'":"false","'on_auction'":"true","'adressbidder'":"'accountbidder'","'highestbidder'":"'5'","'lowestbidder'":"'1'","'expires_at'":"'1640887469649'","'starts_at'":"'1638295624280'"}'"}}' --accountId dokxo.testnet --amount 0.1
-=======
 near call dev-1638228892358-63955043240214 new_default_meta '{"owner_id":"joehank.testnet"}' --accountId dev-1638228892358-63955043240214
 
 near call dev-1636747327239-18935385243808 minar '{ "token_owner_id":"dokxo.testnet","token_metadata":"{"title":"nombre del token","description":"descripción","media":"imagenim","media_hash":"imageni"}"}' --accountId dev-1636747327239-18935385243808 --amount 0.1 
@@ -70,4 +68,6 @@ near view dev-1638219687333-75508460603043 obtener_pagina_v2 '{"from_index":1,"l
 near call dev-1638219687333-75508460603043 minar '{"token_owner_id": "joehank.testnet", "token_metadata": { "title": "Hola Nada", "description": "This is Hola x34", "media": "imagenimagenimagenimagenimagenim","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'joehank.testnet'","'price'":"'5'","'on_sale'":"true","'on_auction'":"false","'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}}' --accountId joehank.testnet --amount 0.1
 
 near call nft nft_approve '{ "token_id": "0", "account_id": "ejemplo.testnet" }' --accountId joehank --amount .000000000000000000000001
->>>>>>> Stashed changes
+
+
+near call nativodeploy.testnet nft nft_approve '{"token_id": "20","account_id": "joehank.testnet","msg":""}' --accountId joehank.testnet --amount .000000000000000000000001
