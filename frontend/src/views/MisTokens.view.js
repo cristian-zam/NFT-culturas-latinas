@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-
+import Tooltip from '@mui/material/Tooltip';
 //Importamos metodos de interacción con el smartcontract
 import {
   fromWEItoEth,
@@ -42,7 +42,29 @@ function MisTokens(props) {
   });
 
   const history = useHistory();
+  const sendtonearwallet = async (e)=>{
+     
+    console.log(e);
 
+    let contract = await getNearContract();
+    let account = await getNearAccount();
+
+     
+    try {
+        let res = await contract.nft_transfer_call(
+          {"receiver_id":""+account,"token_id":""+e,"approval_id":null,"memo":"","msg":""},
+          300000000000000,
+          1,
+    );
+    } catch (error) {
+      console.error();
+    }
+  
+
+      
+    
+   
+  }
   async function getPage(pag) {
     if (nfts.blockchain == "0") {
       //esta funcion nos regresa todos los tokens por que solidity no permite arreglos
@@ -222,7 +244,22 @@ function MisTokens(props) {
               En esta sección aparecen los token nfts que has creado o
               adquirido.
             </p>
-
+            <Tooltip title="Este botón creará una transferencia nula que generará un  error ,pero el token será agregado a la Near Wallet Web ">
+                            <button
+                            className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                            onClick={() => {
+                             if(nfts.onAuction){
+                                alert("lo sientimos este token se encuentra en subasta");
+                                return;
+                             }
+                             
+                             
+                             sendtonearwallet(nfts.tokenID)
+                            }}
+                          >
+                            Mostrar tokens en NEAR web wallet
+                          </button>
+                          </Tooltip>
             {/* Arroj un mensaje si no hay tokens en mi pertenencia*/}
             {nfts.nfts.length > 0 ? null : (
               <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
@@ -290,19 +327,38 @@ function MisTokens(props) {
                         <br></br>
                         <h2
                           className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-1`}
+                        >{`Token id: ${nft.tokenID}  `}</h2>
+                        <h2
+                          className={`tracking-widest text-sm title-font font-medium text-${props.theme}-500 mb-1`}
                         >{`Adquirido en $${nft.price} ${nfts.currency}`}</h2>
-
                         {/* Mostramos la opción de revender o quitar del marketplace */}
-                        {nft.onSale ? (
-                          <button
+                        {nft.onSale ? (<>      <button
                             className={` mt-12 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
                             disabled={nfts.disabled}
                             onClick={async () => {
                               await quitarDelMarketplace(nft.tokenID);
                             }}
                           >
-                            Quitar del marketplace
+                            Quitar a la venta
                           </button>
+                          <Tooltip title="Esté botón creará una transferencia nula ,que generará un  error ,pero el token será agregado a la Near Wallet Web ">
+                            <button
+                            className={` mt-2 w-full text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded text-lg`}
+                            onClick={() => {
+                             if(nfts.onAuction){
+                                alert("lo sientimos este token se encuentra en subasta");
+                                return;
+                             }
+                             
+                             
+                             sendtonearwallet(nft.tokenID)
+                            }}
+                          >
+                            Enviar token al Near web wallet
+                          </button>
+                          </Tooltip>
+                          </>
+                    
                         ) : (
                           <>
                           {!nft.onAuction && <>  <button
@@ -344,7 +400,10 @@ function MisTokens(props) {
                             }}
                           >
                             Poner en subasta
-                          </button></>}
+                          </button>
+                         
+                      
+                          </>}
                         
                         </>
 

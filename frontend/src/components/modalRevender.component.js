@@ -56,14 +56,15 @@ export default function ModalRevender(props) {
           300000000000000, // attached GAS (optional)
           amount
         );
-        revender.status = revender.on_sale;
+       /*  revender.status = revender.on_sale; */
       }
 
       setstate({ disabled: false });
       //recargar la pantalla si la transacción se ejecuto correctamente
-      if (revender.status) {
+      /* if (revender.status) {
         history.go(0);
-      }
+      } */
+      window.location.reload();
     },
   });
 

@@ -53,7 +53,8 @@ export const methodOptions = {
     "update_token",
     "minar",
     "ofertar_subasta",
-
+    "extraer_token",
+    "nft_transfer_call",
     // "minar",
     "comprar_nft",
     "revender",
