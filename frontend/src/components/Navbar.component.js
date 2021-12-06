@@ -18,7 +18,7 @@ function LightHeaderB(props) {
 
   useEffect(() => {
     if(state.dropdown == 'Blockchain'){
-      changeBlockchain(1);
+      changeBlockchain(2);
     }
     /*  (async () => {
       const { keyStores, connect, WalletConnection } = nearAPI;
@@ -60,6 +60,11 @@ function LightHeaderB(props) {
     await signOut();
     window.location.reload();
   }
+
+  async function goNativoV1() {
+    window.location.href = 'https://v1.nativonft.app/';
+  }
+
   return (
     <header className="text-gray-600 body-font shadow-sm">
       <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -74,6 +79,9 @@ function LightHeaderB(props) {
         <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
           <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
+          </a>
+          <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
+            Galeria V1
           </a>
           <a href="/minar" className="mr-5 hover:text-gray-900">
             Minar
@@ -134,7 +142,7 @@ function LightHeaderB(props) {
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
-                        changeBlockchain(1);
+                        goNativoV1();
                       }}
                     >
                       {({ active }) => (
@@ -148,6 +156,25 @@ function LightHeaderB(props) {
                           )}
                         >
                           {blockchains[1]}
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        changeBlockchain(2);
+                      }}
+                    >
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-2 py-2 text-sm text-center"
+                          )}
+                        >
+                          {blockchains[2]}
                         </a>
                       )}
                     </Menu.Item>
