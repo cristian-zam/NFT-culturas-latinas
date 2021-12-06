@@ -62,7 +62,9 @@ function LightHeaderB(props) {
     window.location.reload();
   }
 
-  
+  async function goNativoV2() {
+    window.location.href = 'https://www.nativonft.app/';
+  }
   
   const closeBeta = () => {
     window.localStorage.setItem("beta","beta");
@@ -86,6 +88,9 @@ function LightHeaderB(props) {
         <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
           <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
+          </a>
+          <a href="https://www.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
+            Galeria V2
           </a>
           <a href="/minar" className="mr-5 hover:text-gray-900">
             Minar
@@ -157,6 +162,25 @@ function LightHeaderB(props) {
                           )}
                         >
                           {blockchains[1]}
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        goNativoV2();
+                      }}
+                    >
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-2 py-2 text-sm text-center"
+                          )}
+                        >
+                          {blockchains[2]}
                         </a>
                       )}
                     </Menu.Item>
