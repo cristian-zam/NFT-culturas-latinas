@@ -63,7 +63,7 @@ near call dev-1636751893359-19496702378959 update_token '{"token_id": "1", "extr
 
 near call dev-1636751893359-19496702378959 update_token '{"token_id": "1", "extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'joehank.testnet'","'price'":"'10'","'on_sale'":"true","'on_auction'":"false","'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}' --accountId dev-1636751893359-19496702378959
 
-near view dev-1638219687333-75508460603043 obtener_pagina_v2 '{"from_index":1,"limit":3}' --accountId dev-1638219687333-75508460603043
+near view nativodeploy.testnet obtener_pagina_v3 '{"from_index":0,"limit":3}' --accountId nativodeploy.testnet
 
 near call dev-1638219687333-75508460603043 minar '{"token_owner_id": "joehank.testnet", "token_metadata": { "title": "Hola Nada", "description": "This is Hola x34", "media": "imagenimagenimagenimagenimagenim","extra":"{'"'culture'":"'Azteca'","'country'":"'Mexico'","'creator'":"'joehank.testnet'","'price'":"'5'","'on_sale'":"true","'on_auction'":"false","'adressbidder'":"'accountbidder'","'highestbidder'":"'notienealtos'","'lowestbidder'":"'notienebajos'","'expires_at'":"'noexpira'","'starts_at'":"'noinicia'"}'"}}' --accountId joehank.testnet --amount 0.1
 
@@ -71,3 +71,9 @@ near call nft nft_approve '{ "token_id": "0", "account_id": "ejemplo.testnet" }'
 
 
 near call nativodeploy.testnet nft nft_approve '{"token_id": "20","account_id": "joehank.testnet","msg":""}' --accountId joehank.testnet --amount .000000000000000000000001
+
+near call nativodeploy.testnet ofertar_subasta '{"token_id": "10"}' --accountId dokxo.testnet --amount 5
+
+near view nativodeploy.testnet obtener_pagina_v3 '{"from_index":0,"limit":136}' --accountId nativodeploy.testnet
+
+near view nativodeploy.testnet obtener_pagina_v3_auction '{"from_index":0,"limit":136}' --accountId nativodeploy.testnet

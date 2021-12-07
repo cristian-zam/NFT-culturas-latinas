@@ -10,7 +10,7 @@ export default function Landing() {
   const [Landing, setLanding] = React.useState({ theme: "yellow" });
   window.localStorage.setItem("page",0);
   window.localStorage.setItem("auctionpage",0);
-
+  window.localStorage.setItem("tokenspage",30);
   return (
     <>
       <Hero />
