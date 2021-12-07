@@ -104,6 +104,9 @@ function LightEcommerceB(props) {
         } else {
           let toksnft = await contract.nft_token({ token_id: tokenid });
           let toks = await contract.get_token({ token_id: tokenid, owner_id: "dev-1636751893359-19496702378959" });
+          if(!toks.on_auction){
+            window.location.href = "/detail/"+tokenid;
+          }
           if(fromYoctoToNear(toks.highestbidder) == 0){
             setStateBidderMin((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));
             setpuja((parseFloat(fromYoctoToNear(toks.lowestbidder))+0.1).toFixed(1));

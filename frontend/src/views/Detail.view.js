@@ -31,6 +31,9 @@ function LightEcommerceB(props) {
   const [stateLogin, setStateLogin] = useState(false);
   //es el parametro de tokenid
   const { tokenid } = useParams();
+
+  const [btn, setbtn] = useState(true);
+
   //es el historial de busqueda
   let history = useHistory();
 
@@ -55,6 +58,8 @@ function LightEcommerceB(props) {
           let toks = await getContract().methods.tokensData(tokenid).call();
           toks.price = fromWEItoEth(toks.price);
           //obtener el dueño del contrato
+
+          
           let owner = await getContract().methods.ownerOf(tokenid).call();
           //agregar el dueño y los datos del token
           console.log(JSON.parse(toks.data));
@@ -79,6 +84,10 @@ function LightEcommerceB(props) {
           let toks = await contract.get_token({ token_id: tokenid});
           console.log("Token")
           console.log(toks)
+          if(toks.on_auction){
+            window.location.href = "/auction/"+tokenid;
+          }
+          setbtn(!toks.on_sale);
           // console.log({
           //   tokenID: toks.token_id,
           //   onSale: toks.metadata.on_sale,
@@ -305,24 +314,31 @@ function LightEcommerceB(props) {
             
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
-              <span className="title-font font-medium text-2xl text-gray-900">
-                $ {state?.tokens.price}
-                {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
+            <span className="title-font font-medium text-2xl text-gray-900">
+                {
+                  btn ?
+                  ""
+                  :
+                  "$ "+state?.tokens.price+" "+currencys[parseInt(localStorage.getItem("blockchain"))]
+                }
               </span>
               {stateLogin ? 
+                      btn ? 
+                        ""
+                      :
                             <button
                             className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                            disabled={state?.btnDisabled}
+                            disabled={btn}
                             onClick={async () => {
                               comprar();
                             }}
                             >
                               Comprar
                             </button>
-                          : 
+                          :            
                           <button
                           className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                          disabled={state?.btnDisabled}
+                          disabled={state?.tokens.onSale}
                           onClick={async () => {
                             nearSignIn(window.location.href);
                           }}
