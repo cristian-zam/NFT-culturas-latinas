@@ -711,6 +711,24 @@ impl Contract {
     pub fn get_on_auction_toks(&self) -> u64 {
         self.n_token_on_auction
     }
+
+    pub fn get_on_auction_toksV2(&self) -> u64 {
+        let mut _realonsale =0;
+
+        let limit = self.get_on_total_toks();
+        log!("tokans total {}",&limit);
+        for x in 0..(limit-1) { 
+                          
+                let mut token =self.get_token(x.to_string().clone());
+                if token.on_auction{       
+                    _realonsale += 1;
+                }
+                if x== (limit-1) {
+                    break;
+                }
+       }
+        _realonsale
+    }
     pub fn get_on_total_toks(&self) -> u64 {
         self.n_total_tokens
     }
@@ -802,7 +820,7 @@ impl Contract {
             }
             if vectMEta.len()< 12 && limit < totoal {
                 let  newfrom =limit; //12
-                let  newlimit = limit*2; //24
+                let  newlimit = limit+30; //24
                
                 for y in newfrom..newlimit { 
                  let mut token =self.get_token(y.to_string().clone());
@@ -824,174 +842,180 @@ impl Contract {
          
     }
     pub fn obtener_pagina_v3_auction(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
-        // no estoy segyri de como convierte  de U128 a u128
-      /*   let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
-        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let inicioPag = start_index as usize * limit; */
-
         let mut vectMEta = vec![];
         assert_ne!(limit, 0, "Cannot provide limit of 0.");
         //let mut counter: usize = from_index;
         log!("  from  -> : {},to -> {}",&from_index,&limit);
-      
+        let mut _tokfound =from_index;  //0
+        let totoal =  self.get_on_total_toks()-1;
+                log!(" {}" ,&totoal);
             for x in from_index..limit { 
+                if x== limit {
+                    break;
+                }
+                if  x>= totoal.clone() {
+                    break;
+                }
+                    let mut token =self.get_token(x.to_string().clone());
+                /*     log!("  x -> : {},token {}",&x,&token.token_id );
+                  */   log!("  token -> : {:?}",token.token_id.clone() );
+                 
+                    if token.on_auction{
+                        
+                    vectMEta.push(token  );
+                    _tokfound+=1;
+                    
+                }
                
-                let mut token =self.get_token(x.to_string().clone());
-            /*     log!("  x -> : {},token {}",&x,&token.token_id );
-                log!("  token -> : {:?}",token.token_id.clone() );
-             */    
-                if token.on_auction{
-                    
-                   vectMEta.push(token  );
-                    
-                   
-               }
-               /*  if token.on_sale{
-                    
-                   
-                    
-                   
-                     break;
-                } else {
-                    counter+= 1;
-                     break;
-                } */
-               
-                if( x == limit ){break; }           
+                
+                //if( x == limit ){break; }           
             }
+            if vectMEta.len()< 12 && limit < totoal {
+                let  newfrom =limit; //12
+                let  newlimit = limit+30; //24
+               
+                for y in newfrom..newlimit { 
+                 let mut token =self.get_token(y.to_string().clone());
+                 log!("  2da vuetla token -> : {:?}",&y );
+                     if token.on_auction{
+                         
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        
+                    }
+                     if y== newlimit {
+                        break;
+                    }
+
+                }
+            }
+           
             vectMEta
          
     }
-    pub fn obtener_pagina_v3_by_owner(&self,account: ValidAccountId, from_index: u64, limit: u64) -> Vec<Meta>  {
-        // no estoy segyri de como convierte  de U128 a u128
-      /*   let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
-        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let inicioPag = start_index as usize * limit; */
-
+    pub fn obtener_pagina_v3_by_owner(&self,account: ValidAccountId) -> Vec<Meta>  {
         let mut vectMEta = vec![];
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        //let mut counter: usize = from_index;
-        log!("  from  -> : {},to -> {}",&from_index,&limit);
       
-            for x in from_index..limit { 
-               
-                let mut token =self.get_token(x.to_string().clone());
-            /*     log!("  x -> : {},token {}",&x,&token.token_id );
+       
+        let totoal =  self.get_on_total_toks();
+        log!("  brakes here  -> : {}",&totoal );
+            for x in 0..totoal { 
+           
+                if x == totoal { break; } 
+              
+                 let mut token =self.get_token(x.to_string().clone());
+            /*    
                 log!("  token -> : {:?}",token.token_id.clone() );
              */    
                 if token.owner_id==account.to_string(){
-                    
-                   vectMEta.push(token  );
-                    
-                   
-               }
-               /*  if token.on_sale{
-                    
-                   
-                    
-                   
-                     break;
-                } else {
-                    counter+= 1;
-                     break;
-                } */
-               
-                if( x == limit ){break; }           
-            }
+                        vectMEta.push(token  );
+                }
+           }
             vectMEta
          
     }
-    pub fn obtener_pagina_v2(&self, from_index: usize, limit: u64) -> Vec<Meta> {
-        // no estoy segyri de como convierte  de U128 a u128
-        let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
-        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let inicioPag = start_index as usize * limit;
-        
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        let mut counter: usize = 0;
-        self.tokens
-            .owner_by_id
-            .iter()
-            .filter(|x| {
-                if self.get_token(x.0.clone())
-                .on_sale
-                   
-                {
-                    counter += 1;
-                    if counter > inicioPag {
-                        true
-                    } else {
-                        false
-                    }
-                } else {
-                    false
+    pub fn obtener_pagina_v4(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
+      
+        let mut vectMEta = vec![];
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");  //0 //30 -> 30:45
+        //let mut counter: usize = from_index;                //46 //30 -> 30:89                      
+        log!("  from  -> : {},to -> {}",&from_index,&limit);
+        let mut _tokfound =0;  //0
+        let totoal =  self.get_on_total_toks()-1;
+                log!(" {}" ,&totoal);
+            for x in from_index..totoal { 
+                
+                if  x>= totoal.clone() { //0 ->150   //29-> 150
+                    break;
                 }
-            })
-            .take(limit)
-            .map(|token_id|    self.get_token(token_id.0))
-            .collect()
+                    let mut token =self.get_token(x.to_string().clone());
+               
+                 
+                    if token.on_sale{
+                        
+                    vectMEta.push(token  );
+                    _tokfound+=1;
+                    
+                     }
+                if _tokfound== limit {  //1 <30  //30-30
+                    break;
+                }
+                
+                          
+            }
+            /* if vectMEta.len()< 12 && limit < totoal {
+                let  newfrom =limit; //12
+                let  newlimit = limit+30; //24
+               
+                for y in newfrom..newlimit { 
+                 let mut token =self.get_token(y.to_string().clone());
+                 log!("  2da vuetla token -> : {:?}",&y );
+                     if token.on_sale{
+                         
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        
+                    }
+                     if y== newlimit {
+                        break;
+                    }
+
+                }
+            } */
+           
+            vectMEta
          
     }
-    pub fn obtener_pagina_v2_auction(&self, from_index: usize, limit: u64) -> Vec<Meta> {
-        // no estoy segyri de como convierte  de U128 a u128
-        let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
-        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let inicioPag = start_index as usize * limit;
-        
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        let mut counter: usize = 0;
-        self.tokens
-            .owner_by_id
-            .iter()
-            .filter(|x| {
-                if self.get_token(x.0.clone())
-                .on_auction
-                   
-                {
-                    counter += 1;
-                    if counter > inicioPag {
-                        true
-                    } else {
-                        false
-                    }
-                } else {
-                    false
+    pub fn obtener_pagina_v4_invert(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
+      
+        let mut vectMEta = vec![];
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");  //0 //30 -> 30:45
+        //let mut counter: usize = from_index;                //46 //30 -> 30:89                      
+        log!("  from  -> : {},to -> {}",&from_index,&limit);
+        let mut _tokfound =0;  //0
+        let totoal =  self.get_on_total_toks()-1;
+                log!(" {}" ,&totoal);
+            for x in from_index..totoal { 
+                
+                if  x>= totoal.clone() { //0 ->150   //29-> 150
+                    break;
                 }
-            })
-            .take(limit)
-            .map(|token_id|    self.get_token(token_id.0))
-            .collect()
-         
-    }
-    pub fn obtener_pagina_v2_by_owner(&self,account: ValidAccountId, from_index: usize, limit: u64) -> Vec<Meta> {
-        // no estoy segyri de como convierte  de U128 a u128
-        let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
-        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
-        let inicioPag = start_index as usize * limit;
-        
-        assert_ne!(limit, 0, "Cannot provide limit of 0.");
-        let mut counter: usize = 0;
-        self.tokens
-            .owner_by_id
-            .iter()
-            .filter(|x| {
-                if self.get_token(x.0.clone())
-                .owner_id==account.to_string()
-                   
-                {
-                    counter += 1;
-                    if counter > inicioPag {
-                        true
-                    } else {
-                        false
-                    }
-                } else {
-                    false
+                    let mut token =self.get_token(x.to_string().clone());
+               
+                 
+                    if token.on_sale{
+                        
+                    vectMEta.push(token  );
+                    _tokfound+=1;
+                    
+                     }
+                if _tokfound== limit {  //1 <30  //30-30
+                    break;
                 }
-            })
-            .take(limit)
-            .map(|token_id|    self.get_token(token_id.0))
-            .collect()
+                
+                          
+            }
+            /* if vectMEta.len()< 12 && limit < totoal {
+                let  newfrom =limit; //12
+                let  newlimit = limit+30; //24
+               
+                for y in newfrom..newlimit { 
+                 let mut token =self.get_token(y.to_string().clone());
+                 log!("  2da vuetla token -> : {:?}",&y );
+                     if token.on_sale{
+                         
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        
+                    }
+                     if y== newlimit {
+                        break;
+                    }
+
+                }
+            } */
+           
+            vectMEta
          
     }
 
