@@ -37,7 +37,7 @@ export const methodOptions = {
     "obtener_pagina_v3_auction",
     "get_token",
     "get_on_sale_toks",
-    "get_on_auction_toks",
+    "get_on_auction_toksV2",
     "storage_byte_cost",
     "enum_get_token",
     "nft_token",
