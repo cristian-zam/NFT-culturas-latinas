@@ -17,70 +17,11 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 12,
+    tokensPerPageNear: 30,
   });
+  const [counter, setcounter] = React.useState();
 
-  async function getPage(pag) {
-    let toks;
-    let datatokens;
-    
-    if (Landing.blockchain == "0") {
-      toks = await getContract()
-        .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
-        .call();
-
-      // datatokens = await getContract()
-      // .methods.get_token(Landing.tokensPerPage, 2)
-      // .call();
-      //filtrar tokens
-      let copytoks = toks.filter((tok) => tok.onSale);
-
-      console.log(toks);
-      console.log(datatokens);
-      //convertir los precios de wei a eth
-      copytoks = copytoks.map((tok) => {
-        return { ...tok, price: fromWEItoEth(tok.price) };
-      });
-
-      setLanding({
-        ...Landing,
-        tokens: copytoks,
-        page: pag,
-      });
-    } else {
-      
-      //instanciar contracto
-      let contract = await getNearContract();
-      let numberOfToks = pag * Landing.tokensPerPage;
-      //obtener cuantos tokens estan a la venta
-      let onSaleToks = await contract.get_on_sale_toks();
-      //obtener tokens a la venta
-      window.contr = contract;
-      toks = await contract.obtener_pagina_v2({
-        from_index: pag,
-        limit: Landing.tokensPerPage,
-      });
-
-      //convertir los datos al formato esperado por la vista
-      toks = toks.map((tok) => {
-        return {
-          tokenID: tok.token_id,
-          price: tok.price,
-          data: JSON.stringify({
-            title: tok.title,
-            image: tok.media,
-          }),
-        };
-      });
-      console.log(toks);
-      setLanding({
-        ...Landing,
-        tokens: toks,
-        page: pag,
-      });
-    }
-  }
-
+   
   React.useEffect(() => {
     (async () => {
       let toks, onSaleToks;
@@ -122,10 +63,11 @@ function LightEcommerceA() {
         let contract = await getNearContract();
         console.log("Page",Landing.page)
         //obtener tokens a la venta
-        
-        toks = await contract.obtener_pagina_v2({
-          from_index: Landing.page,
-          limit: Landing.tokensPerPageNear,
+        console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
+      
+        toks = await contract.obtener_pagina_v3({
+          from_index: Landing.page*30,
+          limit: Landing.tokensPerPageNear*(Landing.page+1),
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -152,7 +94,7 @@ function LightEcommerceA() {
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(toks.length /Landing.tokensPerPageNear)+1,
+          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
         });
       }
     })();
@@ -254,6 +196,8 @@ function LightEcommerceA() {
                   onClick={async () => {
                   //  await getPage(index);
                     window.localStorage.setItem("page",index);
+                    setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
+
                     window.location.reload();
                   }}
                 >

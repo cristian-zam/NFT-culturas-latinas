@@ -12,6 +12,8 @@ use std::sync::{Mutex};
 use lazy_static::lazy_static;
 use near_sdk::collections::LazyOption;
 //use std::time::{Duration, Instant};
+//use std::thread::sleep;
+
 
 use near_sdk::json_types::{ValidAccountId,Base64VecU8};
 use near_sdk::serde::{Deserialize, Serialize};
@@ -496,14 +498,14 @@ impl Contract {
                 let expires_at_token=   extradatajson.expires_at.parse::<i64>().unwrap();
                 //let local: DateTime = Local::now();
                 
-            //     let now = Instant::now();
+              //   let now = Instant::now();
                
             //   //  let noww= chrono::offset::Utc::now().timestamp() ;
-            //        log!("token date : {},today: {:?}",expires_at_token,now);  
-           /*  assert_eq!(extradatajson.expires_at.parse::<i64>().unwrap()
-                        >   chrono::offset::Utc::now().timestamp() ,
+                    log!("token date : {},today: {}",(expires_at_token as u64)*1000000,env::block_timestamp());  
+             assert_eq!((expires_at_token as u64)*1000000
+                        < env::block_timestamp(),
                            false,// self.finalizar_subasta(token_id.clone())
-                             "la subasta ya terminó" ); */
+                             "la subasta ya terminó" );  
                              log!("low:{},high:{},send:{}", extradatajson.lowestbidder.parse::<u128>().unwrap(),extradatajson.highestbidder.parse::<u128>().unwrap(),amountsended);
  assert_eq!( extradatajson.lowestbidder.parse::<u128>().unwrap() > amountsended, false, "la cantidad enviada es menos que el minimo");
  assert_eq!( extradatajson.highestbidder.parse::<u128>().unwrap() >= amountsended, false, "la cantidad enviada es menor o igual que la ultima puja");
@@ -638,7 +640,7 @@ impl Contract {
     }
     #[payable]
     pub fn aproved_token(&mut self, token_id: TokenId){
-        let token_owner_id = self.tokens.owner_by_id.get(&token_id);
+        let token_owner_id = self.tokens.owner_by_id.get(&token_id);    
         let Contractaccount: AccountId = token_owner_id.as_ref().unwrap().clone();
             let  account: ValidAccountId = Contractaccount.clone().try_into().unwrap(); 
             let msj: Option<String> = Some("withdraw succesfully,enjoy it! :)".to_string());
@@ -709,6 +711,9 @@ impl Contract {
     pub fn get_on_auction_toks(&self) -> u64 {
         self.n_token_on_auction
     }
+    pub fn get_on_total_toks(&self) -> u64 {
+        self.n_total_tokens
+    }
 
      /* fn update_token(&mut self, token_id: TokenId, extra: String) -> TokenMetadata {
         //assert!(!env::state_exists(), "Already initialized");
@@ -761,6 +766,141 @@ impl Contract {
     }
     
  
+    pub fn obtener_pagina_v3(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
+        // no estoy segyri de como convierte  de U128 a u128
+      /*   let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
+        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
+        let inicioPag = start_index as usize * limit; */
+
+        let mut vectMEta = vec![];
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");
+        //let mut counter: usize = from_index;
+        log!("  from  -> : {},to -> {}",&from_index,&limit);
+        let mut _tokfound =from_index;  //0
+        let totoal =  self.get_on_total_toks()-1;
+                log!(" {}" ,&totoal);
+            for x in from_index..limit { 
+                
+                if  x>= totoal.clone() {
+                    break;
+                }
+                    let mut token =self.get_token(x.to_string().clone());
+                /*     log!("  x -> : {},token {}",&x,&token.token_id );
+                  */   log!("  token -> : {:?}",token.token_id.clone() );
+                 
+                    if token.on_sale{
+                        
+                    vectMEta.push(token  );
+                    _tokfound+=1;
+                    
+                }
+                if x== limit {
+                    break;
+                }
+                
+                //if( x == limit ){break; }           
+            }
+            if vectMEta.len()< 12 && limit < totoal {
+                let  newfrom =limit; //12
+                let  newlimit = limit*2; //24
+               
+                for y in newfrom..newlimit { 
+                 let mut token =self.get_token(y.to_string().clone());
+                 log!("  2da vuetla token -> : {:?}",&y );
+                     if token.on_sale{
+                         
+                        vectMEta.push(token  );
+                        _tokfound+=1;
+                        
+                    }
+                     if y== newlimit {
+                        break;
+                    }
+
+                }
+            }
+           
+            vectMEta
+         
+    }
+    pub fn obtener_pagina_v3_auction(&self, from_index: u64, limit: u64) -> Vec<Meta>  {
+        // no estoy segyri de como convierte  de U128 a u128
+      /*   let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
+        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
+        let inicioPag = start_index as usize * limit; */
+
+        let mut vectMEta = vec![];
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");
+        //let mut counter: usize = from_index;
+        log!("  from  -> : {},to -> {}",&from_index,&limit);
+      
+            for x in from_index..limit { 
+               
+                let mut token =self.get_token(x.to_string().clone());
+            /*     log!("  x -> : {},token {}",&x,&token.token_id );
+                log!("  token -> : {:?}",token.token_id.clone() );
+             */    
+                if token.on_auction{
+                    
+                   vectMEta.push(token  );
+                    
+                   
+               }
+               /*  if token.on_sale{
+                    
+                   
+                    
+                   
+                     break;
+                } else {
+                    counter+= 1;
+                     break;
+                } */
+               
+                if( x == limit ){break; }           
+            }
+            vectMEta
+         
+    }
+    pub fn obtener_pagina_v3_by_owner(&self,account: ValidAccountId, from_index: u64, limit: u64) -> Vec<Meta>  {
+        // no estoy segyri de como convierte  de U128 a u128
+      /*   let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
+        let limit = Some(limit).map(|v| v as usize).unwrap_or(usize::MAX);
+        let inicioPag = start_index as usize * limit; */
+
+        let mut vectMEta = vec![];
+        assert_ne!(limit, 0, "Cannot provide limit of 0.");
+        //let mut counter: usize = from_index;
+        log!("  from  -> : {},to -> {}",&from_index,&limit);
+      
+            for x in from_index..limit { 
+               
+                let mut token =self.get_token(x.to_string().clone());
+            /*     log!("  x -> : {},token {}",&x,&token.token_id );
+                log!("  token -> : {:?}",token.token_id.clone() );
+             */    
+                if token.owner_id==account.to_string(){
+                    
+                   vectMEta.push(token  );
+                    
+                   
+               }
+               /*  if token.on_sale{
+                    
+                   
+                    
+                   
+                     break;
+                } else {
+                    counter+= 1;
+                     break;
+                } */
+               
+                if( x == limit ){break; }           
+            }
+            vectMEta
+         
+    }
     pub fn obtener_pagina_v2(&self, from_index: usize, limit: u64) -> Vec<Meta> {
         // no estoy segyri de como convierte  de U128 a u128
         let start_index: u128 = Some(from_index).map(|v| v as u128).unwrap_or_default();
@@ -875,10 +1015,10 @@ impl Contract {
         }
     }
    
-
-
+ 
 }
-
+ 
+ 
 near_contract_standards::impl_non_fungible_token_core!(Contract, tokens);
 near_contract_standards::impl_non_fungible_token_approval!(Contract, tokens);
 near_contract_standards::impl_non_fungible_token_enumeration!(Contract, tokens);

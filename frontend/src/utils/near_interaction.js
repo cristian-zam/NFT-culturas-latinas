@@ -33,8 +33,8 @@ export const config = {
 //son los metodos que tenemos en el smart contract
 export const methodOptions = {
   viewMethods: [
-    "obtener_pagina_v2",
-    "obtener_pagina_v2_auction",
+    "obtener_pagina_v3",
+    "obtener_pagina_v3_auction",
     "get_token",
     "get_on_sale_toks",
     "get_on_auction_toks",
@@ -46,7 +46,7 @@ export const methodOptions = {
     "nft_supply_for_owner",
     "nft_tokens",
     "tokens_of",
-    "obtener_pagina_v2_by_owner",
+    "obtener_pagina_v3_by_owner",
     
   ],
   changeMethods: [

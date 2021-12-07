@@ -18,7 +18,7 @@ function LightEcommerceA() {
     page: parseInt( window.localStorage.getItem("auctionpage")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 15,
-    tokensPerPageNear: 12,
+    tokensPerPageNear: 30,
   });
   async function getPage(pag) {
     let toks;
@@ -117,8 +117,8 @@ function LightEcommerceA() {
         console.log("Page",Landing.page,"PerNEar",Landing.tokensPerPageNear)
         
         //obtener tokens a la venta
-        toks = await contract.obtener_pagina_v2_auction({
-          from_index: Landing.page,
+        toks = await contract.obtener_pagina_v3_auction({
+          from_index: 1,
           limit: Landing.tokensPerPageNear,
         });
         //obtener cuantos tokens estan a la venta
