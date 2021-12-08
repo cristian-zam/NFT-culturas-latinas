@@ -123,7 +123,7 @@ function LightEcommerceA() {
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
-        let onAuctionToks = await contract.get_on_auction_toks();
+        let onAuctionToks = await contract.get_on_auction_toksV2();
         const data = await contract.account.connection.provider.block({
           finality: "final",
       });
