@@ -163,8 +163,8 @@ function MisTokens(props) {
         console.log(account);
         let payload = {
           account : account,
-          from_index: nfts.page , 
-          limit: nfts.tokensPerPageNear,
+          //from_index: nfts.page , 
+          //limit: nfts.tokensPerPageNear,
         };
 
         let nftsArr = await contract.obtener_pagina_v3_by_owner(payload);
@@ -176,7 +176,7 @@ function MisTokens(props) {
  
         //convertir los datos al formato esperado por la vista
         nftsArr = nftsArr.map((tok) => {
-          console.log("X->",  tok  )
+          //console.log("X->",  tok  )
          
           return {
             tokenID: tok.token_id,
@@ -192,8 +192,8 @@ function MisTokens(props) {
         //Actualizamos el estado el componente con una propiedad que almacena los tokens nft
         setNfts({
           ...nfts,
-          nfts: nftsArr,
-          nPages: Math.ceil(nftsArr.length / nfts.tokensPerPageNear)+1,
+          nfts: nftsArr.slice(nfts.page*nfts.tokensPerPageNear,(nfts.page+1)*nfts.tokensPerPageNear),
+          nPages: Math.ceil(nftsArr.length / nfts.tokensPerPageNear),
           owner: account,
         });
       }
@@ -279,7 +279,7 @@ function MisTokens(props) {
               nfts.nfts.map((nft, key) => {
                 //obtenemos la data del token nft
                 const nftData = JSON.parse(nft.data);
-                console.log("Aquiiii",nft);
+                //console.log("Aquiiii",nft);
                 return (
                   //devolvemos un card por cada token nft del usuario
                   <div className="lg:w-1/3 sm:w-1/2 p-4" key={key}>
