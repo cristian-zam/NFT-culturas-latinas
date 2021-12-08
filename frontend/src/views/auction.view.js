@@ -144,10 +144,9 @@ function LightEcommerceB(props) {
             },
             jdata: {
               image: toks.media,
-              // title: toks.metadata.title,
-              // description: toks.metadata.description,
+              title: toks.title,
+              description: toks.description,
               postor: toks.adressbidder,
-              // owner: toks.owner,
               culture: toks.culture,
               country: toks.country,
               creator: toks.creator,
@@ -158,7 +157,7 @@ function LightEcommerceB(props) {
             },
             owner: toksnft.owner_id,
           }));
-          
+
           setHilow(s => ({
             ...s,
             highestbidder: fromYoctoToNear(toks.highestbidder),
