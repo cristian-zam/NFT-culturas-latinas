@@ -301,8 +301,8 @@ function LightEcommerceB(props) {
 
             <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
             <meta property="og:type" content="article" />
-            <meta property="og:title" content={`${state?.tokens.title}`} />
-            <meta property="og:description" content={`${state?.tokens.description}`} />
+            <meta property="og:title" content={`${state?.jdata.title}`} />
+            <meta property="og:description" content={`${state?.jdata.description}`} />
             <meta property="og:image" content={`https://ipfs.io/ipfs/${state?.jdata.image}`} />
 
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
