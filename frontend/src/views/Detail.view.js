@@ -37,7 +37,7 @@ function LightEcommerceB(props) {
   React.useEffect(() => {
     (async () => {
       setStateLogin(await isNearReady());
-      
+
       let totalSupply;
 
       if (localStorage.getItem("blockchain") == "0") {
@@ -76,7 +76,7 @@ function LightEcommerceB(props) {
         if (parseInt(tokenid) >= parseInt(totalSupply)) {
           window.location.href = "/galeria";
         } else {
-          let toks = await contract.get_token({ token_id: tokenid});
+          let toks = await contract.get_token({ token_id: tokenid });
           console.log("Token")
           console.log(toks)
           // console.log({
@@ -100,18 +100,18 @@ function LightEcommerceB(props) {
             },
             jdata: {
               image: toks.media,
-              // title: toks.metadata.title,
-              // description: toks.metadata.description,
-              culture:toks.culture,
-              country:toks.country,
-              creator:toks.creator,
+              title: toks.title,
+              description: toks.description,
+              culture: toks.culture,
+              country: toks.country,
+              creator: toks.creator,
             },
             owner: toks.owner_id,
           });
-          console.log("state",state )
+          console.log("state", state)
         }
 
-        
+
       }
     })();
   }, []);
@@ -166,10 +166,10 @@ function LightEcommerceB(props) {
           return err;
         });
     } else {
-      
-      let amount=parseFloat(state.tokens.price);
-      console.log("amount",amount)
-   
+
+      let amount = parseFloat(state.tokens.price);
+      console.log("amount", amount)
+
       //instanciar contracto
       let contract = await getNearContract();
       //obtener tokens a la venta
@@ -239,11 +239,10 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">En venta</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.tokens.onSale
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.tokens.onSale
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
                   {state?.tokens.onSale ? "Disponible" : "No disponible"}
                 </span>
@@ -255,13 +254,12 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">Cultura</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.culture
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.culture
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
-                  {state?.jdata.culture  }
+                  {state?.jdata.culture}
                 </span>
               </span>
             </div>
@@ -272,13 +270,12 @@ function LightEcommerceB(props) {
               <span className="text-gray-500">País de origen</span>
               <span className="ml-auto text-gray-900">
                 <span
-                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${
-                    state?.jdata.country
+                  className={`inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none ${state?.jdata.country
                       ? "text-green-100 bg-green-500"
                       : "text-red-100 bg-red-500"
-                  } rounded-full`}
+                    } rounded-full`}
                 >
-                  {state?.jdata.country  }
+                  {state?.jdata.country}
                 </span>
               </span>
             </div>
@@ -302,33 +299,38 @@ function LightEcommerceB(props) {
             </div>
 
 
-            
+            <meta property="og:url" content={`https://develop.nativonft.app/detail/${state?.tokens.tokenID}`} />
+            <meta property="og:type" content="article" />
+            <meta property="og:title" content={`${state?.tokens.title}`} />
+            <meta property="og:description" content={`${state?.tokens.description}`} />
+            <meta property="og:image" content={`https://ipfs.io/ipfs/${state?.jdata.image}`} />
+
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5"></div>
             <div className="flex">
               <span className="title-font font-medium text-2xl text-gray-900">
                 $ {state?.tokens.price}
                 {" " + currencys[parseInt(localStorage.getItem("blockchain"))]}
               </span>
-              {stateLogin ? 
-                            <button
-                            className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                            disabled={state?.btnDisabled}
-                            onClick={async () => {
-                              comprar();
-                            }}
-                            >
-                              Comprar
-                            </button>
-                          : 
-                          <button
-                          className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
-                          disabled={state?.btnDisabled}
-                          onClick={async () => {
-                            nearSignIn(window.location.href);
-                          }}
-                          >
-                            Iniciar Sesión para Comprar
-                          </button>
+              {stateLogin ?
+                <button
+                  className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                  disabled={state?.btnDisabled}
+                  onClick={async () => {
+                    comprar();
+                  }}
+                >
+                  Comprar
+                </button>
+                :
+                <button
+                  className={`flex ml-auto text-white bg-${props.theme}-500 border-0 py-2 px-6 focus:outline-none hover:bg-${props.theme}-600 rounded`}
+                  disabled={state?.btnDisabled}
+                  onClick={async () => {
+                    nearSignIn(window.location.href);
+                  }}
+                >
+                  Iniciar Sesión para Comprar
+                </button>
               }
             </div>
           </div>
