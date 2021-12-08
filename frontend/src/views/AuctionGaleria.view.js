@@ -50,7 +50,7 @@ function LightEcommerceA() {
       let numberOfToks = pag * Landing.tokensPerPageNear;
       //obtener cuantos tokens estan a la venta
       let onSaleToks = await contract.get_on_sale_toks();
-      let onAuctionToks = await contract.get_on_auction_toks();
+      let onAuctionToks = await contract.get_on_auction_toksV2();
       //obtener tokens a la venta
       toks = await contract.obtener_pagina_v2_auction({
         from_index: pag,
