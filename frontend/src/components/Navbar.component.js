@@ -5,7 +5,7 @@ import { ChevronDownIcon } from "@heroicons/react/solid";
 import { config, signOut } from "../utils/near_interaction";
 import * as nearAPI from "near-api-js";
 import { blockchains } from "../utils/constraint";
-
+import nativoLogo from '../assets/img/nativologocrop.png'
 function LightHeaderB(props) {
   const [state, setState] = useState({
     dropdown:
@@ -17,6 +17,9 @@ function LightHeaderB(props) {
   }
 
   useEffect(() => {
+    if(state.dropdown == 'Blockchain'){
+      changeBlockchain(2);
+    }
     /*  (async () => {
       const { keyStores, connect, WalletConnection } = nearAPI;
       const keyStore = new keyStores.BrowserLocalStorageKeyStore();
@@ -57,33 +60,34 @@ function LightHeaderB(props) {
     await signOut();
     window.location.reload();
   }
+
+  async function goNativoV1() {
+    window.location.href = 'https://v1.nativonft.app/';
+  }
+
   return (
     <header className="text-gray-600 body-font shadow-sm">
       <div className=" flex flex-wrap p-5 flex-col md:flex-row items-center">
         <a
           href="/"
-          className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
+         
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            className={`w-10 h-10 text-white p-2 bg-${props.theme}-500 rounded-full`}
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-          <span className="ml-3 text-xl">LatinArt</span>
+         <img  src={nativoLogo} class="d-inline-block align-top" alt="logo"   width="200px"/>
+
+         
         </a>
         <nav className="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
           <a href="/galeria" className="mr-5 hover:text-gray-900">
             Galeria
           </a>
+          <a href="https://v1.nativonft.app/galeria" className="mr-5 hover:text-gray-900">
+            Galeria V1
+          </a>
           <a href="/minar" className="mr-5 hover:text-gray-900">
             Minar
+          </a>
+          <a href="/auctions" className="mr-5 hover:text-gray-900">
+            Subastas
           </a>
           <a href="/mis_nfts" className="mr-5 hover:text-gray-900">
             Mis Nfts
@@ -138,7 +142,7 @@ function LightHeaderB(props) {
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
-                        changeBlockchain(1);
+                        goNativoV1();
                       }}
                     >
                       {({ active }) => (
@@ -152,6 +156,25 @@ function LightHeaderB(props) {
                           )}
                         >
                           {blockchains[1]}
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        changeBlockchain(2);
+                      }}
+                    >
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-2 py-2 text-sm text-center"
+                          )}
+                        >
+                          {blockchains[2]}
                         </a>
                       )}
                     </Menu.Item>

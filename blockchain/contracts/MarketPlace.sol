@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+ // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -20,6 +20,7 @@ contract MarketPlace is ERC721Enumerable {
         string data;
         bool onSale;
         uint256 tokenID;
+        address creator;
     }
 
     //contiene todas las representacion de cada token
@@ -55,6 +56,7 @@ contract MarketPlace is ERC721Enumerable {
         tokensData[newItemId].price = price;
         tokensData[newItemId].onSale = true;
         tokensData[newItemId].tokenID = newItemId;
+        tokensData[newItemId].creator = msg.sender;
 
         //agregar a la venta el nuevo token
         nTokenOnSale++;
@@ -218,6 +220,7 @@ contract MarketPlace is ERC721Enumerable {
 
         return onSaleTokensData;
     }
+    event  buyed ( address tokenon ,  uint  payout,  address tokencre ,  uint  reg, address mpowner ,  uint  gains    ); 
 
     /**
      *con esta funcion cualquiera puede comprar el nft que desea
@@ -233,16 +236,26 @@ contract MarketPlace is ERC721Enumerable {
         );
         //es el dueño del token
         address payable tokenOwner = payable(ownerOf(tokenId));
+        //es el creador del token
+        address payable tokenCreator = payable(tokensData[tokenId].creator);
+        
 
         //mandamos el token al comprador
         _transfer(tokenOwner, msg.sender, tokenId);
-
+        
+        //calculo de regalias ,ganancias y pago al vendedor
+        uint256 regal=msg.value * 10 / 100;
+        uint256 gains=msg.value* 3 / 100;
+        uint256 payout=msg.value*  87 / 100;
         //le transferimos el dinero al  vendedor
-        tokenOwner.transfer(msg.value);
-
+        tokenOwner.transfer(payout);
+        //le transferimos las regalias al creator
+        tokenCreator.transfer(regal);
+        //le transferimos el comision al dueño del MarketPlace
+        payable(minero).transfer(gains);
         //poner el token en pausa
         tokensData[tokenId].onSale = false;
-
+   emit  buyed( tokenOwner ,  payout,  tokenCreator ,  regal, minero , gains   );
         nTokenOnSale--;
     }
 

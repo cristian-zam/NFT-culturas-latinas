@@ -18,6 +18,8 @@ use near_sdk::{
     Promise, PromiseOrValue, PromiseResult,
 };
 
+use more_asserts;
+
 setup_alloc!();
 
 // Structs in Rust are similar to other languages, and may include impl keyword as shown below
@@ -29,6 +31,7 @@ setup_alloc!();
 pub struct Contract {
     tokens: NonFungibleToken,
     metadata: LazyOption<NFTContractMetadata>,
+    nTokenOnAuction: u64,
     nTokenOnSale: u64,
 }
 
@@ -53,8 +56,8 @@ impl Contract {
             //Metadata al momento de crear el contrato
             NFTContractMetadata {
                 spec: NFT_METADATA_SPEC.to_string(),
-                name: "Marketplace comunidades latinas".to_string(),
-                symbol: "ARTL".to_string(),
+                name: "Nativo NFT".to_string(),
+                symbol: "NTV".to_string(),
                 icon: Some(DATA_IMAGE_SVG_LATINART_ICON.to_string()),
                 base_uri: None,
                 reference: None,
@@ -121,6 +124,19 @@ impl Contract {
             Some(token_metadata),
         )
     }
+    #[payable]
+    pub fn minarauction(
+        &mut self,
+        token_owner_id: ValidAccountId,
+        token_metadata: TokenMetadata,
+    ) -> Token {
+        self.nTokenOnAuction += 1;
+        self.tokens.mint(
+            self.tokens.owner_by_id.len().to_string(),
+            token_owner_id,
+            Some(token_metadata),
+        )
+    }
 
     pub fn storage_byte_cost() -> Balance {
         env::storage_byte_cost()
@@ -158,16 +174,33 @@ impl Contract {
         );
         assert_eq!(
             metadata.on_sale.as_ref().unwrap(),
-            &true,
+            &true, 
             "no esta a la venta"
         );
 
         //revisar que este a la venta
         //obtener el dueño del token
-        let owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+        let token_owner_id = self.tokens.owner_by_id.get(&token_id).unwrap();
+        //obtener el creador del token
+        let creator_id = metadata.creator.as_ref().unwrap();
+        //obtener el comprador del token
         let buyer_id = &env::signer_account_id();
+         //obtener la regalia,la comision de Nativo y el pagoa al autor del token
+         let mut  res:f64=0.0;
+         let mut  roy:f64=0.0;
+         let mut  gains:f64=0.0;
+         let mut  pay:f64=0.0;
+         roy = amount as f64 *0.10;
+         gains=amount as f64 *0.03;
+         pay=amount as f64 *0.87;
+          
+        let my_string = metadata.price.as_ref().unwrap().to_string();  // `parse()` works with `&str` and `String`!
+        let price_meta = my_string.parse::<u128>().unwrap();
+        let regal = amount-price_meta ;
+
+       
         // el dueñp no puede comprar su propio token
-        assert_eq!(buyer_id == &owner_id, false, "eres el dueño del token ");
+        assert_eq!(buyer_id == &token_owner_id, false, "eres el dueño del token ");
         //cambiar la metadata
         metadata.on_sale = Some(false);
         //remplazamos la metadata
@@ -183,11 +216,15 @@ impl Contract {
             .transfer(amount)
             .function_call("tx_status_callback".into(), vec![], 0, 0);
         */
-        Promise::new(owner_id.clone()).transfer(amount);
-
+        Promise::new(token_owner_id.clone()).transfer(pay as  u128);
+    
+        //TODO: transferir la regalia del token
+        Promise::new(creator_id.clone()).transfer(gains as u128);
+        //TODO: transferir la regalia del token
+        Promise::new(env::predecessor_account_id().clone()).transfer(roy as u128);
         //transferir el nft
         self.tokens
-            .internal_transfer_unguarded(&token_id, &owner_id, buyer_id);
+            .internal_transfer_unguarded(&token_id, &token_owner_id, buyer_id);
 
         //cambiar el numero de nfts disponibles
         self.nTokenOnSale -= 1;
@@ -326,6 +363,7 @@ impl Contract {
             limit,
             inicioPag
         );
+        let mut token_id="1"
         let mut counter: usize = 0;
         self.tokens
             .owner_by_id

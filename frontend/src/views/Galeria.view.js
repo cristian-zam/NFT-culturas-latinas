@@ -8,70 +8,20 @@ import {
 import { currencys } from "../utils/constraint";
 import { getNearContract, fromYoctoToNear } from "../utils/near_interaction";
 
+
 function LightEcommerceA() {
   const [Landing, setLanding] = React.useState({
     theme: "yellow",
     currency: currencys[parseInt(localStorage.getItem("blockchain"))],
     tokens: [],
-    page: window.localStorage.getItem("page"),
+    page: parseInt( window.localStorage.getItem("page")),
     blockchain: localStorage.getItem("blockchain"),
     tokensPerPage: 10,
-    tokensPerPageNear: 6,
+    tokensPerPageNear: 30,
   });
+  const [counter, setcounter] = React.useState();
 
-  async function getPage(pag) {
-    let toks;
-    if (Landing.blockchain == "0") {
-      toks = await getContract()
-        .methods.obtenerPaginav2(Landing.tokensPerPage, 2)
-        .call();
-
-      //filtrar tokens
-      let copytoks = toks.filter((tok) => tok.onSale);
-
-      console.log(toks);
-      //convertir los precios de wei a eth
-      copytoks = copytoks.map((tok) => {
-        return { ...tok, price: fromWEItoEth(tok.price) };
-      });
-
-      setLanding({
-        ...Landing,
-        tokens: copytoks,
-        page: pag,
-      });
-    } else {
-      //instanciar contracto
-      let contract = await getNearContract();
-      let numberOfToks = pag * Landing.tokensPerPage;
-      //obtener cuantos tokens estan a la venta
-      let onSaleToks = await contract.get_on_sale_toks();
-      //obtener tokens a la venta
-      toks = await contract.obtener_pagina_v2({
-        from_index: pag,
-        limit: Landing.tokensPerPage,
-      });
-
-      //convertir los datos al formato esperado por la vista
-      toks = toks.map((tok) => {
-        return {
-          tokenID: tok.token_id,
-          price: fromYoctoToNear(tok.metadata.price),
-          data: JSON.stringify({
-            title: tok.metadata.title,
-            image: tok.metadata.media,
-          }),
-        };
-      });
-      console.log(toks);
-      setLanding({
-        ...Landing,
-        tokens: toks,
-        page: pag,
-      });
-    }
-  }
-
+   
   React.useEffect(() => {
     (async () => {
       let toks, onSaleToks;
@@ -79,7 +29,7 @@ function LightEcommerceA() {
       
       if (Landing.blockchain == "0") {
         //primero nos aseguramos de que la red de nuestro combo sea igual a la que esta en metamask
-                await syncNets();
+          await syncNets();
           //obtener cuantos tokens tiene el contrato
           let totalSupply = await getContract().methods.totalSupply().call();
           //obtener el numero de tokens a la venta
@@ -100,19 +50,24 @@ function LightEcommerceA() {
              setLanding({
               ...Landing,
               tokens: arr,
-              nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+              nPages: Math.ceil(arr.length / Landing.tokensPerPage),
             });  
 
           }
            
      
       } else {
+        window.contr = await getNearContract();
+      
         //instanciar contracto
         let contract = await getNearContract();
+        console.log("Page",Landing.page)
         //obtener tokens a la venta
-        toks = await contract.obtener_pagina_v2({
-          from_index: 0,
-          limit: 6,
+        console.log("Paasdsadfsdfdge",Landing.page*30,"edfew" ,Landing.tokensPerPageNear*(Landing.page+1))
+      
+        toks = await contract.obtener_pagina_v3({
+          from_index: Landing.page*30,
+          limit: Landing.tokensPerPageNear*(Landing.page+1),
         });
         //obtener cuantos tokens estan a la venta
         onSaleToks = await contract.get_on_sale_toks();
@@ -121,21 +76,25 @@ function LightEcommerceA() {
         toks = toks.map((tok) => {
           return {
             tokenID: tok.token_id,
-            price: fromYoctoToNear(tok.metadata.price),
+            ownerId: tok.owner_id,
+            price: tok.price,
             data: JSON.stringify({
-              title: tok.metadata.title,
-              image: tok.metadata.media,
+              title: tok.title,
+              image: tok.media,
+              on_sale: tok.on_sale, // sale status
+              on_auction: tok.on_auction, //auction status
+              highestbidder: tok.highestbidder,
             }),
           };
         });
 
-        console.log(toks);
-        console.log(onSaleToks);
-
+        console.log("toks",toks);
+        console.log("onsale",onSaleToks);
+        console.log(Math.ceil(onSaleToks /Landing.tokensPerPageNear))
         setLanding({
           ...Landing,
           tokens: toks,
-          nPages: Math.ceil(onSaleToks / Landing.tokensPerPage),
+          nPages: Math.ceil(onSaleToks /Landing.tokensPerPageNear),
         });
       }
     })();
@@ -155,28 +114,45 @@ function LightEcommerceA() {
               //a nuestro datos le aplicamos al funcion stringify por lo cual necesitamos pasarlo
               const tokenData = JSON.parse(token.data);
               return (
-                <div className="lg:w-1/4 md:w-1/2 px-2 w-full my-3" key={key}>
+                <div className="lg:w-1/3 md:w-1/2 px-3 w my-" key={key}>
+                 {tokenData.image ?
                   <a href={"/detail/" + token.tokenID}>
+                    <div className="token">
                     <div className="block relative h-48 rounded overflow-hidden">
-                      <img
-                        alt="ecommerce"
-                        className="object-cover object-center w-full h-full block"
-                        src={`https://ipfs.io/ipfs/${tokenData.image}`}
-                      />
+                    
+                       <img
+                            alt="ecommerce"
+                            className="imgaa object-cover object-center w-full h-full block"
+                            src={`https://ipfs.io/ipfs/${tokenData.image}`}
+                          /> 
+               
+                   
+                           
                     </div>
                     <div className="mt-4">
-                      <h2 className="text-gray-900 title-font text-lg font-medium">
+                      <h2 className="ml-1 text-gray-900 title-font text-lg font-medium">
                         {tokenData.title}
                       </h2>
-                      <p className="mt-1">
+                      <p className="mt-1 mb-4 ml-2">
+                        {"Tokenid: "+ token.tokenID }
+                        <br/>
+                        { "Owner: "+token.ownerId+"\n"}
+                        <br/>
                         {Landing.blockchain==0 &&
                             fromWEItoEth(token.price) + " " + Landing.currency}
 
                         {Landing.blockchain!=0 &&
-                              token.price + " " + Landing.currency}
+                              fromYoctoToNear(token.price) + " " + Landing.currency}
                       </p>
                     </div>
+                    </div>
                   </a>
+                  :
+                  <img 
+                     src={"https://media.giphy.com/media/tA4R6biK5nlBVXeR7w/giphy.gif"} 
+                     className="object-cover object-center w-full h-full block" />
+
+                  }
                 </div>
               );
             })}
@@ -185,7 +161,7 @@ function LightEcommerceA() {
           <nav
             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
             aria-label="Pagination"
-          >
+          > 
             {Landing?.page != 0 && (
               <a
                 href="#"
@@ -218,8 +194,10 @@ function LightEcommerceA() {
                   }  relative inline-flex items-center px-4 py-2 text-sm font-medium`}
                   key={index}
                   onClick={async () => {
-                    //await getPage(index);
+                  //  await getPage(index);
                     window.localStorage.setItem("page",index);
+                    setcounter(Landing.tokens[Landing.tokens.length-1].tokenID +1)
+
                     window.location.reload();
                   }}
                 >

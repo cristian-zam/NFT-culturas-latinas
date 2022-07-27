@@ -10,10 +10,10 @@ Asegurate de tener instalado la herramienta `near-cli`, esta sera utilizada para
 `near login`
 
 ## Construir el smart contract para WebAssambly 
-`cargo build --target wasm32-unknown-unknown`
+`cargo build --target wasm32-unknown-unknown --release`
 
 ## Desplegar contrato en testnet
-`near dev-deploy --wasmFile target/wasm32-unknown-unknown/debug/nft_marketplace.wasm`
+`near dev-deploy --wasmFile target/wasm32-unknown-unknown/release/non_fungible_token.wasm`
 
 # 💻 Comandos del contrato
 

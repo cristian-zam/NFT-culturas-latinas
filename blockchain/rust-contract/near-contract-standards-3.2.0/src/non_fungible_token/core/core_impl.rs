@@ -143,7 +143,12 @@ impl NonFungibleToken {
                     price: Some("1".to_string()),
                     culture: Some("a".repeat(64)),
                     country: Some("a".repeat(64)),
+                    creator: Some("a".repeat(64)),
                     on_sale: Some(true),
+                    on_auction: Some(false), //auction status
+                    adressbidder: Some("a".repeat(64)), //
+                    highestbidder: Some("a".repeat(64)),
+                    lowestbidder: Some("a".repeat(64)),
                 },
             );
         }

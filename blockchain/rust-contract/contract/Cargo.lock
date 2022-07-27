@@ -272,6 +272,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8452105ba047068f40ff7093dd1d9da90898e63dd61736462e9cdda6a90ad3c3"
 
 [[package]]
+name = "more-asserts"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0debeb9fcf88823ea64d64e4a815ab1643f33127d995978e099942ce38f25238"
+
+[[package]]
 name = "near-contract-standards"
 version = "3.2.0"
 dependencies = [
@@ -408,6 +414,7 @@ dependencies = [
 name = "nft_marketplace"
 version = "0.1.0"
 dependencies = [
+ "more-asserts",
  "near-contract-standards",
  "near-sdk",
 ]
